@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "142099948756",
+    "project_id": "cozy-home-1ebd3",
+    "storage_bucket": "cozy-home-1ebd3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:142099948756:android:9ad3c133241c6c93688741",
+        "android_client_info": {
+          "package_name": "com.example.cozy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDgWNQKI3h0ZASErU55kusxNYjb42FQ5E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
