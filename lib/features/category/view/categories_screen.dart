@@ -49,7 +49,6 @@ class CategoriesScreen extends StatelessWidget {
               ),
             ),
 
-            SizedBox(height: 100.h), // Space for floating nav bar
           ],
         ),
       ),

@@ -9,6 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../customer_services/view/customer_service_screen.dart';
+import '../../notifications/view/notification_screen.dart';
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -61,10 +64,45 @@ class HomeScreen extends StatelessWidget {
                         color: AppColors.primary,
                         borderRadius: BorderRadius.circular(12.r),
                       ),
-                      child: Icon(
-                        Icons.notifications_outlined,
-                        color: Colors.white,
-                        size: 20.sp,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const NotificationsScreen(),
+                            ),
+                          );
+                        },
+                        child: Icon(
+                          Icons.notifications_outlined,
+                          color: Colors.white,
+                          size: 20.sp,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+                    Container(
+                      width: 40.w,
+                      height: 40.w,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const CustomerServiceScreen(),
+                            ),
+                          );
+                        },
+                        child: Icon(
+                          Icons.support_agent_outlined,
+                          color: Colors.white,
+                          size: 20.sp,
+                        ),
                       ),
                     ),
                   ],
@@ -352,8 +390,6 @@ class HomeScreen extends StatelessWidget {
                   },
                 ),
               ),
-
-              SizedBox(height: 100.h), // Space for floating nav bar
             ],
           ),
         ),

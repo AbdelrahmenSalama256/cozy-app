@@ -2,7 +2,7 @@ import 'package:cozy/core/component/widgets/app_theme.dart';
 import 'package:cozy/core/cubit/global_cubit.dart';
 import 'package:cozy/core/cubit/global_state.dart';
 import 'package:cozy/core/locale/localization_settings.dart';
-import 'package:cozy/features/into/splash/view/splash_screen.dart';
+import 'package:cozy/features/intro/splash/view/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

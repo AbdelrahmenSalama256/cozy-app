@@ -1,14 +1,11 @@
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/constants/language_switcher.dart';
-import 'package:cozy/core/cubit/global_cubit.dart';
-import 'package:cozy/core/cubit/global_state.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/features/auth/view/create_account_screen.dart';
 import 'package:cozy/features/auth/view/login_screen.dart';
 import 'package:cozy/features/customer_services/view/customer_service_screen.dart';
 import 'package:cozy/features/profile/view/about_us_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'addresses_screen.dart';
@@ -246,8 +243,6 @@ class _ProfileScreenState extends State<ProfileScreen>
               ],
             ),
           ),
-
-          SizedBox(height: 100.h), // Space for floating nav bar
         ],
       ),
     );
@@ -384,49 +379,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                   Icons.arrow_forward_ios,
                   color: AppColors.textGrey,
                   size: 16.sp,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showLanguageDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.transparent,
-        insetPadding: EdgeInsets.all(20.w),
-        child: BlocListener<GlobalCubit, GlobalState>(
-          listener: (context, state) {
-            if (state is LanguageChangedState) {
-              Navigator.pop(context);
-            }
-          },
-          child: Container(
-            padding: EdgeInsets.all(20.w),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20.r),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'select_language'.tr(context),
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 20.h),
-                const LanguageSwitcher(),
-                SizedBox(height: 20.h),
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text('close'.tr(context)),
                 ),
               ],
             ),

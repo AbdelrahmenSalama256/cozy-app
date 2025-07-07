@@ -96,8 +96,6 @@ class _WishlistScreenState extends State<WishlistScreen> {
             },
           ),
         ),
-
-        SizedBox(height: 100.h), // Space for floating nav bar
       ],
     );
   }

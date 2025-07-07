@@ -68,23 +68,24 @@ class _BaseScreenState extends State<BaseScreen> {
             }
           },
           child: Scaffold(
-            body: _screens[_currentIndex],
+            backgroundColor: AppColors.white,
+            body: SafeArea(child: _screens[_currentIndex]),
             bottomNavigationBar: AnimatedSwitcher(
               duration: const Duration(milliseconds: 500),
               child: Container(
-                margin: EdgeInsets.all(20.w),
+                // margin: EdgeInsets.all(20.w),
                 padding: EdgeInsets.symmetric(horizontal: 10.w),
                 height: 70.h,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(35.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 20,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
+                  // boxShadow: [
+                  //   BoxShadow(
+                  //     color: Colors.black.withOpacity(0.1),
+                  //     blurRadius: 20,
+                  //     offset: const Offset(0, 5),
+                  //   ),
+                  // ],
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

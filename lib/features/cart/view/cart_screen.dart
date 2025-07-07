@@ -1,8 +1,11 @@
+import 'package:cozy/core/component/widgets/app_button.dart';
 import 'package:cozy/core/constants/app_colors.dart';
+import 'package:cozy/core/constants/navigation.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/features/auth/view/login_screen.dart';
 import 'package:cozy/features/cart/data/model/cart_model.dart';
 import 'package:cozy/features/cart/view/widgets/cart_item_card.dart';
+import 'package:cozy/features/checkout/view/checkout_screen.dart';
 import 'package:cozy/features/home/data/model/product_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,7 +18,7 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  bool isLoggedIn = true; // This would come from your auth state management
+  bool isLoggedIn = true;
   late Cart cart;
 
   @override
@@ -118,24 +121,11 @@ class _CartScreenState extends State<CartScreen> {
               SizedBox(
                 width: double.infinity,
                 height: 50.h,
-                child: ElevatedButton(
+                child: AppButton(
                   onPressed: () {
-                    // Proceed to checkout
+                    navigateTo(context, CheckoutScreen(cart: cart));
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.r),
-                    ),
-                  ),
-                  child: Text(
-                    'checkout'.tr(context),
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
+                  text: 'checkout'.tr(context),
                 ),
               ),
             ],

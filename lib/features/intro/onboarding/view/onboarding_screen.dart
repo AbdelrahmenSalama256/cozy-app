@@ -3,7 +3,7 @@ import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/features/auth/view/create_account_screen.dart';
 import 'package:cozy/features/auth/view/login_screen.dart';
-import 'package:cozy/features/into/onboarding/data/model/onboarding_model.dart';
+import 'package:cozy/features/intro/onboarding/data/model/onboarding_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

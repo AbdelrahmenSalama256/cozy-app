@@ -340,7 +340,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ],
                     ),
 
-                    SizedBox(height: 100.h), // Space for buttons
                   ],
                 ),
               ),
