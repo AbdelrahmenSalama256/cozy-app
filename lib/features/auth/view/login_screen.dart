@@ -109,7 +109,7 @@ class LoginScreen extends StatelessWidget {
                               alignment: Alignment.centerRight,
                               child: TextButton(
                                 onPressed: () {
-                                  FocusScope.of(context).unfocus();
+                                  // FocusScope.of(context).unfocus();
                                   CustomBottomSheet.show(
                                     context: context,
                                     child: BlocProvider.value(

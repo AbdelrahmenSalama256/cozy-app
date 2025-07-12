@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/component/custom_toast.dart';
+
 class CreateNewPasswordBottomSheet extends StatefulWidget {
   const CreateNewPasswordBottomSheet({super.key});
 
@@ -29,19 +31,19 @@ class _CreateNewPasswordBottomSheetState
       listener: (context, state) {
         if (state is AuthResetPasswordSuccess) {
           Navigator.of(context).pop();
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(
-              content: Text(state.message.tr(context)),
-              backgroundColor: Colors.green,
-            ));
+          showToast(
+            context,
+            message: state.message.tr(context),
+            state: ToastStates.success,
+            duration: const Duration(seconds: 3),
+          );
         } else if (state is AuthFailure) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(
-              content: Text(state.error.tr(context)),
-              backgroundColor: Colors.red,
-            ));
+          showToast(
+            context,
+            message: state.error.tr(context),
+            state: ToastStates.error,
+            duration: const Duration(seconds: 3),
+          );
         }
       },
       child: Form(

@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pinput/pinput.dart';
 
+import '../../../../core/component/custom_toast.dart';
 import 'custom_bottom_sheet.dart';
 
 class OtpBottomSheetForReset extends StatefulWidget {
@@ -32,28 +33,30 @@ class _OtpBottomSheetForResetState extends State<OtpBottomSheetForReset> {
         return BlocListener<AuthCubit, AuthState>(
           listener: (context, state) {
             if (state is AuthOtpVerificationSuccess) {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(SnackBar(
-                  content: Text(state.message.tr(context)),
-                  backgroundColor: Colors.green,
-                ));
-              CustomBottomSheet.show(
-                context: context,
-                child: BlocProvider.value(
-                  value: authCubit,
-                  child: const CreateNewPasswordBottomSheet(),
-                ),
+              showToast(
+                context,
+                message: state.message.tr(context),
+                state: ToastStates.success,
+                duration: const Duration(seconds: 3),
               );
+              Navigator.pop(context); // Dismiss the OTP bottom sheet
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                CustomBottomSheet.show(
+                  context: context,
+                  child: BlocProvider.value(
+                    value: authCubit,
+                    child: const CreateNewPasswordBottomSheet(),
+                  ),
+                );
+              });
             } else if (state is AuthFailure) {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(SnackBar(
-                  content: Text(state.error.tr(context)),
-                  backgroundColor: Colors.red,
-                ));
+              Navigator.pop(context); // Dismiss the OTP bottom sheet
+              showToast(
+                context,
+                message: state.error.tr(context),
+                state: ToastStates.error,
+                duration: const Duration(seconds: 3),
+              );
             }
           },
           child: Form(
