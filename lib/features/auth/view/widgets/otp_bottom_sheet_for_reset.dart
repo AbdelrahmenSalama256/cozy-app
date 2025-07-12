@@ -10,159 +10,158 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pinput/pinput.dart';
 
-class OtpBottomSheetForReset extends StatelessWidget {
+import 'custom_bottom_sheet.dart';
+
+class OtpBottomSheetForReset extends StatefulWidget {
   final String emailOrPhoneForOtp;
   const OtpBottomSheetForReset({super.key, required this.emailOrPhoneForOtp});
 
   @override
+  State<OtpBottomSheetForReset> createState() => _OtpBottomSheetForResetState();
+}
+
+class _OtpBottomSheetForResetState extends State<OtpBottomSheetForReset> {
+  final _formKey = GlobalKey<FormState>();
+
+  @override
   Widget build(BuildContext context) {
     final authCubit = context.read<AuthCubit>();
-    final formKey = GlobalKey<FormState>();
 
-    final defaultPinTheme = PinTheme(
-      width: 56.w,
-      height: 60.h,
-      textStyle: TextStyle(
-          fontSize: 22.sp,
-          color: AppColors.textBlack,
-          fontWeight: FontWeight.bold),
-      decoration: BoxDecoration(
-        color: AppColors.inputFieldBackground,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.transparent),
-      ),
-    );
-
-    return BlocListener<AuthCubit, AuthState>(
-      listener: (context, state) {
-        if (state is AuthOtpVerificationSuccess) {
-          Navigator.of(context).pop();
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(
-                content: Text(state.message.tr(context)),
-                backgroundColor: Colors.green));
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder: (_) => BlocProvider.value(
-              value: authCubit,
-              child: const CreateNewPasswordBottomSheet(),
-            ),
-          );
-        } else if (state is AuthFailure) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(
-                content: Text(state.error.tr(context)),
-                backgroundColor: Colors.red));
-        }
-      },
-      child: Padding(
-        padding: MediaQuery.of(context).viewInsets,
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.r),
-              topRight: Radius.circular(20.r),
-            ),
-          ),
-          child: SingleChildScrollView(
-            child: Form(
-              key: formKey,
+    return BlocBuilder<AuthCubit, AuthState>(
+      builder: (context, state) {
+        return BlocListener<AuthCubit, AuthState>(
+          listener: (context, state) {
+            if (state is AuthOtpVerificationSuccess) {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(SnackBar(
+                  content: Text(state.message.tr(context)),
+                  backgroundColor: Colors.green,
+                ));
+              CustomBottomSheet.show(
+                context: context,
+                child: BlocProvider.value(
+                  value: authCubit,
+                  child: const CreateNewPasswordBottomSheet(),
+                ),
+              );
+            } else if (state is AuthFailure) {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(SnackBar(
+                  content: Text(state.error.tr(context)),
+                  backgroundColor: Colors.red,
+                ));
+            }
+          },
+          child: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              // padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Center(
-                    child: Container(
-                      width: 40.w,
-                      height: 5.h,
-                      decoration: BoxDecoration(
-                        color: AppColors.textGrey.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20.h),
                   Text(
                     "auth_verification_code_label".tr(context),
                     style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textBlack),
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textBlack,
+                    ),
                   ),
                   SizedBox(height: 8.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "auth_verification_message".tr(context),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 14.sp, color: AppColors.textGrey),
-                      ),
-                      SizedBox(width: 10.w),
-                      Text(
-                        emailOrPhoneForOtp,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 14.sp, color: AppColors.textGrey),
-                      ),
-                    ],
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "auth_verification_message".tr(context),
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: AppColors.textGrey,
+                          ),
+                        ),
+                        TextSpan(
+                          text: widget.emailOrPhoneForOtp,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: AppColors.primaryLight,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 24.h),
                   Pinput(
                     controller: authCubit.otpController,
                     length: 4,
-                    defaultPinTheme: defaultPinTheme,
-                    focusedPinTheme: defaultPinTheme.copyDecorationWith(
-                      border:
-                          Border.all(color: AppColors.primaryLight, width: 2),
+                    defaultPinTheme: PinTheme(
+                      width: 56.w,
+                      height: 60.h,
+                      textStyle: TextStyle(
+                        fontSize: 22.sp,
+                        color: AppColors.textBlack,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.inputFieldBackground,
+                        borderRadius: BorderRadius.circular(4.r),
+                        border: Border.all(color: Colors.transparent),
+                      ),
                     ),
-                    pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
-                    showCursor: true,
+                    focusedPinTheme: PinTheme(
+                      width: 56.w,
+                      height: 60.h,
+                      textStyle: TextStyle(
+                        fontSize: 22.sp,
+                        color: AppColors.textBlack,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.inputFieldBackground,
+                        borderRadius: BorderRadius.circular(4.r),
+                        border: Border.all(
+                          color: AppColors.primaryLight,
+                          width: 2,
+                        ),
+                      ),
+                    ),
                     validator: (value) =>
                         Validators.validateOtp(value, context),
                   ),
                   SizedBox(height: 24.h),
-                  BlocBuilder<AuthCubit, AuthState>(
-                    builder: (context, state) {
-                      if (state is AuthLoading) {
-                        return Center(
-                            child: CircularProgressIndicator(
-                                color: AppColors.primaryLight));
+                  AppButton(
+                    text: "auth_submit_button".tr(context),
+                    isLoading: state is AuthLoading,
+                    onPressed: () {
+                      if (_formKey.currentState?.validate() ?? false) {
+                        authCubit.verifyResetOtpAndShowCreateNewPassword();
                       }
-                      return AppButton(
-                        text: "auth_submit_button".tr(context),
-                        onPressed: () {
-                          if (formKey.currentState!.validate()) {
-                            authCubit.verifyResetOtpAndShowCreateNewPassword();
-                          }
-                        },
-                        backgroundColor: AppColors.primaryLight,
-                      );
                     },
                   ),
                   SizedBox(height: 16.h),
                   TextButton(
                     onPressed: () {
-                      authCubit.sendForgotPasswordCode(formKey);
+                      authCubit.sendForgotPasswordCode(_formKey);
                     },
-                    child: Text("auth_resend_code".tr(context),
-                        style: TextStyle(
-                            color: AppColors.primaryLight, fontSize: 14.sp)),
+                    child: Text(
+                      "auth_resend_code".tr(context),
+                      style: TextStyle(
+                        color: AppColors.primaryLight,
+                        fontSize: 14.sp,
+                      ),
+                    ),
                   ),
-                  SizedBox(height: 20.h),
                 ],
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

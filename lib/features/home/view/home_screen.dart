@@ -1,30 +1,81 @@
 import 'package:cozy/core/constants/app_colors.dart';
-import 'package:cozy/core/cubit/global_cubit.dart';
+import 'package:cozy/core/constants/navigation.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
-import 'package:cozy/features/home/data/model/product_model.dart';
+import 'package:cozy/features/home/view/offers_screen.dart';
 import 'package:cozy/features/home/view/widgets/category_chip.dart';
 import 'package:cozy/features/home/view/widgets/product_card.dart';
 import 'package:cozy/features/product/view/product_details_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../customer_services/view/customer_service_screen.dart';
 import '../../notifications/view/notification_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final List<Map<String, dynamic>> demoProducts = [
+    {
+      'imageUrl':
+          'assets/images/furniture-styles-GettyImages-1467984982-512fed4077b646eabbc187619554d517.jpg',
+      'name': 'Modern Sofa',
+      'storeName': 'IKEA',
+      'rating': 4.7,
+      'reviewCount': 145,
+      'price': 799.99,
+      'oldPrice': 999.99,
+      'isFavorite': true,
+    },
+    {
+      'imageUrl':
+          'assets/images/furniture-styles-GettyImages-1467984982-512fed4077b646eabbc187619554d517.jpg',
+      'name': 'Wooden Bed',
+      'storeName': 'Home Center',
+      'rating': 4.2,
+      'reviewCount': 87,
+      'price': 599.99,
+      'oldPrice': 749.99,
+      'isFavorite': false,
+    },
+    {
+      'imageUrl':
+          'assets/images/furniture-styles-GettyImages-1467984982-512fed4077b646eabbc187619554d517.jpg',
+      'name': 'Dining Table Set',
+      'storeName': 'Furniture World',
+      'rating': 4.8,
+      'reviewCount': 200,
+      'price': 899.99,
+      'oldPrice': 999.99,
+      'isFavorite': true,
+    },
+    {
+      'imageUrl':
+          'assets/images/furniture-styles-GettyImages-1467984982-512fed4077b646eabbc187619554d517.jpg',
+      'name': 'Office Chair',
+      'storeName': 'Ergo Store',
+      'rating': 4.3,
+      'reviewCount': 60,
+      'price': 299.99,
+      'oldPrice': 399.99,
+      'isFavorite': false,
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: false,
       backgroundColor: AppColors.lightGrey,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
               Padding(
                 padding: EdgeInsets.all(20.w),
                 child: Row(
@@ -62,7 +113,7 @@ class HomeScreen extends StatelessWidget {
                       height: 40.w,
                       decoration: BoxDecoration(
                         color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(12.r),
+                        borderRadius: BorderRadius.circular(4.r),
                       ),
                       child: GestureDetector(
                         onTap: () {
@@ -86,7 +137,7 @@ class HomeScreen extends StatelessWidget {
                       height: 40.w,
                       decoration: BoxDecoration(
                         color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(12.r),
+                        borderRadius: BorderRadius.circular(4.r),
                       ),
                       child: GestureDetector(
                         onTap: () {
@@ -108,8 +159,6 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
               ),
-
-              // Search Bar
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Container(
@@ -146,10 +195,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-
               SizedBox(height: 30.h),
-
-              // Categories
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Text(
@@ -161,9 +207,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-
               SizedBox(height: 15.h),
-
               SizedBox(
                 height: 40.h,
                 child: ListView(
@@ -182,96 +226,93 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
               ),
-
               SizedBox(height: 30.h),
-
-              // Featured Banner
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Container(
-                  height: 160.h,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: AlignmentDirectional.topStart,
-                      end: AlignmentDirectional.bottomEnd,
-                      colors: [
-                        AppColors.primary,
-                        AppColors.primaryLight,
-                      ],
+                child: GestureDetector(
+                  onTap: () {
+                    navigateTo(context, OffersScreen());
+                  },
+                  child: Container(
+                    height: 150.h,
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: AlignmentDirectional.topStart,
+                        end: AlignmentDirectional.bottomEnd,
+                        colors: [
+                          AppColors.primary,
+                          AppColors.primaryLight,
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(20.r),
                     ),
-                    borderRadius: BorderRadius.circular(20.r),
-                  ),
-                  child: Stack(
-                    children: [
-                      Positioned.directional(
-                        start: 20.w,
-                        top: 20.h,
-                        textDirection:
-                            context.read<GlobalCubit>().language == "ar"
-                                ? TextDirection.rtl
-                                : TextDirection.rtl,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'special_offers'.tr(context),
-                              style: TextStyle(
-                                fontSize: 20.sp,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(height: 8.h),
-                            Text(
-                              'Up to 50% Off',
-                              style: TextStyle(
-                                fontSize: 32.sp,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(height: 8.h),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16.w,
-                                vertical: 8.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20.r),
-                              ),
-                              child: Text(
-                                'see_all'.tr(context),
+                    child: Stack(
+                      children: [
+                        PositionedDirectional(
+                          start: 20.w,
+                          top: 20.h,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'special_offers'.tr(context),
                                 style: TextStyle(
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.primary,
+                                  fontSize: 20.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                        right: -20.w,
-                        bottom: -20.h,
-                        child: Container(
-                          width: 120.w,
-                          height: 120.w,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(60.r),
+                              SizedBox(height: 8.h),
+                              Text(
+                                'Up to 50% Off',
+                                style: TextStyle(
+                                  fontSize: 32.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(height: 8.h),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16.w,
+                                  vertical: 8.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20.r),
+                                ),
+                                child: Text(
+                                  'see_all'.tr(context),
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                    ],
+                        Positioned(
+                          right: -20.w,
+                          bottom: -20.h,
+                          child: Container(
+                            width: 120.w,
+                            height: 120.w,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(60.r),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-
               SizedBox(height: 30.h),
-
-              // New Arrivals
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Row(
@@ -296,43 +337,45 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
               ),
-
               SizedBox(height: 15.h),
-
               SizedBox(
-                height:
-                    260.h, // Reduced from 280.h to match the card constraints
+                height: 200.h,
                 child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.only(left: 20.w),
-                  itemCount: sampleProductsNewArrivals.length,
-                  itemBuilder: (context, index) {
-                    final product = sampleProductsNewArrivals[index];
-                    return Padding(
-                      padding: EdgeInsets.only(right: 15.w),
-                      child: SizedBox(
-                        width: 170.w, // Reduced from 180.w for better fit
-                        child: ProductCard(
-                          product: product,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ProductDetailsScreen(product: product),
-                              ),
-                            );
-                          },
+                    scrollDirection: Axis.horizontal,
+                    physics: BouncingScrollPhysics(),
+                    padding: EdgeInsets.only(left: 20.w),
+                    itemCount: demoProducts.length,
+                    itemBuilder: (context, index) {
+                      final product = demoProducts[index];
+                      return Padding(
+                        padding: EdgeInsets.only(right: 15.w),
+                        child: SizedBox(
+                          width: 170.w,
+                          child: ProductCard(
+                            imageUrl: product['imageUrl'],
+                            name: product['name'],
+                            storeName: product['storeName'],
+                            rating: product['rating'],
+                            reviewCount: product['reviewCount'],
+                            price: product['price'],
+                            oldPrice: product['oldPrice'],
+                            isFavorite: product['isFavorite'],
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ProductDetailsScreen(),
+                                ),
+                              );
+                            },
+                            onFavoriteTap: () {},
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ),
+                      );
+                    }),
               ),
-
               SizedBox(height: 30.h),
-
-              // Popular Products
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Row(
@@ -357,39 +400,45 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
               ),
-
               SizedBox(height: 15.h),
-
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: GridView.builder(
                   shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
+                  physics: BouncingScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 15.w,
                     mainAxisSpacing: 15.h,
-                    childAspectRatio:
-                        0.8, // Increased from 0.75 to give more height
+                    childAspectRatio: 0.75,
                   ),
-                  itemCount: sampleProductsPopular.length,
+                  itemCount: demoProducts.length,
                   itemBuilder: (context, index) {
-                    final product = sampleProductsPopular[index];
+                    final product = demoProducts[index];
+
                     return ProductCard(
-                      product: product,
+                      imageUrl: product['imageUrl'],
+                      name: product['name'],
+                      storeName: product['storeName'],
+                      rating: product['rating'],
+                      reviewCount: product['reviewCount'],
+                      price: product['price'],
+                      oldPrice: product['oldPrice'],
+                      isFavorite: product['isFavorite'],
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                ProductDetailsScreen(product: product),
+                            builder: (context) => const ProductDetailsScreen(),
                           ),
                         );
                       },
+                      onFavoriteTap: () {},
                     );
                   },
                 ),
               ),
+              SizedBox(height: 15.h),
             ],
           ),
         ),

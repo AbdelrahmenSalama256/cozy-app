@@ -8,12 +8,15 @@ import 'package:cozy/core/utils/validator.dart';
 import 'package:cozy/features/auth/view/create_account_screen.dart';
 import 'package:cozy/features/auth/view/cubit/auth_cubit.dart';
 import 'package:cozy/features/auth/view/cubit/auth_state.dart';
+import 'package:cozy/features/auth/view/widgets/custom_bottom_sheet.dart';
 import 'package:cozy/features/auth/view/widgets/forgot_password_bottom_sheet.dart';
 import 'package:cozy/features/auth/view/widgets/social_login_button.dart';
-import 'package:cozy/features/home/view/home_screen.dart';
+import 'package:cozy/features/base/view/base_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../core/component/custom_toast.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -27,18 +30,20 @@ class LoginScreen extends StatelessWidget {
         child: BlocConsumer<AuthCubit, AuthState>(
           listener: (context, state) {
             if (state is AuthLoginSuccess) {
-              ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(SnackBar(
-                    content: Text(state.message.tr(context)),
-                    backgroundColor: Colors.green));
-              navigateAndFinish(context, HomeScreen());
+              showToast(
+                context,
+                message: state.message.tr(context),
+                state: ToastStates.success,
+                duration: const Duration(seconds: 3),
+              );
+              navigateAndFinish(context, BaseScreen());
             } else if (state is AuthFailure) {
-              ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(SnackBar(
-                    content: Text(state.error.tr(context)),
-                    backgroundColor: Colors.red));
+              showToast(
+                context,
+                message: state.error.tr(context),
+                state: ToastStates.error,
+                duration: const Duration(seconds: 3),
+              );
             }
           },
           builder: (context, state) {
@@ -53,6 +58,9 @@ class LoginScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: SingleChildScrollView(
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
+                      physics: const BouncingScrollPhysics(),
                       padding: EdgeInsets.symmetric(
                           horizontal: 24.w, vertical: 20.h),
                       child: Form(
@@ -95,19 +103,16 @@ class LoginScreen extends StatelessWidget {
                                   authCubit.togglePasswordVisibility('login');
                                 },
                               ),
-                              validator: (value) =>
-                                  Validators.validatePassword(value, context),
                             ),
                             SizedBox(height: 12.h),
                             Align(
                               alignment: Alignment.centerRight,
                               child: TextButton(
                                 onPressed: () {
-                                  showModalBottomSheet(
+                                  FocusScope.of(context).unfocus();
+                                  CustomBottomSheet.show(
                                     context: context,
-                                    isScrollControlled: true,
-                                    backgroundColor: Colors.transparent,
-                                    builder: (_) => BlocProvider.value(
+                                    child: BlocProvider.value(
                                       value: authCubit,
                                       child: const ForgotPasswordBottomSheet(),
                                     ),
@@ -123,18 +128,13 @@ class LoginScreen extends StatelessWidget {
                               ),
                             ),
                             SizedBox(height: 20.h),
-                            if (state is AuthLoading)
-                              Center(
-                                  child: CircularProgressIndicator(
-                                      color: AppColors.primaryLight))
-                            else
-                              AppButton(
-                                text: "auth_sign_in_button".tr(context),
-                                onPressed: () {
-                                  authCubit.attemptLogin(formKey);
-                                },
-                                backgroundColor: AppColors.primaryLight,
-                              ),
+                            AppButton(
+                              text: "auth_sign_in_button".tr(context),
+                              isLoading: state is AuthLoading,
+                              onPressed: () {
+                                authCubit.attemptLogin(formKey);
+                              },
+                            ),
                             SizedBox(height: 30.h),
                             Center(
                               child: Text(

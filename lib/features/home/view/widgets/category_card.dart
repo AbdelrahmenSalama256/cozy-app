@@ -21,7 +21,7 @@ class LargeCategoryCard extends StatelessWidget {
       child: Container(
         height: 120.h,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(4.r),
           image: DecorationImage(
             image: NetworkImage(category.imageUrl),
             fit: BoxFit.cover,

@@ -25,6 +25,7 @@ class AuthCubit extends Cubit<AuthState> {
   late TextEditingController otpController;
   late TextEditingController newPasswordController;
   late TextEditingController confirmNewPasswordController;
+  late GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   bool isCreateAccountPasswordObscure = true;
   bool isLoginPasswordObscure = true;

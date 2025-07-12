@@ -1,9 +1,15 @@
 import 'package:cozy/core/constants/app_colors.dart';
+import 'package:cozy/core/constants/navigation.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/features/profile/data/models/order_model.dart';
+import 'package:cozy/features/profile/view/order_details_screen.dart';
 import 'package:cozy/features/profile/view/widgets/order_card.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../core/component/custom_toast.dart';
+import 'tracking_orders_screen.dart';
 
 class MyOrdersScreen extends StatefulWidget {
   const MyOrdersScreen({super.key});
@@ -37,8 +43,8 @@ class _MyOrdersScreenState extends State<MyOrdersScreen>
       id: 'ORD003',
       date: DateTime.now().subtract(const Duration(days: 10)),
       status: OrderStatus.processing,
-      total: 599.99,
-      items: 3,
+      total: 549.98,
+      items: 2,
     ),
     OrderModel(
       id: 'ORD004',
@@ -143,8 +149,38 @@ class _MyOrdersScreenState extends State<MyOrdersScreen>
         return OrderCard(
           order: orders[index],
           onTap: () {
-            // Navigate to order details
+            navigateTo(context, const OrderDetailsScreen());
           },
+          onTrackTap: orders[index].trackingNumber != null
+              ? () {
+                  navigateTo(context, OrderTrackingDetailsScreen());
+                }
+              : null,
+          onCancelTap: orders[index].status == OrderStatus.processing
+              ? () {
+                  if (kDebugMode) {
+                    print('Cancel order #${orders[index].id}');
+                  }
+                  setState(() {
+                    allOrders[index] = OrderModel(
+                      id: orders[index].id,
+                      date: orders[index].date,
+                      status: OrderStatus.cancelled,
+                      total: orders[index].total,
+                      items: orders[index].items,
+                      trackingNumber: orders[index].trackingNumber,
+                      orderItems: orders[index].orderItems,
+                    );
+                  });
+                  showToast(
+                    context,
+                    message: 'order_cancelled'
+                        .tr(context), // Add this key to your localization
+                    state: ToastStates.success,
+                    duration: const Duration(seconds: 3),
+                  );
+                }
+              : null,
         );
       },
     );

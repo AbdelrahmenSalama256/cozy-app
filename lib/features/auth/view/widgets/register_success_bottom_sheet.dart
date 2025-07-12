@@ -76,7 +76,7 @@ class RegisterSuccessBottomSheet extends StatelessWidget {
                         )),
               );
             },
-            backgroundColor: AppColors.primaryLight,
+            backgroundColor: AppColors.primary,
           ),
           SizedBox(height: 10.h),
         ],

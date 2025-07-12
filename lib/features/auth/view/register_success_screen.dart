@@ -52,7 +52,7 @@ class RegisterSuccessScreen extends StatelessWidget {
                     print("Navigate to Homepage");
                   }
                 },
-                backgroundColor: AppColors.primaryLight,
+                backgroundColor: AppColors.primary,
               ),
               SizedBox(height: 20.h),
             ],

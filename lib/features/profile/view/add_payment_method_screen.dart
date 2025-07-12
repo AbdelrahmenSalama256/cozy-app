@@ -4,6 +4,7 @@ import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../core/component/widgets/app_button.dart';
 import '../data/models/payment_method_model.dart';
 
 class AddPaymentMethodScreen extends StatefulWidget {
@@ -95,7 +96,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
                 padding: EdgeInsets.all(16.w),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(4.r),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.05),
@@ -207,7 +208,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
                   padding: EdgeInsets.all(20.w),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(12.r),
+                    borderRadius: BorderRadius.circular(4.r),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.05),
@@ -254,7 +255,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
                 padding: EdgeInsets.all(16.w),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(4.r),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.05),
@@ -303,27 +304,14 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
 
               SizedBox(height: 32.h),
 
-              SizedBox(
-                width: double.infinity,
-                height: 50.h,
-                child: ElevatedButton(
+              Expanded(
+                child: AppButton(
                   onPressed: _savePaymentMethod,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                  ),
-                  child: Text(
-                    _isEditing
-                        ? 'update_payment_method'.tr(context)
-                        : 'save_payment_method'.tr(context),
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
+                  height: 50.h,
+                  isLoading: _isEditing,
+                  text: _isEditing
+                      ? 'update_payment_method'.tr(context)
+                      : 'save_payment_method'.tr(context),
                 ),
               ),
             ],
@@ -338,47 +326,40 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
     final isSelected = _selectedType == type;
     return Container(
       margin: EdgeInsets.only(bottom: 8.h),
-      child: Material(
-        color: isSelected
-            ? AppColors.primary.withOpacity(0.1)
-            : Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _selectedType = type;
+          });
+        },
         borderRadius: BorderRadius.circular(8.r),
-        child: InkWell(
-          onTap: () {
-            setState(() {
-              _selectedType = type;
-            });
-          },
-          borderRadius: BorderRadius.circular(8.r),
-          child: Padding(
-            padding: EdgeInsets.all(12.w),
-            child: Row(
-              children: [
+        child: Padding(
+          padding: EdgeInsets.all(12.w),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: isSelected ? AppColors.primary : AppColors.textGrey,
+                size: 24.sp,
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                    color: isSelected ? AppColors.primary : AppColors.textBlack,
+                  ),
+                ),
+              ),
+              if (isSelected)
                 Icon(
-                  icon,
-                  color: isSelected ? AppColors.primary : AppColors.textGrey,
-                  size: 24.sp,
+                  Icons.check_circle,
+                  color: AppColors.primary,
+                  size: 20.sp,
                 ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w500,
-                      color:
-                          isSelected ? AppColors.primary : AppColors.textBlack,
-                    ),
-                  ),
-                ),
-                if (isSelected)
-                  Icon(
-                    Icons.check_circle,
-                    color: AppColors.primary,
-                    size: 20.sp,
-                  ),
-              ],
-            ),
+            ],
           ),
         ),
       ),

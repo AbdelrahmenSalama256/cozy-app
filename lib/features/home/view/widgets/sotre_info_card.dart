@@ -13,7 +13,7 @@ class StoreInfoCard extends StatelessWidget {
       margin: EdgeInsets.symmetric(vertical: 16.h),
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(4.r),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.1),

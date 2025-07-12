@@ -6,6 +6,8 @@ import 'package:cozy/features/profile/view/widgets/address_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../core/component/widgets/app_button.dart';
+
 class AddressesScreen extends StatefulWidget {
   const AddressesScreen({super.key});
 
@@ -132,7 +134,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 24.h),
-          ElevatedButton(
+          AppButton(
             onPressed: () {
               Navigator.push(
                 context,
@@ -141,21 +143,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
                 ),
               );
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 16.h),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25.r),
-              ),
-            ),
-            child: Text(
-              'add_address'.tr(context),
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
+            text: 'add_address'.tr(context),
           ),
         ],
       ),

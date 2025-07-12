@@ -1,3 +1,4 @@
+import 'package:cozy/core/component/widgets/app_button.dart';
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:flutter/material.dart';
@@ -129,22 +130,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             SizedBox(
               width: double.infinity,
               height: 50.h,
-              child: ElevatedButton(
+              child: AppButton(
                 onPressed: _saveSettings,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                ),
-                child: Text(
-                  'save_settings'.tr(context),
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
+                text: 'save_settings'.tr(context),
               ),
             ),
           ],
@@ -178,7 +166,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(4.r),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),

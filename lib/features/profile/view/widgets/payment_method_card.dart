@@ -25,7 +25,7 @@ class PaymentMethodCard extends StatelessWidget {
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(4.r),
         border: paymentMethod.isDefault
             ? Border.all(color: AppColors.primary, width: 2)
             : null,
@@ -47,7 +47,7 @@ class PaymentMethodCard extends StatelessWidget {
                 height: 40.w,
                 decoration: BoxDecoration(
                   color: _getPaymentMethodColor().withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(4.r),
                 ),
                 child: Icon(
                   _getPaymentMethodIcon(),
@@ -84,7 +84,7 @@ class PaymentMethodCard extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                   decoration: BoxDecoration(
                     color: AppColors.success,
-                    borderRadius: BorderRadius.circular(12.r),
+                    borderRadius: BorderRadius.circular(4.r),
                   ),
                   child: Text(
                     'default'.tr(context),

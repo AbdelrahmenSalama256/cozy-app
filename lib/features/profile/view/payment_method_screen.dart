@@ -1,3 +1,4 @@
+import 'package:cozy/core/component/widgets/app_button.dart';
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/features/profile/data/models/payment_method_model.dart';
@@ -135,7 +136,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 24.h),
-          ElevatedButton(
+          AppButton(
             onPressed: () {
               Navigator.push(
                 context,
@@ -144,21 +145,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
                 ),
               );
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 16.h),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25.r),
-              ),
-            ),
-            child: Text(
-              'add_payment_method'.tr(context),
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
+            text: 'add_payment_method'.tr(context),
           ),
         ],
       ),

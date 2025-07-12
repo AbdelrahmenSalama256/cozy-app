@@ -1,13 +1,16 @@
 import 'package:cozy/core/constants/app_colors.dart';
+import 'package:cozy/core/constants/navigation.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
-import 'package:cozy/features/home/data/model/product_model.dart';
+import 'package:cozy/features/cart/view/cubit/cart_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class ProductDetailsScreen extends StatefulWidget {
-  final ProductModel product;
+import '../../../core/component/widgets/app_button.dart';
+import '../../cart/view/cart_screen.dart';
 
-  const ProductDetailsScreen({super.key, required this.product});
+class ProductDetailsScreen extends StatefulWidget {
+  const ProductDetailsScreen({super.key});
 
   @override
   State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
@@ -16,11 +19,33 @@ class ProductDetailsScreen extends StatefulWidget {
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   int _currentImageIndex = 0;
   bool _isFavorite = false;
+  int _quantity = 1;
+
+  // Fake furniture product data
+  final String productId = 'modern_sofa_001';
+  final String productName = 'Modern Velvet Sofa';
+  final String storeName = 'Cozy Home Furnishings';
+  final double price = 599.99;
+  final String currency = 'USD';
+  final double discount = 15.0;
+  final String description =
+      'Elevate your living space with this luxurious Modern Velvet Sofa. Featuring a sleek design with plush velvet upholstery, this sofa offers both comfort and style. Perfect for modern and contemporary interiors, it provides ample seating space and durable construction for lasting use.';
+  final Map<String, String> specifications = {
+    'Material': 'Velvet Fabric, Solid Wood Frame',
+    'Dimensions': '80"L x 34"W x 33"H',
+    'Color': 'Emerald Green',
+    'Weight Capacity': '750 lbs',
+  };
+  final List<String> imageUrls = [
+    'https://via.placeholder.com/400?text=Modern+Sofa+1',
+    'https://via.placeholder.com/400?text=Modern+Sofa+2',
+    'https://via.placeholder.com/400?text=Modern+Sofa+3',
+  ];
 
   @override
   void initState() {
     super.initState();
-    _isFavorite = widget.product.isFavorite;
+    _isFavorite = false;
   }
 
   @override
@@ -88,21 +113,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ],
             flexibleSpace: FlexibleSpaceBar(
               background: PageView.builder(
-                itemCount: widget.product.imageGallery.isNotEmpty
-                    ? widget.product.imageGallery.length
-                    : 1,
+                itemCount: imageUrls.length,
                 onPageChanged: (index) {
                   setState(() {
                     _currentImageIndex = index;
                   });
                 },
                 itemBuilder: (context, index) {
-                  final imageUrl = widget.product.imageGallery.isNotEmpty
-                      ? widget.product.imageGallery[index]
-                      : widget.product.imagePath;
-
                   return Image.network(
-                    imageUrl,
+                    imageUrls[index],
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => Container(
                       color: AppColors.lightGrey,
@@ -128,12 +147,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Image indicators
-                    if (widget.product.imageGallery.isNotEmpty)
+                    if (imageUrls.length > 1)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(
-                          widget.product.imageGallery.length,
+                          imageUrls.length,
                           (index) => Container(
                             margin: EdgeInsets.symmetric(horizontal: 4.w),
                             width: 8.w,
@@ -147,16 +165,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ),
                         ),
                       ),
-
                     SizedBox(height: 20.h),
-
-                    // Product name and rating
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
-                            widget.product.nameKey.tr(context),
+                            productName.tr(context),
                             style: TextStyle(
                               fontSize: 24.sp,
                               fontWeight: FontWeight.bold,
@@ -181,7 +196,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ),
                               SizedBox(width: 4.w),
                               Text(
-                                '${widget.product.rating}',
+                                '4.5',
                                 style: TextStyle(
                                   fontSize: 14.sp,
                                   fontWeight: FontWeight.w600,
@@ -193,64 +208,54 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ),
                       ],
                     ),
-
                     SizedBox(height: 8.h),
-
                     Text(
-                      widget.product.storeNameKey.tr(context),
+                      storeName.tr(context),
                       style: TextStyle(
                         fontSize: 16.sp,
                         color: AppColors.textGrey,
                       ),
                     ),
-
                     SizedBox(height: 16.h),
-
-                    // Price
                     Row(
                       children: [
                         Text(
-                          '${widget.product.currencySymbolKey.tr(context)}${widget.product.price.toStringAsFixed(0)}',
+                          '$price',
                           style: TextStyle(
                             fontSize: 28.sp,
                             fontWeight: FontWeight.bold,
                             color: AppColors.primary,
                           ),
                         ),
-                        if (widget.product.oldPrice != null) ...[
-                          SizedBox(width: 12.w),
-                          Text(
-                            '${widget.product.currencySymbolKey.tr(context)}${widget.product.oldPrice!.toStringAsFixed(0)}',
+                        SizedBox(width: 12.w),
+                        Text(
+                          currency.tr(context),
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            color: AppColors.textGrey,
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 8.w, vertical: 4.h),
+                          decoration: BoxDecoration(
+                            color: AppColors.error,
+                            borderRadius: BorderRadius.circular(4.r),
+                          ),
+                          child: Text(
+                            '$discount% OFF'.tr(context),
                             style: TextStyle(
-                              fontSize: 18.sp,
-                              color: AppColors.textGrey,
-                              decoration: TextDecoration.lineThrough,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
-                          SizedBox(width: 8.w),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8.w, vertical: 4.h),
-                            decoration: BoxDecoration(
-                              color: AppColors.error,
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                            child: Text(
-                              '${(((widget.product.oldPrice! - widget.product.price) / widget.product.oldPrice!) * 100).round()}% OFF',
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ],
                     ),
-
                     SizedBox(height: 24.h),
-
-                    // Description
                     Text(
                       'description'.tr(context),
                       style: TextStyle(
@@ -259,33 +264,26 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         color: AppColors.textBlack,
                       ),
                     ),
-
                     SizedBox(height: 12.h),
-
                     Text(
-                      widget.product.descriptionKey.tr(context),
+                      description.tr(context),
                       style: TextStyle(
                         fontSize: 14.sp,
                         color: AppColors.textGrey,
                         height: 1.5,
                       ),
                     ),
-
                     SizedBox(height: 24.h),
-
-                    // Specifications
-                    if (widget.product.specifications.isNotEmpty) ...[
-                      Text(
-                        'specifications'.tr(context),
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textBlack,
-                        ),
+                    Text(
+                      'specifications'.tr(context),
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack,
                       ),
-                      SizedBox(height: 12.h),
-                      ...widget.product.specifications.entries.map(
-                        (entry) => Padding(
+                    ),
+                    SizedBox(height: 12.h),
+                    ...specifications.entries.map((entry) => Padding(
                           padding: EdgeInsets.only(bottom: 8.h),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -293,7 +291,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               SizedBox(
                                 width: 100.w,
                                 child: Text(
-                                  entry.key,
+                                  entry.key.tr(context),
                                   style: TextStyle(
                                     fontSize: 14.sp,
                                     fontWeight: FontWeight.w500,
@@ -303,7 +301,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ),
                               Expanded(
                                 child: Text(
-                                  entry.value,
+                                  entry.value.tr(context),
                                   style: TextStyle(
                                     fontSize: 14.sp,
                                     color: AppColors.textBlack,
@@ -312,34 +310,58 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ),
                             ],
                           ),
-                        ),
-                      ),
-                      SizedBox(height: 24.h),
-                    ],
-
-                    // Reviews
+                        )),
+                    SizedBox(height: 24.h),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'reviews'.tr(context),
+                          'quantity'.tr(context),
                           style: TextStyle(
                             fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
                             color: AppColors.textBlack,
                           ),
                         ),
-                        Text(
-                          '${widget.product.reviewCount} ${'reviews'.tr(context)}',
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                Icons.remove,
+                                color: AppColors.textGrey,
+                                size: 20.sp,
+                              ),
+                              onPressed: () {
+                                if (_quantity > 1) {
+                                  setState(() {
+                                    _quantity--;
+                                  });
+                                }
+                              },
+                            ),
+                            Text(
+                              '$_quantity',
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                color: AppColors.textBlack,
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.add,
+                                color: AppColors.primary,
+                                size: 20.sp,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _quantity++;
+                                });
+                              },
+                            ),
+                          ],
                         ),
                       ],
                     ),
-
                   ],
                 ),
               ),
@@ -362,49 +384,53 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         child: Row(
           children: [
             Expanded(
-              child: ElevatedButton(
+              child: AppButton(
+                text: 'add_to_cart'.tr(context),
                 onPressed: () {
-                  // Add to cart functionality
+                  context.read<CartCubit>();
+                  // cartCubit.addToCart(
+                  //   productId,
+                  //   _quantity,
+                  // );
+                  navigateTo(
+                    context,
+                    BlocProvider(
+                      create: (context) => CartCubit(),
+                      child: const CartScreen(),
+                    ),
+                  );
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.lightGrey,
-                  foregroundColor: AppColors.textBlack,
-                  elevation: 0,
-                  padding: EdgeInsets.symmetric(vertical: 16.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                ),
-                child: Text(
-                  'add_to_cart'.tr(context),
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
+                type: AppButtonType.secondary,
+                height: 48.h,
+                borderRadius: BorderRadius.circular(4.r),
+                backgroundColor: AppColors.lightGrey,
+                textStyle: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textBlack,
                 ),
               ),
             ),
             SizedBox(width: 12.w),
             Expanded(
-              child: ElevatedButton(
+              child: AppButton(
+                text: 'buy_now'.tr(context),
                 onPressed: () {
-                  // Buy now functionality
+                  context.read<CartCubit>();
+                  // cartCubit.addToCart(
+                  //   productId,
+                  //   _quantity,
+                  // );
+                  // navigateTo(context, CheckoutScreen(cart: cartCubit.cart));
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  padding: EdgeInsets.symmetric(vertical: 16.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                ),
-                child: Text(
-                  'buy_now'.tr(context),
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
+                type: AppButtonType.primary,
+                height: 48.h,
+                borderRadius: BorderRadius.circular(4.r),
+                backgroundColor: AppColors.primary,
+                textStyle: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
                 ),
               ),
             ),

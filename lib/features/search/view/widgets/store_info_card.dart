@@ -27,7 +27,8 @@ class StoreInfoCard extends StatelessWidget {
       padding: EdgeInsets.all(12.sp),
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(4.r),
+
         border: Border.all(color: AppColors.lightGrey.withOpacity(0.5)),
         // boxShadow: [
         //   BoxShadow(
@@ -117,7 +118,7 @@ class StoreInfoCard extends StatelessWidget {
               onPressed: onVisitStore,
               style: TextButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                backgroundColor: AppColors.primaryLight.withOpacity(0.1),
+                backgroundColor: AppColors.primary.withOpacity(0.1),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.r)),
               ),

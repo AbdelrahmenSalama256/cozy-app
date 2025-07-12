@@ -1,3 +1,4 @@
+import 'package:cozy/core/component/widgets/app_button.dart';
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/features/home/view/widgets/product_card.dart';
@@ -9,6 +10,8 @@ import 'package:cozy/features/search/view/widgets/popular_search_item_card.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../core/component/custom_loading_indicator.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -154,7 +157,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   borderRadius: BorderRadius.circular(12.r)),
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: AppColors.primaryLight.withOpacity(0.1),
+                  backgroundColor: AppColors.primary.withOpacity(0.1),
                   child: Icon(Icons.store_mall_directory_outlined,
                       color: AppColors.primaryLight, size: 24.sp),
                 ),
@@ -167,9 +170,8 @@ class _SearchScreenState extends State<SearchScreen> {
                   children: [
                     Flexible(
                       child: Text(
-                        "search_products_count"
-                            .tr(context)
-                            .replaceFirst('{0}', '104'),
+                        "search_products_count".tr(context).replaceFirst(
+                            '{0}', state.searchResults.length.toString()),
                         style: TextStyle(
                             fontSize: 12.sp, color: AppColors.textGrey),
                         overflow: TextOverflow.ellipsis,
@@ -200,9 +202,7 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         Expanded(
           child: state.isLoading
-              ? const Center(
-                  child:
-                      CircularProgressIndicator(color: AppColors.primaryLight))
+              ? const Center(child: CustomLoadingIndicator())
               : state.searchResults.isEmpty
                   ? Center(
                       child: Text("search_no_results".tr(context),
@@ -218,7 +218,23 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                       itemCount: state.searchResults.length,
                       itemBuilder: (context, index) {
-                        return ProductCard(product: state.searchResults[index]);
+                        final product = state.searchResults[index];
+                        return ProductCard(
+                          imageUrl: product.imagePath,
+                          name: product.nameKey,
+                          storeName: product.storeNameKey,
+                          rating: product.rating,
+                          reviewCount: product.reviewCount,
+                          price: product.price,
+                          oldPrice: product.oldPrice,
+                          isFavorite: product.isFavorite,
+                          onTap: () {
+                            // Handle product tap
+                          },
+                          onFavoriteTap: () {
+                            // Handle favorite tap
+                          },
+                        );
                       },
                     ),
         ),
@@ -268,19 +284,9 @@ class _SearchScreenState extends State<SearchScreen> {
                 }).toList(),
               ),
               SizedBox(height: 16.h),
-              ElevatedButton(
+              AppButton(
                 onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryLight,
-                  minimumSize: Size(double.infinity, 48.h),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r)),
-                ),
-                child: Text("search_apply_filters".tr(context),
-                    style: TextStyle(
-                        fontSize: 16.sp,
-                        color: AppColors.white,
-                        fontWeight: FontWeight.w600)),
+                text: "search_apply_filters".tr(context),
               ),
             ],
           ),

@@ -5,11 +5,13 @@ import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/core/utils/validator.dart';
 import 'package:cozy/features/auth/view/cubit/auth_cubit.dart';
 import 'package:cozy/features/auth/view/cubit/auth_state.dart';
-import 'package:cozy/features/auth/view/widgets/register_success_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pinput/pinput.dart';
+
+import '../../../core/component/custom_toast.dart';
+import 'widgets/create_new_password_bottom_sheet.dart';
 
 class VerificationScreen extends StatelessWidget {
   final String emailOrPhoneForOtp;
@@ -29,7 +31,7 @@ class VerificationScreen extends StatelessWidget {
           fontWeight: FontWeight.bold),
       decoration: BoxDecoration(
         color: AppColors.inputFieldBackground,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(4.r),
         border: Border.all(color: Colors.transparent),
       ),
     );
@@ -44,30 +46,31 @@ class VerificationScreen extends StatelessWidget {
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthOtpVerificationSuccess) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                    content: Text(state.message.tr(context)),
-                    backgroundColor: Colors.green),
-              );
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              backgroundColor: Colors.transparent,
-              builder: (_) => BlocProvider.value(
-                value: authCubit,
-                child: const RegisterSuccessBottomSheet(),
-              ),
+            showToast(
+              context,
+              message: state.message.tr(context),
+              state: ToastStates.success,
+              duration: const Duration(seconds: 3),
             );
-          } else if (state is AuthFailure) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                    content: Text(state.error.tr(context)),
-                    backgroundColor: Colors.red),
+            Navigator.pop(context); // Dismiss the current OTP bottom sheet
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (_) => BlocProvider.value(
+                  value: authCubit,
+                  child: const CreateNewPasswordBottomSheet(),
+                ),
               );
+            });
+          } else if (state is AuthFailure) {
+            showToast(
+              context,
+              message: state.error.tr(context),
+              state: ToastStates.error,
+              duration: const Duration(seconds: 3),
+            );
           }
         },
         builder: (context, state) {
@@ -134,20 +137,16 @@ class VerificationScreen extends StatelessWidget {
                                 Validators.validateOtp(value, context),
                           ),
                           SizedBox(height: 40.h),
-                          if (state is AuthOtpVerificationLoading)
-                            Center(
-                                child: CircularProgressIndicator(
-                                    color: AppColors.primaryLight))
-                          else
-                            AppButton(
-                              text: "auth_submit_button".tr(context),
-                              onPressed: () {
-                                if (formKey.currentState!.validate()) {
-                                  authCubit.verifyOtpForAccountCreation();
-                                }
-                              },
-                              backgroundColor: AppColors.primaryLight,
-                            ),
+                          AppButton(
+                            text: "auth_submit_button".tr(context),
+                            isLoading: state is AuthLoading,
+                            onPressed: () {
+                              if (formKey.currentState!.validate()) {
+                                authCubit.verifyOtpForAccountCreation();
+                              }
+                            },
+                            backgroundColor: AppColors.primary,
+                          ),
                           SizedBox(height: 20.h),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,

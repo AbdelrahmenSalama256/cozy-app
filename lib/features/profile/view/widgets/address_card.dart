@@ -25,7 +25,7 @@ class AddressCard extends StatelessWidget {
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(4.r),
         border: address.isDefault
             ? Border.all(color: AppColors.primary, width: 2)
             : null,
@@ -48,7 +48,7 @@ class AddressCard extends StatelessWidget {
                   color: address.isDefault
                       ? AppColors.primary
                       : AppColors.lightGrey,
-                  borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(4.r),
                 ),
                 child: Text(
                   address.title,
@@ -66,7 +66,7 @@ class AddressCard extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                   decoration: BoxDecoration(
                     color: AppColors.success,
-                    borderRadius: BorderRadius.circular(12.r),
+                    borderRadius: BorderRadius.circular(4.r),
                   ),
                   child: Text(
                     'default'.tr(context),

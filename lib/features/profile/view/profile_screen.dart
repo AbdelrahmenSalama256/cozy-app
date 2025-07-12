@@ -1,3 +1,4 @@
+import 'package:cozy/core/component/widgets/app_button.dart';
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/constants/language_switcher.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
@@ -10,7 +11,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'addresses_screen.dart';
 import 'edit_profile_screen.dart';
-import 'help_support_screen.dart';
 import 'my_orders_screen.dart';
 import 'notifications_screen.dart';
 import 'payment_method_screen.dart';
@@ -209,18 +209,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                   },
                 ),
                 _buildProfileOption(
-                  icon: Icons.help_outline,
-                  title: 'help_support'.tr(context),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const HelpSupportScreen(),
-                      ),
-                    );
-                  },
-                ),
-                _buildProfileOption(
                   icon: Icons.info_outline,
                   title: 'about_us'.tr(context),
                   onTap: () {
@@ -281,7 +269,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           SizedBox(
             width: double.infinity,
             height: 50.h,
-            child: ElevatedButton(
+            child: AppButton(
               onPressed: () {
                 Navigator.push(
                   context,
@@ -290,20 +278,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   ),
                 );
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25.r),
-                ),
-              ),
-              child: Text(
-                'login'.tr(context),
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
+              text: 'login'.tr(context),
             ),
           ),
           SizedBox(height: 16.h),
@@ -337,51 +312,48 @@ class _ProfileScreenState extends State<ProfileScreen>
     bool isDestructive = false,
   }) {
     return Container(
+      color: AppColors.white,
       margin: EdgeInsets.only(bottom: 12.h),
-      child: Material(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(16.r),
-          child: Padding(
-            padding: EdgeInsets.all(16.w),
-            child: Row(
-              children: [
-                Container(
-                  width: 40.w,
-                  height: 40.w,
-                  decoration: BoxDecoration(
-                    color: isDestructive
-                        ? AppColors.error.withOpacity(0.1)
-                        : AppColors.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  child: Icon(
-                    icon,
-                    color: isDestructive ? AppColors.error : AppColors.primary,
-                    size: 20.sp,
-                  ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(4.r),
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Row(
+            children: [
+              Container(
+                width: 40.w,
+                height: 40.w,
+                decoration: BoxDecoration(
+                  color: isDestructive
+                      ? AppColors.error.withOpacity(0.1)
+                      : AppColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(4.r),
                 ),
-                SizedBox(width: 16.w),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w500,
-                      color:
-                          isDestructive ? AppColors.error : AppColors.textBlack,
-                    ),
+                child: Icon(
+                  icon,
+                  color: isDestructive ? AppColors.error : AppColors.primary,
+                  size: 20.sp,
+                ),
+              ),
+              SizedBox(width: 16.w),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                    color:
+                        isDestructive ? AppColors.error : AppColors.textBlack,
                   ),
                 ),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  color: AppColors.textGrey,
-                  size: 16.sp,
-                ),
-              ],
-            ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                color: AppColors.textGrey,
+                size: 16.sp,
+              ),
+            ],
           ),
         ),
       ),

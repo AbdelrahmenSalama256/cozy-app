@@ -59,6 +59,9 @@ dependencies:
   pinput: ^5.0.1
   bloc: ^9.0.0
   convex_bottom_bar: ^3.2.0
+  curved_navigation_bar: ^1.0.6
+  curved_labeled_navigation_bar: ^2.0.6
+  flutter_svg: ^2.2.0
 
 dev_dependencies:
   flutter_test:
@@ -117,13 +120,14 @@ flutter:
 
     - family: Tajawal
       fonts:
-        - asset: assets/fonts/ar/Tajawal-Black.ttf
-        - asset: assets/fonts/ar/Tajawal-Bold.ttf
-        - asset: assets/fonts/ar/Tajawal-ExtraBold.ttf
-        - asset: assets/fonts/ar/Tajawal-ExtraLight.ttf
-        - asset: assets/fonts/ar/Tajawal-Light.ttf
-        - asset: assets/fonts/ar/Tajawal-Medium.ttf
-        - asset: assets/fonts/ar/Tajawal-Regular.ttf
+        - asset: assets/fonts/ar/Beiruti-Black.ttf
+        - asset: assets/fonts/ar/Beiruti-Bold.ttf
+        - asset: assets/fonts/ar/Beiruti-ExtraBold.ttf
+        - asset: assets/fonts/ar/Beiruti-ExtraLight.ttf
+        - asset: assets/fonts/ar/Beiruti-Light.ttf
+        - asset: assets/fonts/ar/Beiruti-Light.ttf
+        - asset: assets/fonts/ar/Beiruti-Regular.ttf
+        - asset: assets/fonts/ar/Beiruti-SemiBold.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

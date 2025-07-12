@@ -9,13 +9,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class CreateNewPasswordBottomSheet extends StatelessWidget {
+class CreateNewPasswordBottomSheet extends StatefulWidget {
   const CreateNewPasswordBottomSheet({super.key});
+
+  @override
+  State<CreateNewPasswordBottomSheet> createState() =>
+      _CreateNewPasswordBottomSheetState();
+}
+
+class _CreateNewPasswordBottomSheetState
+    extends State<CreateNewPasswordBottomSheet> {
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     final authCubit = context.read<AuthCubit>();
-    final formKey = GlobalKey<FormState>();
 
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
@@ -24,126 +32,104 @@ class CreateNewPasswordBottomSheet extends StatelessWidget {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(SnackBar(
-                content: Text(state.message.tr(context)),
-                backgroundColor: Colors.green));
+              content: Text(state.message.tr(context)),
+              backgroundColor: Colors.green,
+            ));
         } else if (state is AuthFailure) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(SnackBar(
-                content: Text(state.error.tr(context)),
-                backgroundColor: Colors.red));
+              content: Text(state.error.tr(context)),
+              backgroundColor: Colors.red,
+            ));
         }
       },
-      child: Padding(
-        padding: MediaQuery.of(context).viewInsets,
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.r),
-              topRight: Radius.circular(20.r),
-            ),
-          ),
-          child: SingleChildScrollView(
-            child: Form(
-              key: formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Container(
-                      width: 40.w,
-                      height: 5.h,
-                      decoration: BoxDecoration(
-                        color: AppColors.textGrey.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20.h),
-                  Text(
-                    "auth_create_new_password_title".tr(context),
-                    style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textBlack),
-                  ),
-                  SizedBox(height: 8.h),
-                  Text(
-                    "auth_create_new_password_sheet_subtitle".tr(context),
-                    style:
-                        TextStyle(fontSize: 14.sp, color: AppColors.textGrey),
-                  ),
-                  SizedBox(height: 24.h),
-                  AppTextField(
-                    controller: authCubit.newPasswordController,
-                    labelText: "auth_new_password_label".tr(context),
-                    hintText: "auth_password_hint".tr(context),
-                    prefixIcon: Icon(Icons.lock_outline,
-                        color: AppColors.textGrey.withOpacity(0.7)),
-                    obscureText: authCubit.isNewPasswordObscure,
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        authCubit.isNewPasswordObscure
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                        color: AppColors.textGrey,
-                      ),
-                      onPressed: () {
-                        authCubit.togglePasswordVisibility('new');
-                      },
-                    ),
-                    validator: (value) =>
-                        Validators.validatePassword(value, context),
-                  ),
-                  SizedBox(height: 20.h),
-                  AppTextField(
-                    controller: authCubit.confirmNewPasswordController,
-                    labelText: "auth_confirm_password_label".tr(context),
-                    hintText: "auth_confirm_password_hint".tr(context),
-                    prefixIcon: Icon(Icons.lock_outline,
-                        color: AppColors.textGrey.withOpacity(0.7)),
-                    obscureText: authCubit.isConfirmNewPasswordObscure,
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        authCubit.isConfirmNewPasswordObscure
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                        color: AppColors.textGrey,
-                      ),
-                      onPressed: () {
-                        authCubit.togglePasswordVisibility('confirm');
-                      },
-                    ),
-                    validator: (value) => Validators.validateConfirmPassword(
-                        value, authCubit.newPasswordController.text, context),
-                  ),
-                  SizedBox(height: 24.h),
-                  BlocBuilder<AuthCubit, AuthState>(
-                    builder: (context, state) {
-                      if (state is AuthLoading) {
-                        return Center(
-                            child: CircularProgressIndicator(
-                                color: AppColors.primaryLight));
-                      }
-                      return AppButton(
-                        text: "auth_change_password_button".tr(context),
-                        onPressed: () {
-                          authCubit.attemptResetPassword(formKey);
-                        },
-                        backgroundColor: AppColors.primaryLight,
-                      );
-                    },
-                  ),
-                  SizedBox(height: 20.h),
-                ],
+      child: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "auth_create_new_password_title".tr(context),
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textBlack,
+                ),
               ),
-            ),
+              SizedBox(height: 8.h),
+              Text(
+                "auth_create_new_password_sheet_subtitle".tr(context),
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: AppColors.textGrey,
+                ),
+              ),
+              SizedBox(height: 24.h),
+              _buildPasswordField(authCubit, 'new'),
+              SizedBox(height: 20.h),
+              _buildPasswordField(authCubit, 'confirm'),
+              SizedBox(height: 24.h),
+              BlocBuilder<AuthCubit, AuthState>(
+                builder: (context, state) {
+                  return AppButton(
+                    text: "auth_change_password_button".tr(context),
+                    isLoading: state is AuthLoading,
+                    onPressed: () {
+                      if (_formKey.currentState?.validate() ?? false) {
+                        authCubit.attemptResetPassword(_formKey);
+                      }
+                    },
+                  );
+                },
+              ),
+              SizedBox(height: 20.h),
+            ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildPasswordField(AuthCubit authCubit, String type) {
+    final isNew = type == 'new';
+    return AppTextField(
+      controller: isNew
+          ? authCubit.newPasswordController
+          : authCubit.confirmNewPasswordController,
+      labelText: isNew
+          ? "auth_new_password_label".tr(context)
+          : "auth_confirm_password_label".tr(context),
+      hintText: isNew
+          ? "auth_password_hint".tr(context)
+          : "auth_confirm_password_hint".tr(context),
+      prefixIcon: Icon(
+        Icons.lock_outline,
+        color: AppColors.textGrey.withOpacity(0.7),
+      ),
+      obscureText: isNew
+          ? authCubit.isNewPasswordObscure
+          : authCubit.isConfirmNewPasswordObscure,
+      suffixIcon: IconButton(
+        icon: Icon(
+          (isNew
+                  ? authCubit.isNewPasswordObscure
+                  : authCubit.isConfirmNewPasswordObscure)
+              ? Icons.visibility_off_outlined
+              : Icons.visibility_outlined,
+          color: AppColors.textGrey,
+        ),
+        onPressed: () => authCubit.togglePasswordVisibility(type),
+      ),
+      validator: isNew
+          ? (value) => Validators.validatePassword(value, context)
+          : (value) => Validators.validateConfirmPassword(
+                value,
+                authCubit.newPasswordController.text,
+                context,
+              ),
     );
   }
 }

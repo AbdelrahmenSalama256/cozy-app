@@ -30,15 +30,15 @@ class OrderModel {
   String get statusText {
     switch (status) {
       case OrderStatus.processing:
-        return 'Processing';
+        return 'processing';
       case OrderStatus.shipped:
-        return 'Shipped';
+        return 'shipped';
       case OrderStatus.delivered:
-        return 'Delivered';
+        return 'delivered';
       case OrderStatus.cancelled:
-        return 'Cancelled';
+        return 'cancelled';
       case OrderStatus.returned:
-        return 'Returned';
+        return 'returned';
     }
   }
 

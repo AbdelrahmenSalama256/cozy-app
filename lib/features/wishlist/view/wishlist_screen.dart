@@ -1,7 +1,7 @@
+import 'package:cozy/core/component/widgets/app_button.dart';
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/features/auth/view/login_screen.dart';
-import 'package:cozy/features/home/data/model/product_model.dart';
 import 'package:cozy/features/home/view/widgets/product_card.dart';
 import 'package:cozy/features/product/view/product_details_screen.dart';
 import 'package:flutter/material.dart';
@@ -15,10 +15,28 @@ class WishlistScreen extends StatefulWidget {
 }
 
 class _WishlistScreenState extends State<WishlistScreen> {
-  bool isLoggedIn = true; // This would come from your auth state management
-  List<ProductModel> favoriteProducts = [
-    sampleProductsNewArrivals[0],
-    sampleProductsPopular[1],
+  bool isLoggedIn = true;
+  List<Map<String, dynamic>> favoriteProducts = [
+    {
+      'imageUrl': 'https://via.placeholder.com/120',
+      'name': 'item_name_0',
+      'storeName': 'store_name',
+      'rating': 4.5,
+      'reviewCount': 10,
+      'price': 99.99,
+      'oldPrice': 120.00,
+      'isFavorite': true,
+    },
+    {
+      'imageUrl': 'https://via.placeholder.com/120',
+      'name': 'item_name_1',
+      'storeName': 'store_name',
+      'rating': 4.5,
+      'reviewCount': 10,
+      'price': 99.99,
+      'oldPrice': 120.00,
+      'isFavorite': true,
+    },
   ];
 
   @override
@@ -38,7 +56,6 @@ class _WishlistScreenState extends State<WishlistScreen> {
 
     return Column(
       children: [
-        // Header
         Padding(
           padding: EdgeInsets.all(20.w),
           child: Row(
@@ -62,8 +79,6 @@ class _WishlistScreenState extends State<WishlistScreen> {
             ],
           ),
         ),
-
-        // Favorites Grid
         Expanded(
           child: GridView.builder(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -77,13 +92,19 @@ class _WishlistScreenState extends State<WishlistScreen> {
             itemBuilder: (context, index) {
               final product = favoriteProducts[index];
               return ProductCard(
-                product: product,
+                imageUrl: product['imageUrl'],
+                name: product['name'],
+                storeName: product['storeName'],
+                rating: product['rating'],
+                reviewCount: product['reviewCount'],
+                price: product['price'],
+                oldPrice: product['oldPrice'],
+                isFavorite: product['isFavorite'],
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          ProductDetailsScreen(product: product),
+                      builder: (context) => const ProductDetailsScreen(),
                     ),
                   );
                 },
@@ -129,25 +150,11 @@ class _WishlistScreenState extends State<WishlistScreen> {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 40.h),
-          ElevatedButton(
+          AppButton(
             onPressed: () {
               // Navigate to home or categories
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 16.h),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25.r),
-              ),
-            ),
-            child: Text(
-              'explore_products'.tr(context),
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
+            text: 'explore_products'.tr(context),
           ),
         ],
       ),
@@ -188,7 +195,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
             SizedBox(
               width: double.infinity,
               height: 50.h,
-              child: ElevatedButton(
+              child: AppButton(
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -197,20 +204,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                     ),
                   );
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25.r),
-                  ),
-                ),
-                child: Text(
-                  'login'.tr(context),
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
+                text: 'login'.tr(context),
               ),
             ),
           ],

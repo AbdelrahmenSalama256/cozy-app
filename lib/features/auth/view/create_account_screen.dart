@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../core/component/custom_toast.dart';
 import '../../../core/utils/validator.dart';
 
 class CreateAccountScreen extends StatelessWidget {
@@ -25,29 +26,29 @@ class CreateAccountScreen extends StatelessWidget {
         child: BlocConsumer<AuthCubit, AuthState>(
           listener: (context, state) {
             if (state is AuthCreateAccountSuccess) {
-              ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  SnackBar(
-                      content: Text(state.message.tr(context)),
-                      backgroundColor: Colors.green),
-                );
+              showToast(
+                context,
+                message: state.message.tr(context),
+                state: ToastStates.success,
+                duration: const Duration(seconds: 3),
+              );
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => BlocProvider.value(
-                            value: context.read<AuthCubit>(),
-                            child: VerificationScreen(
-                                emailOrPhoneForOtp: state.emailForVerification),
-                          )));
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider.value(
+                    value: context.read<AuthCubit>(),
+                    child: VerificationScreen(
+                        emailOrPhoneForOtp: state.emailForVerification),
+                  ),
+                ),
+              );
             } else if (state is AuthFailure) {
-              ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  SnackBar(
-                      content: Text(state.error.tr(context)),
-                      backgroundColor: Colors.red),
-                );
+              showToast(
+                context,
+                message: state.error.tr(context),
+                state: ToastStates.error,
+                duration: const Duration(seconds: 3),
+              );
             }
           },
           builder: (context, state) {
@@ -133,18 +134,14 @@ class CreateAccountScreen extends StatelessWidget {
                                   Validators.validatePassword(value, context),
                             ),
                             SizedBox(height: 30.h),
-                            if (state is AuthLoading)
-                              Center(
-                                  child: CircularProgressIndicator(
-                                      color: AppColors.primaryLight))
-                            else
-                              AppButton(
-                                text: "onboarding_create_account".tr(context),
-                                onPressed: () {
-                                  authCubit.attemptAccountCreation(formKey);
-                                },
-                                backgroundColor: AppColors.primaryLight,
-                              ),
+
+                            AppButton(
+                              text: "onboarding_create_account".tr(context),
+                              isLoading: state is AuthLoading,
+                              onPressed: () {
+                                authCubit.attemptAccountCreation(formKey);
+                              },
+                            ),
                             SizedBox(height: 30.h),
                             Center(
                               child: Text(
@@ -157,7 +154,7 @@ class CreateAccountScreen extends StatelessWidget {
                             SocialLoginButton(
                               text: "auth_sign_up_google".tr(context),
                               iconAssetPath:
-                                  "assets/images//icons/google_logo.png",
+                                  "assets/images/icons/google_logo.png",
                               onPressed: () {},
                             ),
                             SizedBox(height: 16.h),

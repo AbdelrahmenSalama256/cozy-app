@@ -1,7 +1,11 @@
+import 'package:cozy/core/component/custom_loading_indicator.dart';
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
+import 'package:cozy/features/notifications/view/widgets/notification_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import 'widgets/notifications_empty_state.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -10,8 +14,7 @@ class NotificationsScreen extends StatefulWidget {
   State<NotificationsScreen> createState() => _NotificationsScreenState();
 }
 
-class _NotificationsScreenState extends State<NotificationsScreen>
-    with SingleTickerProviderStateMixin {
+class _NotificationsScreenState extends State<NotificationsScreen> {
   List<NotificationItem> notifications = [];
   bool isLoading = true;
 
@@ -55,24 +58,22 @@ class _NotificationsScreenState extends State<NotificationsScreen>
         ),
         centerTitle: true,
       ),
-      body: _buildAllNotifications(),
+      body: _buildBody(),
     );
   }
 
-  Widget _buildAllNotifications() {
+  Widget _buildBody() {
     if (isLoading) {
       return _buildLoadingState();
     }
 
     if (notifications.isEmpty) {
-      return _buildEmptyState();
+      return const NotificationsEmptyState();
     }
 
     return RefreshIndicator(
       onRefresh: () async {
-        setState(() {
-          isLoading = true;
-        });
+        setState(() => isLoading = true);
         _loadNotifications();
       },
       color: AppColors.primary,
@@ -81,177 +82,11 @@ class _NotificationsScreenState extends State<NotificationsScreen>
         itemCount: notifications.length,
         itemBuilder: (context, index) {
           final notification = notifications[index];
-          return _buildNotificationItem(notification);
+          return NotificationItemWidget(
+            notification: notification,
+            onTap: () => _handleNotificationTap(notification),
+          );
         },
-      ),
-    );
-  }
-
-  Widget _buildNotificationItem(NotificationItem notification) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 4.h),
-      decoration: BoxDecoration(
-        color: notification.isRead ? Colors.white : Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: notification.isRead
-            ? null
-            : Border.all(color: AppColors.primary.withOpacity(0.2), width: 1),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => _handleNotificationTap(notification),
-          borderRadius: BorderRadius.circular(12.r),
-          child: Padding(
-            padding: EdgeInsets.all(16.w),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // User Avatar
-                Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 24.r,
-                      backgroundImage: NetworkImage(notification.userAvatar),
-                      backgroundColor: AppColors.lightGrey,
-                    ),
-                    if (!notification.isRead)
-                      Positioned(
-                        top: 0,
-                        right: 0,
-                        child: Container(
-                          width: 12.w,
-                          height: 12.w,
-                          decoration: BoxDecoration(
-                            color: AppColors.primary,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                SizedBox(width: 12.w),
-                // Notification Content
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: notification.userName,
-                              style: TextStyle(
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textBlack,
-                              ),
-                            ),
-                            TextSpan(
-                              text: ' ${notification.message}',
-                              style: TextStyle(
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.textBlack,
-                              ),
-                            ),
-                          ],
-                        ),
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: 4.h),
-                      Text(
-                        notification.time,
-                        style: TextStyle(
-                          fontSize: 13.sp,
-                          color: AppColors.textGrey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(width: 8.w),
-                // Action Area
-                _buildNotificationAction(notification),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNotificationAction(NotificationItem notification) {
-    switch (notification.type) {
-      case NotificationType.follow:
-        return _buildFollowButton(notification);
-      case NotificationType.like:
-      case NotificationType.comment:
-        return _buildPostThumbnail(notification);
-      case NotificationType.order:
-      case NotificationType.promotion:
-        return _buildActionIcon(notification);
-    }
-  }
-
-  Widget _buildFollowButton(NotificationItem notification) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-      decoration: BoxDecoration(
-        color: notification.isFollowing ? Colors.grey[200] : AppColors.primary,
-        borderRadius: BorderRadius.circular(20.r),
-      ),
-      child: Text(
-        notification.isFollowing
-            ? 'following'.tr(context)
-            : 'follow'.tr(context),
-        style: TextStyle(
-          fontSize: 12.sp,
-          fontWeight: FontWeight.w600,
-          color: notification.isFollowing ? AppColors.textGrey : Colors.white,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPostThumbnail(NotificationItem notification) {
-    return Container(
-      width: 40.w,
-      height: 40.w,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.r),
-        image: notification.postImage != null
-            ? DecorationImage(
-                image: NetworkImage(notification.postImage!),
-                fit: BoxFit.cover,
-              )
-            : null,
-        color: notification.postImage == null ? AppColors.lightGrey : null,
-      ),
-      child: notification.postImage == null
-          ? Icon(
-              Icons.image_outlined,
-              color: AppColors.textGrey,
-              size: 20.sp,
-            )
-          : null,
-    );
-  }
-
-  Widget _buildActionIcon(NotificationItem notification) {
-    return Container(
-      width: 32.w,
-      height: 32.w,
-      decoration: BoxDecoration(
-        color: _getNotificationColor(notification.type).withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8.r),
-      ),
-      child: Icon(
-        _getNotificationIcon(notification.type),
-        color: _getNotificationColor(notification.type),
-        size: 16.sp,
       ),
     );
   }
@@ -261,7 +96,9 @@ class _NotificationsScreenState extends State<NotificationsScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(color: AppColors.primary),
+          CustomLoadingIndicator(
+            type: LoadingType.furnitureRotation,
+          ),
           SizedBox(height: 16.h),
           Text(
             'loading_notifications'.tr(context),
@@ -275,55 +112,11 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     );
   }
 
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 80.w,
-            height: 80.w,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(40.r),
-            ),
-            child: Icon(
-              Icons.notifications_outlined,
-              size: 40.sp,
-              color: AppColors.primary,
-            ),
-          ),
-          SizedBox(height: 24.h),
-          Text(
-            'no_notifications'.tr(context),
-            style: TextStyle(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textBlack,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            'no_notifications_message'.tr(context),
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: AppColors.textGrey,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
   void _handleNotificationTap(NotificationItem notification) {
     if (!notification.isRead) {
-      setState(() {
-        notification.isRead = true;
-      });
+      setState(() => notification.isRead = true);
     }
 
-    // Handle different notification actions
     switch (notification.type) {
       case NotificationType.follow:
         // Navigate to user profile
@@ -425,67 +218,4 @@ class _NotificationsScreenState extends State<NotificationsScreen>
       ),
     ];
   }
-
-  IconData _getNotificationIcon(NotificationType type) {
-    switch (type) {
-      case NotificationType.follow:
-        return Icons.person_add_outlined;
-      case NotificationType.like:
-        return Icons.favorite_outline;
-      case NotificationType.comment:
-        return Icons.chat_bubble_outline;
-      case NotificationType.order:
-        return Icons.shopping_bag_outlined;
-      case NotificationType.promotion:
-        return Icons.local_offer_outlined;
-    }
-  }
-
-  Color _getNotificationColor(NotificationType type) {
-    switch (type) {
-      case NotificationType.follow:
-        return AppColors.primary;
-      case NotificationType.like:
-        return Colors.red;
-      case NotificationType.comment:
-        return Colors.blue;
-      case NotificationType.order:
-        return Colors.green;
-      case NotificationType.promotion:
-        return Colors.orange;
-    }
-  }
-}
-
-// Models
-class NotificationItem {
-  final String id;
-  final String userName;
-  final String userAvatar;
-  final String message;
-  final String time;
-  final NotificationType type;
-  final String? postImage;
-  bool isRead;
-  bool isFollowing;
-
-  NotificationItem({
-    required this.id,
-    required this.userName,
-    required this.userAvatar,
-    required this.message,
-    required this.time,
-    required this.type,
-    this.postImage,
-    this.isRead = false,
-    this.isFollowing = false,
-  });
-}
-
-enum NotificationType {
-  follow,
-  like,
-  comment,
-  order,
-  promotion,
 }

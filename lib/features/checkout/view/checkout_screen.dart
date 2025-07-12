@@ -4,7 +4,15 @@ import 'package:cozy/features/cart/data/model/cart_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../data/models/address_model.dart';
+import '../data/models/payment_method.dart';
 import 'order_success_screen.dart';
+import 'widgets/address_card.dart';
+import 'widgets/checkout_bottom_section.dart';
+import 'widgets/order_notes.dart';
+import 'widgets/order_summary.dart';
+import 'widgets/payment_card.dart';
+import 'widgets/section_container.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final Cart cart;
@@ -96,608 +104,55 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   SizedBox(height: 20.h),
 
                   // Order Summary
-                  _buildOrderSummary(),
+                  OrderSummarySection(cart: widget.cart),
 
                   SizedBox(height: 20.h),
 
                   // Delivery Address
-                  _buildDeliveryAddress(),
+                  SectionContainer(
+                    title: 'delivery_address'.tr(context),
+                    actionText: 'change'.tr(context),
+                    onActionPressed: _showAddressSelection,
+                    child: AddressCard(
+                      address: addresses[selectedAddressIndex],
+                      isSelected: true,
+                    ),
+                  ),
 
                   SizedBox(height: 20.h),
 
                   // Payment Method
-                  _buildPaymentMethod(),
+                  SectionContainer(
+                    title: 'payment_method'.tr(context),
+                    actionText: 'change'.tr(context),
+                    onActionPressed: _showPaymentSelection,
+                    child: PaymentCard(
+                      payment: paymentMethods[selectedPaymentIndex],
+                      isSelected: true,
+                    ),
+                  ),
 
-                  SizedBox(height: 20.h),
+                  // SizedBox(height: 20.h),
 
                   // Delivery Options
-                  _buildDeliveryOptions(),
+                  // DeliveryOptionsSection(),
 
                   SizedBox(height: 20.h),
 
                   // Order Notes
-                  _buildOrderNotes(),
+                  OrderNotesSection(),
                 ],
               ),
             ),
           ),
-
-          // Bottom Section with Total and Place Order
-          _buildBottomSection(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOrderSummary() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20.w),
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'order_summary'.tr(context),
-                style: TextStyle(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textBlack,
-                ),
-              ),
-              Text(
-                '${widget.cart.totalItems} ${'items'.tr(context)}',
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: AppColors.textGrey,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16.h),
-
-          // Cart Items Preview
-          ...widget.cart.items.take(2).map((item) => _buildOrderItem(item)),
-
-          if (widget.cart.items.length > 2)
-            Padding(
-              padding: EdgeInsets.only(top: 8.h),
-              child: Text(
-                '+${widget.cart.items.length - 2} ${'more_items'.tr(context)}',
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOrderItem(CartItem item) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 12.h),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8.r),
-            child: Image.network(
-              item.product.imagePath,
-              width: 50.w,
-              height: 50.w,
-              fit: BoxFit.cover,
-            ),
-          ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.product.imagePath,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textBlack,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  'Qty: ${item.quantity}',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: AppColors.textGrey,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Text(
-            '\$${(item.product.price * item.quantity).toStringAsFixed(2)}',
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textBlack,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDeliveryAddress() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20.w),
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'delivery_address'.tr(context),
-                style: TextStyle(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textBlack,
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  _showAddressSelection();
-                },
-                child: Text(
-                  'change'.tr(context),
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          _buildAddressCard(addresses[selectedAddressIndex], isSelected: true),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAddressCard(Address address, {bool isSelected = false}) {
-    return Container(
-      padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(
-        color: isSelected
-            ? AppColors.primary.withOpacity(0.1)
-            : AppColors.lightGrey,
-        borderRadius: BorderRadius.circular(12.r),
-        border:
-            isSelected ? Border.all(color: AppColors.primary, width: 1) : null,
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.location_on_outlined,
-            color: isSelected ? AppColors.primary : AppColors.textGrey,
-            size: 20.sp,
-          ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      address.title,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textBlack,
-                      ),
-                    ),
-                    if (address.isDefault) ...[
-                      SizedBox(width: 8.w),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 6.w, vertical: 2.h),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          borderRadius: BorderRadius.circular(4.r),
-                        ),
-                        child: Text(
-                          'default'.tr(context),
-                          style: TextStyle(
-                            fontSize: 10.sp,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-                SizedBox(height: 4.h),
-                Text(
-                  address.address,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: AppColors.textGrey,
-                  ),
-                ),
-                Text(
-                  address.city,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: AppColors.textGrey,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPaymentMethod() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20.w),
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'payment_method'.tr(context),
-                style: TextStyle(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textBlack,
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  _showPaymentSelection();
-                },
-                child: Text(
-                  'change'.tr(context),
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          _buildPaymentCard(paymentMethods[selectedPaymentIndex],
-              isSelected: true),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPaymentCard(PaymentMethod payment, {bool isSelected = false}) {
-    return Container(
-      padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(
-        color: isSelected
-            ? AppColors.primary.withOpacity(0.1)
-            : AppColors.lightGrey,
-        borderRadius: BorderRadius.circular(12.r),
-        border:
-            isSelected ? Border.all(color: AppColors.primary, width: 1) : null,
-      ),
-      child: Row(
-        children: [
-          Icon(
-            payment.icon,
-            color: isSelected ? AppColors.primary : AppColors.textGrey,
-            size: 20.sp,
-          ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  payment.type,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textBlack,
-                  ),
-                ),
-                SizedBox(height: 2.h),
-                Text(
-                  payment.details,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: AppColors.textGrey,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDeliveryOptions() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20.w),
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'delivery_options'.tr(context),
-            style: TextStyle(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textBlack,
-            ),
-          ),
-          SizedBox(height: 16.h),
-          _buildDeliveryOption(
-            'Standard Delivery',
-            '5-7 business days',
-            'Free',
-            true,
-          ),
-          SizedBox(height: 12.h),
-          _buildDeliveryOption(
-            'Express Delivery',
-            '2-3 business days',
-            '\$15.00',
-            false,
-          ),
-          SizedBox(height: 12.h),
-          _buildDeliveryOption(
-            'Next Day Delivery',
-            'Next business day',
-            '\$25.00',
-            false,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDeliveryOption(
-      String title, String subtitle, String price, bool isSelected) {
-    return Container(
-      padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(
-        color: isSelected
-            ? AppColors.primary.withOpacity(0.1)
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: isSelected ? AppColors.primary : Colors.grey[300]!,
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          Radio<bool>(
-            value: true,
-            groupValue: isSelected,
-            onChanged: (value) {
-              // Handle delivery option selection
-            },
-            activeColor: AppColors.primary,
-          ),
-          SizedBox(width: 8.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textBlack,
-                  ),
-                ),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: AppColors.textGrey,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Text(
-            price,
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
-              color: AppColors.primary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOrderNotes() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20.w),
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'order_notes'.tr(context),
-            style: TextStyle(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textBlack,
-            ),
-          ),
-          SizedBox(height: 12.h),
-          TextField(
-            maxLines: 3,
-            decoration: InputDecoration(
-              hintText: 'add_special_instructions'.tr(context),
-              hintStyle: TextStyle(
-                color: AppColors.textGrey,
-                fontSize: 14.sp,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: Colors.grey[300]!),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: AppColors.primary),
-              ),
-              contentPadding: EdgeInsets.all(12.w),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomSection() {
-    return Container(
-      padding: EdgeInsets.all(20.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'total'.tr(context),
-                style: TextStyle(
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textBlack,
-                ),
-              ),
-              Text(
-                '\$${widget.cart.total.toStringAsFixed(2)}',
-                style: TextStyle(
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 20.h),
           SizedBox(
-            width: double.infinity,
-            height: 50.h,
-            child: ElevatedButton(
-              onPressed: isProcessing ? null : _placeOrder,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25.r),
-                ),
-              ),
-              child: isProcessing
-                  ? SizedBox(
-                      width: 20.w,
-                      height: 20.w,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                      ),
-                    )
-                  : Text(
-                      'place_order'.tr(context),
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-            ),
+            height: 20.h,
+          ),
+          // Bottom Section with Total and Place Order
+          CheckoutBottomSection(
+            total: widget.cart.total,
+            isProcessing: isProcessing,
+            onPlaceOrder: _placeOrder,
           ),
         ],
       ),
@@ -736,8 +191,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 },
                 child: Container(
                   margin: EdgeInsets.only(bottom: 12.h),
-                  child: _buildAddressCard(
-                    address,
+                  child: AddressCard(
+                    address: address,
                     isSelected: index == selectedAddressIndex,
                   ),
                 ),
@@ -781,8 +236,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 },
                 child: Container(
                   margin: EdgeInsets.only(bottom: 12.h),
-                  child: _buildPaymentCard(
-                    payment,
+                  child: PaymentCard(
+                    payment: payment,
                     isSelected: index == selectedPaymentIndex,
                   ),
                 ),
@@ -817,37 +272,4 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       ),
     );
   }
-}
-
-// Models
-class Address {
-  final String id;
-  final String title;
-  final String address;
-  final String city;
-  final bool isDefault;
-
-  Address({
-    required this.id,
-    required this.title,
-    required this.address,
-    required this.city,
-    required this.isDefault,
-  });
-}
-
-class PaymentMethod {
-  final String id;
-  final String type;
-  final String details;
-  final IconData icon;
-  final bool isDefault;
-
-  PaymentMethod({
-    required this.id,
-    required this.type,
-    required this.details,
-    required this.icon,
-    required this.isDefault,
-  });
 }

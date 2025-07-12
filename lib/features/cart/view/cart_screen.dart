@@ -1,48 +1,49 @@
 import 'package:cozy/core/component/widgets/app_button.dart';
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/constants/navigation.dart';
+import 'package:cozy/core/cubit/global_cubit.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
-import 'package:cozy/features/auth/view/login_screen.dart';
-import 'package:cozy/features/cart/data/model/cart_model.dart';
+import 'package:cozy/features/cart/view/cubit/cart_cubit.dart';
 import 'package:cozy/features/cart/view/widgets/cart_item_card.dart';
 import 'package:cozy/features/checkout/view/checkout_screen.dart';
-import 'package:cozy/features/home/data/model/product_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class CartScreen extends StatefulWidget {
+import 'cubit/cart_state.dart';
+
+class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
 
   @override
-  State<CartScreen> createState() => _CartScreenState();
-}
-
-class _CartScreenState extends State<CartScreen> {
-  bool isLoggedIn = true;
-  late Cart cart;
-
-  @override
-  void initState() {
-    super.initState();
-    // Initialize cart with sample data
-    cart = Cart()
-        .addItem(sampleProductsNewArrivals[0], quantity: 2)
-        .addItem(sampleProductsPopular[0], quantity: 1);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.lightGrey,
-      body: SafeArea(
-        child: isLoggedIn ? _buildCartContent() : _buildGuestCart(),
+    return BlocProvider(
+      create: (context) => CartCubit(),
+      child: Scaffold(
+        backgroundColor: AppColors.lightGrey,
+        body: SafeArea(
+          child: BlocBuilder<CartCubit, CartState>(
+            builder: (context, state) {
+              final cubit = context.read<CartCubit>();
+              return Stack(
+                children: [
+                  _buildCartContent(context, cubit),
+                  _buildShippingSheet(context, cubit),
+                  SizedBox(
+                    height: 15.h,
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildCartContent() {
-    if (cart.isEmpty) {
-      return _buildEmptyCart();
+  Widget _buildCartContent(BuildContext context, CartCubit cubit) {
+    if (cubit.cart.isEmpty) {
+      return _buildEmptyCart(context);
     }
 
     return Column(
@@ -62,7 +63,7 @@ class _CartScreenState extends State<CartScreen> {
               ),
               const Spacer(),
               Text(
-                '${cart.totalItems} ${'items'.tr(context)}',
+                '${cubit.cart.totalItems} ${'items'.tr(context)}',
                 style: TextStyle(
                   fontSize: 16.sp,
                   color: AppColors.textGrey,
@@ -76,20 +77,17 @@ class _CartScreenState extends State<CartScreen> {
         Expanded(
           child: ListView.builder(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
-            itemCount: cart.items.length,
+            itemCount: cubit.cart.items.length,
             itemBuilder: (context, index) {
+              final cartItem = cubit.cart.items[index];
               return CartItemCard(
-                cartItem: cart.items[index],
+                key: ValueKey(cartItem.id), // Ensure unique key for each item
+                cartItem: cartItem,
                 onQuantityChanged: (newQuantity) {
-                  setState(() {
-                    cart = cart.updateItemQuantity(
-                        cart.items[index].id, newQuantity);
-                  });
+                  cubit.updateCartItemQuantity(cartItem.id, newQuantity);
                 },
                 onRemove: () {
-                  setState(() {
-                    cart = cart.removeItem(cart.items[index].id);
-                  });
+                  cubit.removeFromCart(cartItem.id);
                 },
               );
             },
@@ -112,21 +110,30 @@ class _CartScreenState extends State<CartScreen> {
           ),
           child: Column(
             children: [
-              _buildSummaryRow('subtotal'.tr(context), cart.subtotal),
-              _buildSummaryRow('shipping'.tr(context), cart.shipping),
-              _buildSummaryRow('tax'.tr(context), cart.tax),
+              _buildSummaryRow(
+                  context, 'subtotal'.tr(context), cubit.cart.subtotal),
+              GestureDetector(
+                onTap: () {
+                  _showShippingSheet(context, cubit);
+                },
+                child: _buildSummaryRow(
+                    context, 'shipping'.tr(context), cubit.cart.shipping,
+                    isInteractive: true),
+              ),
+              _buildSummaryRow(context, 'tax'.tr(context), cubit.cart.tax),
               Divider(height: 20.h),
-              _buildSummaryRow('total'.tr(context), cart.total, isTotal: true),
+              _buildSummaryRow(context, 'total'.tr(context), cubit.cart.total,
+                  isTotal: true),
               SizedBox(height: 20.h),
+              AppButton(
+                text: 'checkout'.tr(context),
+                onPressed: () {
+                  navigateTo(context, CheckoutScreen(cart: cubit.cart));
+                },
+                type: AppButtonType.primary,
+              ),
               SizedBox(
-                width: double.infinity,
                 height: 50.h,
-                child: AppButton(
-                  onPressed: () {
-                    navigateTo(context, CheckoutScreen(cart: cart));
-                  },
-                  text: 'checkout'.tr(context),
-                ),
               ),
             ],
           ),
@@ -135,64 +142,10 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  Widget _buildEmptyCart() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.shopping_cart_outlined,
-            size: 100.sp,
-            color: AppColors.textGrey,
-          ),
-          SizedBox(height: 24.h),
-          Text(
-            'empty_cart'.tr(context),
-            style: TextStyle(
-              fontSize: 20.sp,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textBlack,
-            ),
-          ),
-          SizedBox(height: 12.h),
-          Text(
-            'empty_cart_message'.tr(context),
-            style: TextStyle(
-              fontSize: 16.sp,
-              color: AppColors.textGrey,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 40.h),
-          ElevatedButton(
-            onPressed: () {
-              // Navigate to home or categories
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 16.h),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25.r),
-              ),
-            ),
-            child: Text(
-              'start_shopping'.tr(context),
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGuestCart() {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(20.w),
+  Widget _buildEmptyCart(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w), // Added padding
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -203,7 +156,7 @@ class _CartScreenState extends State<CartScreen> {
             ),
             SizedBox(height: 24.h),
             Text(
-              'login_to_view_cart'.tr(context),
+              'empty_cart'.tr(context),
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
@@ -212,7 +165,7 @@ class _CartScreenState extends State<CartScreen> {
             ),
             SizedBox(height: 12.h),
             Text(
-              'login_cart_message'.tr(context),
+              'empty_cart_message'.tr(context),
               style: TextStyle(
                 fontSize: 16.sp,
                 color: AppColors.textGrey,
@@ -220,32 +173,48 @@ class _CartScreenState extends State<CartScreen> {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 40.h),
-            SizedBox(
-              width: double.infinity,
+            AppButton(
+              text: 'start_shopping'.tr(context),
+              onPressed: () {
+                context.read<GlobalCubit>().changeBottomNavIndex(0);
+              },
+              type: AppButtonType.primary,
               height: 50.h,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginScreen(),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25.r),
-                  ),
-                ),
-                child: Text(
-                  'login'.tr(context),
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
+              borderRadius: BorderRadius.circular(25.r),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSummaryRow(BuildContext context, String label, double amount,
+      {bool isTotal = false, bool isInteractive = false}) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 4.h),
+      child: GestureDetector(
+        onTap: isInteractive
+            ? () => _showShippingSheet(context, context.read<CartCubit>())
+            : null,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: isTotal ? 18.sp : 16.sp,
+                fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
+                color: isInteractive ? AppColors.primary : AppColors.textBlack,
+              ),
+            ),
+            Text(
+              '\$${amount.toStringAsFixed(2)}',
+              style: TextStyle(
+                fontSize: isTotal ? 18.sp : 16.sp,
+                fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
+                color: isTotal
+                    ? AppColors.primary
+                    : (isInteractive ? AppColors.primary : AppColors.textBlack),
               ),
             ),
           ],
@@ -254,29 +223,143 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  Widget _buildSummaryRow(String label, double amount, {bool isTotal = false}) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 4.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: isTotal ? 18.sp : 16.sp,
-              fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-              color: AppColors.textBlack,
-            ),
+  void _showShippingSheet(BuildContext context, CartCubit cubit) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.3,
+        minChildSize: 0.2,
+        maxChildSize: 0.8,
+        builder: (_, controller) => Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
           ),
-          Text(
-            '\$${amount.toStringAsFixed(2)}',
-            style: TextStyle(
-              fontSize: isTotal ? 18.sp : 16.sp,
-              fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-              color: isTotal ? AppColors.primary : AppColors.textBlack,
-            ),
+          child: Column(
+            children: [
+              // Handle
+              Container(
+                margin: EdgeInsets.only(top: 8.h),
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: AppColors.textGrey,
+                  borderRadius: BorderRadius.circular(2.r),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(16.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'shipping_information'.tr(context),
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack,
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+                    Text(
+                      'Cost: \$${cubit.cart.shipping.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: AppColors.textBlack,
+                      ),
+                    ),
+                    SizedBox(height: 8.h),
+                    Text(
+                      'Estimated Delivery: 3-5 business days',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: AppColors.textGrey,
+                      ),
+                    ),
+                    SizedBox(height: 8.h),
+                    Text(
+                      'Shipping Method: Standard Shipping',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: AppColors.textGrey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShippingSheet(BuildContext context, CartCubit cubit) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.0, // Hidden by default
+      minChildSize: 0.0,
+      maxChildSize: 0.8,
+      builder: (_, controller) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        ),
+        child: Column(
+          children: [
+            // Handle (visible when expanded)
+            Container(
+              margin: EdgeInsets.only(top: 8.h),
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: AppColors.textGrey,
+                borderRadius: BorderRadius.circular(2.r),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(16.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'shipping_information'.tr(context),
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textBlack,
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
+                  Text(
+                    'Cost: \$${cubit.cart.shipping.toStringAsFixed(2)}',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      color: AppColors.textBlack,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    'Estimated Delivery: 3-5 business days',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: AppColors.textGrey,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    'Shipping Method: Standard Shipping',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: AppColors.textGrey,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

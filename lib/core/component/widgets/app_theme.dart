@@ -229,7 +229,7 @@ class AppTheme {
           return Colors.transparent;
         }),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(4.r),
           side: const BorderSide(color: Colors.transparent),
         ),
       ),
@@ -244,7 +244,7 @@ class AppTheme {
         dialTextColor: AppColors.textPrimary,
         entryModeIconColor: AppColors.primary,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(4.r),
           side: const BorderSide(color: AppColors.border),
         ),
         helpTextStyle: TextStyle(

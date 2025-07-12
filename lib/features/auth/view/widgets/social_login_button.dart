@@ -34,7 +34,7 @@ class SocialLoginButton extends StatelessWidget {
           side: BorderSide(
               color: AppColors.textGrey.withOpacity(0.3), width: 1.w),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: BorderRadius.circular(4.r),
           ),
           padding: EdgeInsets.symmetric(vertical: 12.h),
         ),
