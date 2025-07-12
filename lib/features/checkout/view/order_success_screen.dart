@@ -118,35 +118,21 @@ class OrderSuccessScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 40.h),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50.h,
-                    child: AppButton(
-                      onPressed: () {
-                        context.read<GlobalCubit>().changeBottomNavIndex(0);
-                      },
-                      text: 'continue_shopping'.tr(context),
-                    ),
+                  AppButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+
+                      context.read<GlobalCubit>().changeBottomNavIndex(0);
+                    },
+                    text: 'continue_shopping'.tr(context),
                   ),
                   SizedBox(height: 16.h),
-                  OutlinedButton(
+                  AppButton(
                     onPressed: () {
                       navigateTo(context, OrderTrackingDetailsScreen());
                     },
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: AppColors.primary),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25.r),
-                      ),
-                    ),
-                    child: Text(
-                      'track_order'.tr(context),
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primary,
-                      ),
-                    ),
+                    type: AppButtonType.secondary,
+                    text: 'track_order'.tr(context),
                   ),
                 ],
               ),
