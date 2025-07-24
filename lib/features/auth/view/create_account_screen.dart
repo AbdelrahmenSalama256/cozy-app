@@ -1,18 +1,22 @@
+import 'package:cozy/core/component/custom_toast.dart';
 import 'package:cozy/core/component/widgets/app_button.dart';
 import 'package:cozy/core/component/widgets/app_text_field.dart';
 import 'package:cozy/core/component/widgets/app_title.dart';
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
-import 'package:cozy/features/auth/view/cubit/auth_cubit.dart';
-import 'package:cozy/features/auth/view/cubit/auth_state.dart';
+import 'package:cozy/core/utils/validator.dart';
+import 'package:cozy/features/auth/data/repo/register_repo.dart';
+import 'package:cozy/features/auth/view/cubit/register_cubit.dart';
+import 'package:cozy/features/auth/view/cubit/register_state.dart';
 import 'package:cozy/features/auth/view/verification_screen.dart';
-import 'package:cozy/features/auth/view/widgets/social_login_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../core/component/custom_toast.dart';
-import '../../../core/utils/validator.dart';
+import '../../../core/component/widgets/error_message_handler.dart';
+import '../../../core/component/widgets/profile_image_picker.dart';
+import '../../../core/services/service_locator.dart';
+import '../../../core/utils/password_strength_toggle.dart';
 
 class CreateAccountScreen extends StatelessWidget {
   const CreateAccountScreen({super.key});
@@ -22,10 +26,12 @@ class CreateAccountScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: BlocProvider(
-        create: (context) => AuthCubit(),
-        child: BlocConsumer<AuthCubit, AuthState>(
+        create: (context) => RegisterCubit(sl<RegisterRepo>()),
+        child: BlocConsumer<RegisterCubit, RegisterState>(
           listener: (context, state) {
-            if (state is AuthCreateAccountSuccess) {
+            if (state is RegisterError) {
+              ErrorMessageHandler.showErrorToast(context, state.message);
+            } else if (state is RegisterSuccess) {
               showToast(
                 context,
                 message: state.message.tr(context),
@@ -35,38 +41,19 @@ class CreateAccountScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => BlocProvider.value(
-                    value: context.read<AuthCubit>(),
-                    child: VerificationScreen(
-                        emailOrPhoneForOtp: state.emailForVerification),
-                  ),
+                  builder: (_) => VerificationScreen(
+                      emailOrPhoneForOtp: state.emailForVerification),
                 ),
-              );
-            } else if (state is AuthFailure) {
-              showToast(
-                context,
-                message: state.error.tr(context),
-                state: ToastStates.error,
-                duration: const Duration(seconds: 3),
               );
             }
           },
           builder: (context, state) {
-            final authCubit = context.read<AuthCubit>();
-            final formKey = GlobalKey<FormState>();
+            final registerCubit = context.read<RegisterCubit>();
+            final formKey = registerCubit.formKey;
 
             return SafeArea(
               child: Column(
                 children: [
-                  // AppHeader(
-                  //   title: "auth_create_account_title".tr(context),
-                  //   titleStyle: TextStyle(
-                  //       color: AppColors.textBlack,
-                  //       fontSize: 18.sp,
-                  //       fontWeight: FontWeight.w600),
-                  //   showBackButton: true,
-                  //   centerTitle: false,
-                  // ),
                   Expanded(
                     child: SingleChildScrollView(
                       padding: EdgeInsets.symmetric(
@@ -81,14 +68,17 @@ class CreateAccountScreen extends StatelessWidget {
                               subtitleKey:
                                   "auth_create_account_subtitle".tr(context),
                             ),
-                            // Text(
-                            //   "auth_create_account_subtitle".tr(context),
-                            //   style: TextStyle(
-                            //       fontSize: 14.sp, color: AppColors.textGrey),
-                            // ),
                             SizedBox(height: 30.h),
+                            Center(
+                              child: ProfileImagePicker(
+                                profileImage: registerCubit.profileImage,
+                                onImageSelected: registerCubit.setProfileImage,
+                              ),
+                            ),
+                            SizedBox(height: 24.h),
                             AppTextField(
-                              controller: authCubit.usernameController,
+                              enabled: state is RegisterLoading ? false : true,
+                              controller: registerCubit.usernameController,
                               labelText: "auth_username_label".tr(context),
                               hintText: "auth_username_hint".tr(context),
                               prefixIcon: Icon(Icons.person_outline,
@@ -98,8 +88,31 @@ class CreateAccountScreen extends StatelessWidget {
                             ),
                             SizedBox(height: 20.h),
                             AppTextField(
-                              controller:
-                                  authCubit.createAccountEmailController,
+                              enabled: state is RegisterLoading ? false : true,
+                              controller: registerCubit.nameController,
+                              labelText: "auth_name_label".tr(context),
+                              hintText: "auth_name_hint".tr(context),
+                              prefixIcon: Icon(Icons.person_outline,
+                                  color: AppColors.textGrey.withOpacity(0.7)),
+                              validator: (value) =>
+                                  Validators.validateName(value, context),
+                            ),
+                            SizedBox(height: 20.h),
+                            AppTextField(
+                              enabled: state is RegisterLoading ? false : true,
+                              controller: registerCubit.mobileController,
+                              labelText: "auth_mobile_label".tr(context),
+                              hintText: "auth_mobile_hint".tr(context),
+                              prefixIcon: Icon(Icons.phone,
+                                  color: AppColors.textGrey.withOpacity(0.7)),
+                              keyboardType: TextInputType.phone,
+                              validator: (value) =>
+                                  Validators.validatePhone(value, context),
+                            ),
+                            SizedBox(height: 20.h),
+                            AppTextField(
+                              controller: registerCubit.emailController,
+                              enabled: state is RegisterLoading ? false : true,
                               labelText: "auth_email_phone_label".tr(context),
                               hintText: "auth_email_phone_hint".tr(context),
                               prefixIcon: Icon(Icons.email_outlined,
@@ -109,62 +122,83 @@ class CreateAccountScreen extends StatelessWidget {
                                   Validators.validateEmail(value, context),
                             ),
                             SizedBox(height: 20.h),
+                            PasswordFieldWithToggle(
+                              isEnabled:
+                                  state is RegisterLoading ? false : true,
+                              controller: registerCubit.passwordController,
+                              labelText: "auth_password_label",
+                              hintText: "auth_password_hint",
+                              onChanged: (value) {
+                                final form = Form.of(context);
+                                form.validate();
+                              },
+                              isPasswordObscure:
+                                  registerCubit.isPasswordObscure,
+                              togglePasswordVisibility:
+                                  registerCubit.togglePasswordVisibility,
+                            ),
+                            SizedBox(height: 20.h),
                             AppTextField(
                               controller:
-                                  authCubit.createAccountPasswordController,
-                              labelText: "auth_password_label".tr(context),
-                              hintText: "auth_password_hint".tr(context),
+                                  registerCubit.passwordConfirmationController,
+                              enabled: state is RegisterLoading ? false : true,
+                              labelText: "auth_password_confirmation_label"
+                                  .tr(context),
+                              hintText:
+                                  "auth_password_confirmation_hint".tr(context),
                               prefixIcon: Icon(Icons.lock_outline,
                                   color: AppColors.textGrey.withOpacity(0.7)),
-                              obscureText:
-                                  authCubit.isConfirmNewPasswordObscure,
+                              obscureText: registerCubit.isPasswordObscure,
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  authCubit.isConfirmNewPasswordObscure
+                                  registerCubit.isPasswordObscure
                                       ? Icons.visibility_off_outlined
                                       : Icons.visibility_outlined,
-                                  color: AppColors.textGrey,
+                                  color: AppColors.primary,
                                 ),
-                                onPressed: () {
-                                  authCubit.togglePasswordVisibility(
-                                      'createAccount');
-                                },
+                                onPressed:
+                                    registerCubit.togglePasswordVisibility,
                               ),
-                              validator: (value) =>
-                                  Validators.validatePassword(value, context),
-                            ),
-                            SizedBox(height: 30.h),
-
-                            AppButton(
-                              text: "onboarding_create_account".tr(context),
-                              isLoading: state is AuthLoading,
-                              onPressed: () {
-                                authCubit.attemptAccountCreation(formKey);
+                              validator: (value) {
+                                if (value !=
+                                    registerCubit.passwordController.text) {
+                                  return 'passwords_do_not_match'.tr(context);
+                                }
+                                return null;
                               },
                             ),
                             SizedBox(height: 30.h),
-                            Center(
-                              child: Text(
-                                "auth_or_sign_up_with".tr(context),
-                                style: TextStyle(
-                                    fontSize: 13.sp, color: AppColors.textGrey),
-                              ),
-                            ),
-                            SizedBox(height: 20.h),
-                            SocialLoginButton(
-                              text: "auth_sign_up_google".tr(context),
-                              iconAssetPath:
-                                  "assets/images/icons/google_logo.png",
-                              onPressed: () {},
-                            ),
-                            SizedBox(height: 16.h),
-                            SocialLoginButton(
-                              text: "auth_sign_up_facebook".tr(context),
-                              iconAssetPath:
-                                  "assets/images/icons/facebook_logo.png",
-                              onPressed: () {},
-                            ),
-                            SizedBox(height: 20.h),
+                            AppButton(
+                                text: "onboarding_create_account".tr(context),
+                                isLoading: state is RegisterLoading,
+                                onPressed: () {
+                                  if (formKey.currentState!.validate()) {
+                                    registerCubit.attemptAccountCreation();
+                                  }
+                                }),
+                            SizedBox(height: 30.h),
+                            // Center(
+                            //   child: Text(
+                            //     "auth_or_sign_up_with".tr(context),
+                            //     style: TextStyle(
+                            //         fontSize: 13.sp, color: AppColors.textGrey),
+                            //   ),
+                            // ),
+                            // SizedBox(height: 20.h),
+                            // SocialLoginButton(
+                            //   text: "auth_sign_up_google".tr(context),
+                            //   iconAssetPath:
+                            //       "assets/images/icons/google_logo.png",
+                            //   onPressed: () {},
+                            // ),
+                            // SizedBox(height: 16.h),
+                            // SocialLoginButton(
+                            //   text: "auth_sign_up_facebook".tr(context),
+                            //   iconAssetPath:
+                            //       "assets/images/icons/facebook_logo.png",
+                            //   onPressed: () {},
+                            // ),
+                            // SizedBox(height: 20.h),
                           ],
                         ),
                       ),

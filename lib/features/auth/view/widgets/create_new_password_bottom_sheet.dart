@@ -126,7 +126,8 @@ class _CreateNewPasswordBottomSheetState
         onPressed: () => authCubit.togglePasswordVisibility(type),
       ),
       validator: isNew
-          ? (value) => Validators.validatePassword(value, context)
+          ? (value) =>
+              Validators.validatePassword(value, context, isStrong: false)
           : (value) => Validators.validateConfirmPassword(
                 value,
                 authCubit.newPasswordController.text,

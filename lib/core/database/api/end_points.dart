@@ -1,15 +1,16 @@
 // ignore_for_file: constant_identifier_names
 
 class EndPoints {
-  static const String baseUrl = "https://empon.evyx.lol/api/";
-  static const String baseUrlWithoutApi = "https://empon.evyx.lol/";
+  static const String baseUrl = "https://cozy-home.cangrowonline.com/api/";
+  static const String baseUrlWithoutApi =
+      "https://cozy-home.cangrowonline.com/";
   //! Login
-  static const String userLogin = "${baseUrl}login";
+  static const String login = "${baseUrl}login";
   static const String userProfile = "${baseUrl}profile";
   static const String updateProfile = "${baseUrl}profile-update";
   static const String updatePassword = "${baseUrl}update-password";
   //! Register
-  static const String userRegister = "${baseUrl}register";
+  static const String register = "${baseUrl}signup";
   //! Verification
   static const String userVerification = "${baseUrl}verify-phone-otp";
   static const String userSendOtp = "${baseUrl}send-otp";

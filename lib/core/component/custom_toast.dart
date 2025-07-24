@@ -8,7 +8,7 @@ void showToast(
   required String message,
   required ToastStates state,
   Duration duration = const Duration(seconds: 3),
-  ToastStyle style = ToastStyle.furniture,
+  ToastStyle style = ToastStyle.minimal,
 }) {
   // Remove any existing toast
   ScaffoldMessenger.of(context).removeCurrentSnackBar();

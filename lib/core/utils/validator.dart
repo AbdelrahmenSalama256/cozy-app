@@ -15,23 +15,19 @@ class Validators {
     return null;
   }
 
-  static String? validatePassword(String? value, BuildContext context) {
+  static String? validatePassword(String? value, BuildContext context,
+      {bool isStrong = false}) {
     if (value == null || value.isEmpty) {
       return 'password_required'.tr(context);
     }
-
     if (value.length < 8) {
-      return 'password_length'.tr(context);
+      return 'password_too_short'.tr(context);
     }
-
-    final hasUppercase = RegExp(r'[A-Z]').hasMatch(value);
-    final hasLowercase = RegExp(r'[a-z]').hasMatch(value);
-    final hasDigit = RegExp(r'[0-9]').hasMatch(value);
-
-    if (!hasUppercase || !hasLowercase || !hasDigit) {
-      return 'password_complexity'.tr(context);
+    if (isStrong) {
+      if (!RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$').hasMatch(value)) {
+        return 'password_weak'.tr(context);
+      }
     }
-
     return null;
   }
 

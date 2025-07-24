@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
+  
   AuthCubit() : super(AuthInitial()) {
     usernameController = TextEditingController();
     createAccountEmailController = TextEditingController();

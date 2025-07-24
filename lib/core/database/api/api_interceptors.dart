@@ -1,8 +1,8 @@
-import 'package:dio/dio.dart';
 import 'package:cozy/core/constants/app_constant.dart';
 import 'package:cozy/core/database/api/end_points.dart';
 import 'package:cozy/core/network/local_network.dart';
 import 'package:cozy/core/services/service_locator.dart';
+import 'package:dio/dio.dart';
 
 class ApiInterceptors extends Interceptor {
   @override
@@ -24,7 +24,7 @@ class ApiInterceptors extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    if (response.realUri.toString().contains(EndPoints.userLogin) ||
+    if (response.realUri.toString().contains(EndPoints.login) ||
         response.realUri.toString().contains(EndPoints.userConfirmCode)) {
       RegExp regex = RegExp(r'maxliss_session=([^;]*)');
       Match? match =
