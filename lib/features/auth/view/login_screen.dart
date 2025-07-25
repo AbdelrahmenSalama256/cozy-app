@@ -47,9 +47,6 @@ class LoginScreen extends StatelessWidget {
             }
           },
           builder: (context, state) {
-            // 01020697427
-            // ando@gmail.com
-            // 123456789Aa@
             final authCubit = context.read<AuthCubit>();
             final formKey = GlobalKey<FormState>();
 
@@ -76,17 +73,19 @@ class LoginScreen extends StatelessWidget {
                             SizedBox(height: 30.h),
                             AppTextField(
                               controller: authCubit.loginEmailController,
+                              enabled: state is AuthLoading ? false : true,
                               labelText: "auth_email_phone_label".tr(context),
                               hintText: "auth_email_phone_hint".tr(context),
                               prefixIcon: Icon(Icons.email_outlined,
                                   color: AppColors.textGrey.withOpacity(0.7)),
-                              keyboardType: TextInputType.emailAddress,
+                              keyboardType: TextInputType.name,
                               validator: (value) =>
-                                  Validators.validateEmail(value, context),
+                                  Validators.validateName(value, context),
                             ),
                             SizedBox(height: 20.h),
                             AppTextField(
                               controller: authCubit.loginPasswordController,
+                              enabled: state is AuthLoading ? false : true,
                               labelText: "auth_password_label".tr(context),
                               hintText: "auth_password_hint".tr(context),
                               prefixIcon: Icon(Icons.lock_outline,
@@ -109,7 +108,6 @@ class LoginScreen extends StatelessWidget {
                               alignment: Alignment.centerRight,
                               child: TextButton(
                                 onPressed: () {
-                                  // FocusScope.of(context).unfocus();
                                   CustomBottomSheet.show(
                                     context: context,
                                     child: BlocProvider.value(

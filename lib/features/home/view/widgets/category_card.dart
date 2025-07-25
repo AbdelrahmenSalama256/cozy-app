@@ -23,7 +23,7 @@ class LargeCategoryCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4.r),
           image: DecorationImage(
-            image: NetworkImage(category.imageUrl),
+            image: NetworkImage("category.imageUrl"),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
               Colors.black
@@ -45,7 +45,7 @@ class LargeCategoryCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          category.nameKey.tr(context),
+                          category.name!.tr(context),
                           style: TextStyle(
                             fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
@@ -78,7 +78,7 @@ class LargeCategoryCard extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              category.productCount.toString(),
+                              "productCount".toString(),
                               style: TextStyle(
                                 fontSize: 13.sp,
                                 fontWeight: FontWeight.w500,

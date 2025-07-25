@@ -1,12 +1,7 @@
 import 'package:cozy/core/constants/app_colors.dart';
-import 'package:cozy/core/constants/navigation.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
-import 'package:cozy/features/category/view/category_details_screen.dart';
-import 'package:cozy/features/home/data/model/category_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import 'widgets/category_card_widget.dart';
 
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({super.key});
@@ -36,28 +31,28 @@ class CategoriesScreen extends StatelessWidget {
             ),
 
             // Categories Grid
-            Expanded(
-              child: GridView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 15.w,
-                  mainAxisSpacing: 15.h,
-                  childAspectRatio: 0.58,
-                ),
-                itemCount: sampleCategories.length,
-                itemBuilder: (context, index) {
-                  final category = sampleCategories[index];
-                  return CategoryCard(
-                    category: category,
-                    onTap: () {
-                      navigateTo(context, CategoryDetailsScreen());
-                    },
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: 15.h),
+            // Expanded(
+            //   child: GridView.builder(
+            //     padding: EdgeInsets.symmetric(horizontal: 20.w),
+            //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            //       crossAxisCount: 2,
+            //       crossAxisSpacing: 15.w,
+            //       mainAxisSpacing: 15.h,
+            //       childAspectRatio: 0.58,
+            //     ),
+            //     itemCount: sampleCategories.length,
+            //     itemBuilder: (context, index) {
+            //       final category = sampleCategories[index];
+            //       return CategoryCard(
+            //         category: category,
+            //         onTap: () {
+            //           navigateTo(context, CategoryDetailsScreen());
+            //         },
+            //       );
+            //     },
+            //   ),
+            // ),
+            // SizedBox(height: 15.h),
           ],
         ),
       ),

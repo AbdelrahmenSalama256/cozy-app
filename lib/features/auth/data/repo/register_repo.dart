@@ -13,7 +13,7 @@ class RegisterRepo {
 
   RegisterRepo(this.api);
 
-  Future<Either<String, String>> registerUser(
+  Future<Either<String, Map<String, dynamic>>> registerUser(
       UserRegistrationModel user) async {
     try {
       final fcmToken = await NotificationHandler.getToken();

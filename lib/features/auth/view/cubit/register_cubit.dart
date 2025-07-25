@@ -1,5 +1,9 @@
+// features/auth/view/cubit/register_cubit.dart
 import 'package:bloc/bloc.dart';
 import 'package:cozy/core/common/logs.dart';
+import 'package:cozy/core/constants/app_constant.dart';
+import 'package:cozy/core/network/local_network.dart';
+import 'package:cozy/core/services/service_locator.dart';
 import 'package:cozy/features/auth/data/models/user_registration_model.dart';
 import 'package:cozy/features/auth/data/repo/register_repo.dart';
 import 'package:flutter/material.dart';
@@ -60,10 +64,18 @@ class RegisterCubit extends Cubit<RegisterState> {
         Print.error("Registration failed: $error");
         emit(RegisterError(message: error));
       },
-      (message) {
-        Print.success("Registration successful: $message");
+      (data) async {
+        final token = data['data']['token'] as String?;
+        if (token != null) {
+          final cacheHelper = sl<CacheHelper>();
+          await cacheHelper.setData(AppConstants.token, token);
+          Print.success("Token cached: $token");
+        } else {
+          Print.warning("No token received in response");
+        }
         emit(RegisterSuccess(
-            message: message, emailForVerification: user.email));
+            message: data['message'] ?? 'Registration successful',
+            emailForVerification: user.email));
       },
     );
   }

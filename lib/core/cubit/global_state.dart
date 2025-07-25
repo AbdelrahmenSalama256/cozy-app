@@ -82,3 +82,5 @@ class AddressError extends GlobalState {
 class LanguageChangingState extends GlobalState {}
 
 class LanguageChangedState extends GlobalState {}
+
+class GlobalTokenUpdated extends GlobalState {}

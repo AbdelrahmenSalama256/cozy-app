@@ -6,57 +6,19 @@ class EndPoints {
       "https://cozy-home.cangrowonline.com/";
   //! Login
   static const String login = "${baseUrl}login";
-  static const String userProfile = "${baseUrl}profile";
-  static const String updateProfile = "${baseUrl}profile-update";
-  static const String updatePassword = "${baseUrl}update-password";
+
   //! Register
   static const String register = "${baseUrl}signup";
-  //! Verification
-  static const String userVerification = "${baseUrl}verify-phone-otp";
-  static const String userSendOtp = "${baseUrl}send-otp";
-  static const String userConfirmCode = "${baseUrl}auth/confirm-code-register";
-  static const String userResendCode = "${baseUrl}auth/password/resend_code";
   //! Logout
   static const String userLogout = "${baseUrl}logout";
   static const String deleteAccount = "${baseUrl}auth/account-deletion";
   //! Forget Password
-  static const String forgetPassword = "${baseUrl}auth/password/forget_request";
-  //! Forget Password Resend Code
-  static const String forgetPasswordResendCode =
-      "${baseUrl}auth/password/resend_code";
-  //! Password Confirm Reset
-  static const String passwordConfirmReset =
-      "${baseUrl}auth/password/confirm_reset";
-  //! Reset Password Check Otp
-  static const String resetPasswordCheckOtp =
-      "${baseUrl}auth/password/validate_otp";
-  //! locations
-  static const String countries = '${baseUrl}countries';
-  static const String states = '${baseUrl}states';
-  static const String cities = '${baseUrl}cities';
-  static const String address = '${baseUrl}address';
-  // ! Reset Password
-  static const String forgotPassword = "${baseUrl}forgot-password";
-  static const String verifyOtpForgotPassword =
-      "${baseUrl}verify-otp-forgot-password";
-  static const String resetPassword = "${baseUrl}reset-password";
-  static const String home = "${baseUrl}home";
-  // ! Search
-  static const String search = "${baseUrl}search";
-  static const String searchHistory = '${baseUrl}history-search';
-  static const String goToProduct = '${baseUrl}go-to-product';
-  static const String commentParent = '${baseUrl}comment/parent';
-  static const String commentChild = '${baseUrl}comment/child';
-  static const String comment = '${baseUrl}comment';
-  static const String commentLike = '${baseUrl}comment/ilke';
-  static const String recentView = '${baseUrl}recent-view';
-  static const String clearHistory = '${baseUrl}history-searches';
 
   // ! Notifications
   static const String notifications = '${baseUrl}notifications';
 
   // ! shop
-  static const String shopNearby = '${baseUrl}homeWithLocation';
+  static const String category = '${baseUrl}categories';
 
   // ! Wishlist
   static const String favorites = '${baseUrl}favourite';
@@ -74,7 +36,6 @@ class EndPoints {
   //! Create Account
   static const String createAccount = '${baseUrl}accounts';
   static const String createAccountStepOne = '${baseUrl}accounts/step-one';
-  static const String category = '${baseUrl}category';
 }
 
 class ApiKey {

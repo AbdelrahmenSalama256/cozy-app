@@ -24,8 +24,7 @@ class ApiInterceptors extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    if (response.realUri.toString().contains(EndPoints.login) ||
-        response.realUri.toString().contains(EndPoints.userConfirmCode)) {
+    if (response.realUri.toString().contains(EndPoints.login)) {
       RegExp regex = RegExp(r'maxliss_session=([^;]*)');
       Match? match =
           regex.firstMatch(response.headers["Set-Cookie"].toString());

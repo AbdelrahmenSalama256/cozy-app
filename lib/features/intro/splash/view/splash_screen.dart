@@ -1,5 +1,9 @@
 import 'package:cozy/core/constants/app_colors.dart';
+import 'package:cozy/core/constants/app_constant.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
+import 'package:cozy/core/network/local_network.dart';
+import 'package:cozy/core/services/service_locator.dart';
+import 'package:cozy/features/base/view/base_screen.dart';
 import 'package:cozy/features/intro/onboarding/view/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -48,7 +52,7 @@ class _SplashViewState extends State<SplashScreen>
 
     _initializeAnimations();
     _startAnimations();
-    _navigateToOnboarding();
+    _navigateToNextScreen();
   }
 
   void _initializeAnimations() {
@@ -122,14 +126,16 @@ class _SplashViewState extends State<SplashScreen>
     super.dispose();
   }
 
-  _navigateToOnboarding() async {
+  _navigateToNextScreen() async {
     await Future.delayed(const Duration(milliseconds: 3500));
     if (mounted) {
+      final cacheHelper = sl<CacheHelper>();
+      final token = cacheHelper.getDataString(key: AppConstants.token);
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
-              const OnboardingView(),
+              token != null ? const BaseScreen() : const OnboardingView(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(opacity: animation, child: child);
           },

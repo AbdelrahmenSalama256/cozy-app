@@ -1,26 +1,24 @@
+// features/auth/data/models/user_login_model.dart
 class UserLoginModel {
-  final String email;
-  final String password;
-  String? token;
+  final String? token;
+  final int? id;
+  final String? username;
+  final String? mobile;
 
   UserLoginModel({
-    required this.email,
-    required this.password,
     this.token,
+    this.id,
+    this.username,
+    this.mobile,
   });
 
-  Map<String, dynamic> toJson() {
-    return {
-      'email': email,
-      'password': password,
-    };
-  }
-
   factory UserLoginModel.fromJson(Map<String, dynamic> json) {
+    final data = json['data'] as Map<String, dynamic>?;
     return UserLoginModel(
-      email: json['email'],
-      password: json['password'],
-      token: json['token'], // Assuming API returns token
+      token: data?['token'] as String?,
+      id: data?['id'] as int?,
+      username: data?['username'] as String?,
+      mobile: data?['mobile'] as String?,
     );
   }
 }

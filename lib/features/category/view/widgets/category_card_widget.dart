@@ -38,7 +38,7 @@ class CategoryCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
                 child: Image.network(
-                  category.imageUrl,
+                  "category.imageUrl",
                   width: double.infinity,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
@@ -61,7 +61,7 @@ class CategoryCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      category.nameKey.tr(context),
+                      "category.nameKey".tr(context),
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
@@ -70,7 +70,7 @@ class CategoryCard extends StatelessWidget {
                     ),
                     SizedBox(height: 4.h),
                     Text(
-                      '${category.productCount} items',
+                      '$category items',
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: AppColors.textGrey,

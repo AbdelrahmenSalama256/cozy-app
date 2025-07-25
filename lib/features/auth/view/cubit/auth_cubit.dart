@@ -1,10 +1,16 @@
+// features/auth/view/cubit/auth_cubit.dart
 import 'package:bloc/bloc.dart';
+import 'package:cozy/core/common/logs.dart';
+import 'package:cozy/core/constants/app_constant.dart';
+import 'package:cozy/core/services/service_locator.dart';
+import 'package:cozy/features/auth/data/repo/login_repo.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/cubit/global_cubit.dart';
+import '../../../../core/network/local_network.dart';
 import 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  
   AuthCubit() : super(AuthInitial()) {
     usernameController = TextEditingController();
     createAccountEmailController = TextEditingController();
@@ -87,8 +93,36 @@ class AuthCubit extends Cubit<AuthState> {
       return;
     }
     emit(AuthLoading());
-    await Future.delayed(Duration(seconds: 1));
-    emit(AuthLoginSuccess(message: "auth_login_success"));
+    try {
+      final loginRepo = sl<LoginRepo>();
+      final response = await loginRepo.loginUser(
+        username: loginEmailController.text,
+        password: loginPasswordController.text,
+      );
+
+      response.fold(
+        (error) {
+          Print.error("Login failed: $error");
+          emit(AuthFailure(error: error));
+        },
+        (userData) async {
+          if (userData.token != null) {
+            final cacheHelper = sl<CacheHelper>();
+            await cacheHelper.setData(AppConstants.token, userData.token!);
+            Print.success("Token cached: ${userData.token}");
+            // Notify GlobalCubit to update token
+            final globalCubit = sl<GlobalCubit>();
+            globalCubit.updateToken(userData.token!);
+          } else {
+            Print.warning("No token received in response");
+          }
+          emit(AuthLoginSuccess(message: 'auth_login_success'));
+        },
+      );
+    } catch (e) {
+      Print.error("Unexpected error during login: $e");
+      emit(AuthFailure(error: "unexpected_error"));
+    }
   }
 
   Future<void> sendForgotPasswordCode(GlobalKey<FormState> formKey) async {

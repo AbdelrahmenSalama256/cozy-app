@@ -1,19 +1,23 @@
-import 'dart:developer';
-
+// core/cubit/global_state.dart
 import 'package:cozy/core/constants/app_constant.dart';
 import 'package:cozy/core/constants/widgets/print_util.dart';
-import 'package:cozy/core/cubit/global_state.dart';
 import 'package:cozy/core/network/local_network.dart';
 import 'package:cozy/core/services/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class GlobalCubit extends Cubit<GlobalState> {
-  GlobalCubit() : super(GlobalInitial());
+import 'global_state.dart';
 
-  init() {
+class GlobalCubit extends Cubit<GlobalState> {
+  GlobalCubit() : super(GlobalInitial()) {
+    init();
+  }
+
+  void init() {
     PrintUtil.warning(
         "User type is ${sl<CacheHelper>().getDataString(key: AppConstants.userType)}");
+    PrintUtil.debug(
+        "User token is ${sl<CacheHelper>().getDataString(key: AppConstants.token)}");
   }
 
   int currentNavIndex = 0;
@@ -22,7 +26,6 @@ class GlobalCubit extends Cubit<GlobalState> {
   void changeBottomNavIndex(int index) {
     if (currentNavIndex != index) {
       currentNavIndex = index;
-      // controller.onAttach(index);
       emit(BottomNavChangeState());
     }
   }
@@ -38,8 +41,15 @@ class GlobalCubit extends Cubit<GlobalState> {
         sl<CacheHelper>().getCachedLanguage() == "en" ? "ar" : "en";
     await sl<CacheHelper>().cacheLanguage(newLanguage);
     language = newLanguage;
-    log("Language changed to $language");
+    PrintUtil.debug("Language changed to $language");
 
     emit(LanguageChangedState());
+  }
+
+  void updateToken(String token) {
+    final cacheHelper = sl<CacheHelper>();
+    cacheHelper.setData(AppConstants.token, token);
+    PrintUtil.success("Global token updated: $token");
+    emit(GlobalTokenUpdated());
   }
 }
