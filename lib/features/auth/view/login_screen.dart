@@ -3,6 +3,7 @@ import 'package:cozy/core/component/widgets/app_text_field.dart';
 import 'package:cozy/core/component/widgets/app_title.dart';
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/constants/navigation.dart';
+import 'package:cozy/core/cubit/global_cubit.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/core/utils/validator.dart';
 import 'package:cozy/features/auth/view/create_account_screen.dart';
@@ -36,7 +37,9 @@ class LoginScreen extends StatelessWidget {
                 state: ToastStates.success,
                 duration: const Duration(seconds: 3),
               );
-              navigateAndFinish(context, BaseScreen());
+              context.read<GlobalCubit>().getProfile(forceRefresh: true);
+              context.read<GlobalCubit>().changeBottomNavIndex(0);
+              navigateAndFinish(context, const BaseScreen());
             } else if (state is AuthFailure) {
               showToast(
                 context,

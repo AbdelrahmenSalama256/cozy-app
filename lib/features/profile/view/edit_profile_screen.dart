@@ -1,78 +1,101 @@
 import 'package:cozy/core/component/widgets/app_button.dart';
 import 'package:cozy/core/component/widgets/app_text_field.dart';
+import 'package:cozy/core/component/widgets/error_message_handler.dart';
 import 'package:cozy/core/constants/app_colors.dart';
+import 'package:cozy/core/cubit/global_cubit.dart';
+import 'package:cozy/core/cubit/global_state.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
+import 'package:cozy/features/profile/view/cubit/profile_cubit.dart';
+import 'package:cozy/features/profile/view/cubit/profile_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class EditProfileScreen extends StatefulWidget {
+import '../../../core/component/custom_toast.dart';
+import '../../../core/component/widgets/profile_image_picker.dart';
+import '../data/models/contact_model.dart';
+import 'widgets/profile_section.dart';
+
+class EditProfileScreen extends StatelessWidget {
   const EditProfileScreen({super.key});
 
   @override
-  State<EditProfileScreen> createState() => _EditProfileScreenState();
-}
-
-class _EditProfileScreenState extends State<EditProfileScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _addressController = TextEditingController();
-  final _cityController = TextEditingController();
-  final _zipController = TextEditingController();
-
-  String _selectedGender = 'male';
-  final List<String> _genders = ['male', 'female', 'other'];
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeForm();
-  }
-
-  void _initializeForm() {
-    // Pre-fill with current user data
-    _nameController.text = 'John Doe';
-    _emailController.text = 'john.doe@example.com';
-    _phoneController.text = '+1 234 567 8900';
-    _addressController.text = '123 Main Street';
-    _cityController.text = 'New York';
-    _zipController.text = '10001';
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    _addressController.dispose();
-    _cityController.dispose();
-    _zipController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.lightGrey,
-      appBar: _buildAppBar(context),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(20.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildProfilePicture(context),
-              SizedBox(height: 32.h),
-              _buildPersonalInfoSection(context),
-              SizedBox(height: 24.h),
-              _buildAddressSection(context),
-              SizedBox(height: 32.h),
-              _buildSaveButton(context),
-            ],
-          ),
-        ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: BlocProvider.of<GlobalCubit>(context)),
+        BlocProvider(
+            create: (context) => ProfileCubit(context.read<GlobalCubit>())),
+      ],
+      child: BlocConsumer<GlobalCubit, GlobalState>(
+        listener: (context, state) {
+          if (state is ProfileUpdated) {
+            showToast(
+              context,
+              message: 'profile_updated_success'.tr(context),
+              state: ToastStates.success,
+              style: ToastStyle.furniture,
+            );
+          } else if (state is ProfileError) {
+            ErrorMessageHandler.showErrorToast(
+                context, state.message.tr(context));
+          }
+        },
+        builder: (context, globalState) {
+          final globalCubit = context.read<GlobalCubit>();
+          final profileCubit = context.read<ProfileCubit>();
+          final user = globalCubit.contactResponse?.data.user ??
+              UserDetails(
+                id: 0,
+                type: '',
+                contactId: '',
+                contactStatus: 'active',
+              );
+
+          return BlocBuilder<ProfileCubit, ProfileState>(
+            builder: (context, profileState) {
+              return Scaffold(
+                backgroundColor: AppColors.lightGrey,
+                appBar: _buildAppBar(context),
+                body: Form(
+                  key: profileCubit.formKey,
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.all(20.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 24.h),
+                        globalState is ProfileLoading
+                            ? const Center(child: CircularProgressIndicator())
+                            : Center(
+                                child: user.image == null
+                                    ? ProfileImagePicker(
+                                        profileImage: profileCubit.profileImage,
+                                        onImageSelected:
+                                            profileCubit.setProfileImage,
+                                      )
+                                    : ProfileSection(
+                                        userName: user.name ?? '',
+                                        userImageUrl: user.image ?? '',
+                                        subtitle: '',
+                                        isVendor: true,
+                                      ),
+                              ),
+                        SizedBox(height: 32.h),
+                        _buildPersonalInfoSection(context, profileCubit, user),
+                        if (profileCubit.hasChanges) ...[
+                          SizedBox(height: 32.h),
+                          _buildSaveButton(context,
+                              globalState is ProfileLoading, profileCubit),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
@@ -96,46 +119,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _buildProfilePicture(BuildContext context) {
-    return Center(
-      child: Stack(
-        children: [
-          CircleAvatar(
-            radius: 60.r,
-            backgroundColor: AppColors.primary,
-            child: Text(
-              'JD',
-              style: TextStyle(
-                fontSize: 32.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: Container(
-              width: 36.w,
-              height: 36.w,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(18.r),
-                border: Border.all(color: Colors.white, width: 2),
-              ),
-              child: Icon(
-                Icons.camera_alt,
-                color: Colors.white,
-                size: 18.sp,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPersonalInfoSection(BuildContext context) {
+  Widget _buildPersonalInfoSection(
+      BuildContext context, ProfileCubit cubit, UserDetails user) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -148,57 +133,62 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
         ),
         SizedBox(height: 16.h),
-        _buildNameField(context),
+        AppTextField(
+          controller: cubit.nameController,
+          labelText: 'name'.tr(context),
+          hintText: 'enter_name'.tr(context),
+          onChanged: (_) => cubit.checkForChanges(),
+          validator: (value) =>
+              value!.isEmpty ? 'name_required'.tr(context) : null,
+        ),
         SizedBox(height: 16.h),
-        _buildEmailField(context),
+        AppTextField(
+          controller: cubit.emailController,
+          labelText: 'email'.tr(context),
+          hintText: 'enter_email'.tr(context),
+          keyboardType: TextInputType.emailAddress,
+          onChanged: (_) => cubit.checkForChanges(),
+          validator: (value) {
+            if (value!.isEmpty) return 'email_required'.tr(context);
+            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+              return 'invalid_email'.tr(context);
+            }
+            return null;
+          },
+        ),
         SizedBox(height: 16.h),
-        _buildPhoneField(context),
+        AppTextField(
+          controller: cubit.mobileController,
+          labelText: 'phone_number'.tr(context),
+          hintText: 'enter_phone'.tr(context),
+          keyboardType: TextInputType.phone,
+          onChanged: (_) => cubit.checkForChanges(),
+        ),
         SizedBox(height: 16.h),
-        _buildGenderDropdown(context),
+        _buildReadOnlyField(context, 'contact_id'.tr(context), user.contactId),
+        SizedBox(height: 16.h),
+        _buildReadOnlyField(
+            context, 'contact_status'.tr(context), user.contactStatus),
+        SizedBox(height: 16.h),
+        _buildReadOnlyField(
+            context, 'created_at'.tr(context), user.createdAt ?? ''),
+        SizedBox(height: 16.h),
+        _buildReadOnlyField(
+            context, 'updated_at'.tr(context), user.updatedAt ?? ''),
       ],
     );
   }
 
-  Widget _buildNameField(BuildContext context) {
-    return AppTextField(
-      controller: _nameController,
-      labelText: 'full_name'.tr(context),
-      hintText: 'enter_name'.tr(context),
-      validator: (value) => value!.isEmpty ? 'name_required'.tr(context) : null,
-    );
-  }
+  Widget _buildReadOnlyField(BuildContext context, String label, String value) {
+    final isDateField =
+        label == 'created_at'.tr(context) || label == 'updated_at'.tr(context);
+    final displayValue = isDateField ? _formatDate(value) : value;
 
-  Widget _buildEmailField(BuildContext context) {
-    return AppTextField(
-      controller: _emailController,
-      labelText: 'email'.tr(context),
-      hintText: 'enter_email'.tr(context),
-      keyboardType: TextInputType.emailAddress,
-      validator: (value) {
-        if (value!.isEmpty) return 'email_required'.tr(context);
-        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-          return 'invalid_email'.tr(context);
-        }
-        return null;
-      },
-    );
-  }
-
-  Widget _buildPhoneField(BuildContext context) {
-    return AppTextField(
-      controller: _phoneController,
-      labelText: 'phone_number'.tr(context),
-      hintText: 'enter_phone'.tr(context),
-      keyboardType: TextInputType.phone,
-    );
-  }
-
-  Widget _buildGenderDropdown(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'gender'.tr(context),
+          label,
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w500,
@@ -208,28 +198,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         SizedBox(height: 8.h),
         Container(
           width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(color: AppColors.lightGrey),
             borderRadius: BorderRadius.circular(4.r),
           ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              borderRadius: BorderRadius.circular(4.r),
-              value: _selectedGender,
-              isExpanded: true,
-              items: _genders.map((String gender) {
-                return DropdownMenuItem<String>(
-                  value: gender,
-                  child: Text(gender.tr(context)),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedGender = newValue!;
-                });
-              },
+          child: Text(
+            displayValue,
+            style: TextStyle(
+              fontSize: 16.sp,
+              color: AppColors.textGrey,
             ),
           ),
         ),
@@ -237,94 +216,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _buildAddressSection(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'address_information'.tr(context),
-          style: TextStyle(
-            fontSize: 20.sp,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textBlack,
-          ),
-        ),
-        SizedBox(height: 16.h),
-        _buildAddressField(context),
-        SizedBox(height: 16.h),
-        _buildCityZipFields(context),
-      ],
-    );
-  }
-
-  Widget _buildAddressField(BuildContext context) {
-    return AppTextField(
-      controller: _addressController,
-      labelText: 'street_address'.tr(context),
-      hintText: 'enter_street'.tr(context),
-    );
-  }
-
-  Widget _buildCityZipFields(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          flex: 2,
-          child: AppTextField(
-            controller: _cityController,
-            labelText: 'city'.tr(context),
-            hintText: 'enter_city'.tr(context),
-          ),
-        ),
-        SizedBox(width: 16.w),
-        Expanded(
-          child: AppTextField(
-            controller: _zipController,
-            labelText: 'zip_code'.tr(context),
-            hintText: 'enter_zip'.tr(context),
-            keyboardType: TextInputType.number,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSaveButton(BuildContext context) {
+  Widget _buildSaveButton(
+      BuildContext context, bool isLoading, ProfileCubit cubit) {
     return AppButton(
       text: 'save_changes'.tr(context),
-      onPressed: _saveProfile,
+      onPressed: isLoading ? null : cubit.saveChanges,
       type: AppButtonType.primary,
       height: 50.h,
       borderRadius: BorderRadius.circular(4.r),
+      isLoading: isLoading,
     );
   }
+}
 
-  void _saveProfile() {
-    if (_formKey.currentState!.validate()) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('profile_updated'.tr(context)),
-          content: Text('profile_update_success'.tr(context)),
-          actions: [
-            AppButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-              text: 'ok'.tr(context),
-              type: AppButtonType.secondary,
-              height: 36.h,
-              borderRadius: BorderRadius.circular(8.r),
-              borderColor: AppColors.textGrey,
-              textStyle: TextStyle(
-                fontSize: 14.sp,
-                color: AppColors.textGrey,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
+String _formatDate(String dateString) {
+  try {
+    final dateTime = DateTime.parse(dateString);
+    return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}';
+  } catch (e) {
+    return dateString; // Return original if parsing fails
   }
 }

@@ -6,9 +6,12 @@ class EndPoints {
       "https://cozy-home.cangrowonline.com/";
   //! Login
   static const String login = "${baseUrl}login";
+  static const String getProfile = "${baseUrl}contact-details";
+  static const String updateProfile = "${baseUrl}profile-update";
 
   //! Register
   static const String register = "${baseUrl}signup";
+  static const String forgotPassword = "${baseUrl}forget-password";
   //! Logout
   static const String userLogout = "${baseUrl}logout";
   static const String deleteAccount = "${baseUrl}auth/account-deletion";

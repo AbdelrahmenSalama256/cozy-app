@@ -1,4 +1,5 @@
-// features/auth/view/cubit/auth_cubit.dart
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
 import 'package:cozy/core/common/logs.dart';
 import 'package:cozy/core/constants/app_constant.dart';
@@ -6,6 +7,7 @@ import 'package:cozy/core/services/service_locator.dart';
 import 'package:cozy/features/auth/data/repo/login_repo.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/widgets/print_util.dart';
 import '../../../../core/cubit/global_cubit.dart';
 import '../../../../core/network/local_network.dart';
 import 'auth_state.dart';
@@ -105,17 +107,23 @@ class AuthCubit extends Cubit<AuthState> {
           Print.error("Login failed: $error");
           emit(AuthFailure(error: error));
         },
-        (userData) async {
-          if (userData.token != null) {
-            final cacheHelper = sl<CacheHelper>();
-            await cacheHelper.setData(AppConstants.token, userData.token!);
-            Print.success("Token cached: ${userData.token}");
-            // Notify GlobalCubit to update token
-            final globalCubit = sl<GlobalCubit>();
-            globalCubit.updateToken(userData.token!);
-          } else {
-            Print.warning("No token received in response");
+        (contactResponse) async {
+          // Save token if available
+          if (contactResponse.data.token != null) {
+            sl<CacheHelper>()
+                .setData(AppConstants.token, contactResponse.data.token!);
           }
+
+          // Save user profile
+          await sl<CacheHelper>().setData(
+              AppConstants.userProfile, jsonEncode(contactResponse.toJson()));
+
+          PrintUtil.success(
+              "Login successful for user: ${contactResponse.data.user.name}");
+
+          // Update GlobalCubit
+          sl<GlobalCubit>().contactResponse = contactResponse;
+
           emit(AuthLoginSuccess(message: 'auth_login_success'));
         },
       );
@@ -125,15 +133,29 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> sendForgotPasswordCode(GlobalKey<FormState> formKey) async {
+  Future<void> sendForgotPasswordCode() async {
     if (!formKey.currentState!.validate()) {
       return;
     }
     emit(AuthLoading());
-    await Future.delayed(Duration(seconds: 1));
-    emit(AuthForgotPasswordOtpSent(
-        message: "auth_otp_sent",
-        emailOrPhone: forgotPasswordEmailController.text));
+    final loginRepo = sl<LoginRepo>();
+    final response = await loginRepo.sendForgotPasswordCode(
+      forgotPasswordEmailController.text.trim(),
+    );
+
+    response.fold(
+      (error) {
+        Print.error("Failed to send forgot password code: $error");
+        emit(AuthFailure(error: error));
+      },
+      (message) {
+        Print.success("Forgot password OTP sent: $message");
+        emit(AuthForgotPasswordOtpSent(
+          message: message,
+          emailOrPhone: forgotPasswordEmailController.text,
+        ));
+      },
+    );
   }
 
   Future<void> verifyResetOtpAndShowCreateNewPassword() async {

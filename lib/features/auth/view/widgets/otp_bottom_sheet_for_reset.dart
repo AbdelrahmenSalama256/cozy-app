@@ -149,7 +149,7 @@ class _OtpBottomSheetForResetState extends State<OtpBottomSheetForReset> {
                   SizedBox(height: 16.h),
                   TextButton(
                     onPressed: () {
-                      authCubit.sendForgotPasswordCode(_formKey);
+                      authCubit.sendForgotPasswordCode();
                     },
                     child: Text(
                       "auth_resend_code".tr(context),

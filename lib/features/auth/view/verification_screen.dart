@@ -157,7 +157,7 @@ class VerificationScreen extends StatelessWidget {
                                       color: AppColors.textGrey)),
                               TextButton(
                                 onPressed: () {
-                                  authCubit.sendForgotPasswordCode(formKey);
+                                  authCubit.sendForgotPasswordCode();
                                 },
                                 child: Text(
                                   "auth_resend_code".tr(context),

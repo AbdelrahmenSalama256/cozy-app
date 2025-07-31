@@ -27,17 +27,17 @@ class _OnboardingViewState extends State<OnboardingView>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 600),
       vsync: this,
     );
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
     _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
+      begin: const Offset(0, 0.2),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-        parent: _animationController, curve: Curves.easeOutCubic));
+    ).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.easeOut));
     _animationController.forward();
   }
 
@@ -51,175 +51,85 @@ class _OnboardingViewState extends State<OnboardingView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Background with decorative shapes
-          _buildBackgroundShapes(),
-
-          SafeArea(
-            child: Column(
-              children: [
-                // Custom header with skip button
-                _buildHeader(),
-
-                // Main content area
-                Expanded(
-                  child: PageView.builder(
-                    controller: _pageController,
-                    itemCount: onboardingContents.length,
-                    onPageChanged: (int page) {
-                      setState(() {});
-                      _animationController.reset();
-                      _animationController.forward();
-                    },
-                    itemBuilder: (_, i) {
-                      return _buildOnboardingPage(i);
-                    },
-                  ),
-                ),
-
-                // Bottom section with indicators and buttons
-                _buildBottomSection(),
-              ],
+      backgroundColor: AppColors.white,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Minimal header
+            _buildMinimalHeader(),
+            // Main content with flexible space
+            Expanded(
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: onboardingContents.length,
+                onPageChanged: (int page) {
+                  setState(() {});
+                  _animationController.reset();
+                  _animationController.forward();
+                },
+                itemBuilder: (_, i) {
+                  return _buildOnboardingPage(i);
+                },
+              ),
             ),
-          ),
-        ],
+            // Fixed bottom section
+            _buildMinimalBottomSection(),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildBackgroundShapes() {
-    return Stack(
-      children: [
-        // Gradient background
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppColors.white,
-                AppColors.primaryLight.withOpacity(0.05),
-                AppColors.white,
-              ],
-            ),
-          ),
-        ),
-
-        // Top decorative shapes
-        Positioned(
-          top: -50.h,
-          right: -30.w,
-          child: Container(
-            width: 120.w,
-            height: 120.w,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.primaryLight.withOpacity(0.1),
-            ),
-          ),
-        ),
-
-        Positioned(
-          top: 100.h,
-          left: -40.w,
-          child: Container(
-            width: 80.w,
-            height: 80.w,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20.r),
-              color: AppColors.primary.withOpacity(0.08),
-            ),
-          ),
-        ),
-
-        // Bottom decorative shapes
-        Positioned(
-          bottom: 200.h,
-          right: -20.w,
-          child: Container(
-            width: 60.w,
-            height: 60.w,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15.r),
-              color: AppColors.primaryLight.withOpacity(0.12),
-            ),
-          ),
-        ),
-
-        Positioned(
-          bottom: 100.h,
-          left: -25.w,
-          child: Container(
-            width: 100.w,
-            height: 100.w,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.primary.withOpacity(0.06),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildHeader() {
+  Widget _buildMinimalHeader() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Logo or brand name
+          // Simple brand
           Row(
             children: [
               Container(
-                width: 32.w,
-                height: 32.w,
+                width: 28.w,
+                height: 28.w,
                 decoration: BoxDecoration(
                   color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(8.r),
+                  borderRadius: BorderRadius.circular(6.r),
                 ),
                 child: Icon(
                   Icons.chair_outlined,
                   color: Colors.white,
-                  size: 18.sp,
+                  size: 16.sp,
                 ),
               ),
               SizedBox(width: 8.w),
               Text(
                 'cozy_home'.tr(context),
                 style: TextStyle(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textBlack,
                 ),
               ),
             ],
           ),
-
-          // Skip button with modern design
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.primaryLight.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20.r),
-            ),
-            child: TextButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                );
-                if (kDebugMode) {
-                  print("Navigate to Login via Skip");
-                }
-              },
-              child: Text(
-                "onboarding_skip".tr(context),
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: AppColors.primaryLight,
-                  fontWeight: FontWeight.w600,
-                ),
+          // Clean skip button
+          TextButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+              );
+              if (kDebugMode) {
+                print("Navigate to Login via Skip");
+              }
+            },
+            child: Text(
+              "onboarding_skip".tr(context),
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: AppColors.textGrey,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),
@@ -237,27 +147,24 @@ class _OnboardingViewState extends State<OnboardingView>
           child: SlideTransition(
             position: _slideAnimation,
             child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
+              padding: EdgeInsets.symmetric(horizontal: 32.w),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height * 0.6,
+                ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(height: 40.h),
-
-                    // Creative image container with shapes
-                    _buildImageContainer(index),
-
-                    SizedBox(height: 40.h),
-
-                    // Title with creative styling
-                    _buildTitle(index),
-
-                    SizedBox(height: 16.h),
-
-                    // Description with better typography
-                    _buildDescription(index),
-
-                    SizedBox(height: 40.h),
+                    SizedBox(height: 20.h),
+                    // Clean image container - responsive size
+                    _buildCleanImageContainer(index),
+                    SizedBox(height: 32.h),
+                    // Minimal title
+                    _buildCleanTitle(index),
+                    SizedBox(height: 12.h),
+                    // Simple description
+                    _buildCleanDescription(index),
+                    SizedBox(height: 20.h),
                   ],
                 ),
               ),
@@ -268,224 +175,126 @@ class _OnboardingViewState extends State<OnboardingView>
     );
   }
 
-  Widget _buildImageContainer(int index) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        // Background decorative shape
-        Container(
-          width: 280.w,
-          height: 280.w,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: RadialGradient(
-              colors: [
-                AppColors.primaryLight.withOpacity(0.1),
-                AppColors.primary.withOpacity(0.05),
-                Colors.transparent,
-              ],
-            ),
-          ),
-        ),
+  Widget _buildCleanImageContainer(int index) {
+    // Make image size responsive to screen height
+    final imageSize = MediaQuery.of(context).size.height * 0.25;
 
-        // Secondary decorative shape
-        Container(
-          width: 240.w,
-          height: 240.w,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(60.r),
-            color: AppColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primary.withOpacity(0.1),
-                blurRadius: 20.r,
-                offset: Offset(0, 10.h),
-              ),
-            ],
-          ),
-        ),
-
-        // Main image container
-        Container(
-          width: 220.w,
-          height: 220.w,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(50.r),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppColors.lightGrey.withOpacity(0.3),
-                AppColors.lightGrey,
-              ],
-            ),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(50.r),
-            child: Image.network(
-              onboardingContents[index].imagePath,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
-                decoration: BoxDecoration(
-                  color: AppColors.lightGrey,
-                  borderRadius: BorderRadius.circular(50.r),
-                ),
-                child: Icon(
-                  Icons.chair_outlined,
-                  size: 80.sp,
-                  color: AppColors.primary.withOpacity(0.5),
-                ),
-              ),
-            ),
-          ),
-        ),
-
-        // Floating decorative elements
-        Positioned(
-          top: 20.h,
-          right: 20.w,
-          child: Container(
-            width: 20.w,
-            height: 20.w,
+    return Container(
+      width: imageSize,
+      height: imageSize,
+      decoration: BoxDecoration(
+        color: AppColors.lightGrey.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(16.r),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16.r),
+        child: Image.network(
+          onboardingContents[index].imagePath,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => Container(
             decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.primaryLight.withOpacity(0.6),
+              color: AppColors.lightGrey.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16.r),
+            ),
+            child: Icon(
+              Icons.chair_outlined,
+              size: imageSize * 0.25,
+              color: AppColors.primary.withOpacity(0.3),
             ),
           ),
         ),
-
-        Positioned(
-          bottom: 30.h,
-          left: 30.w,
-          child: Container(
-            width: 16.w,
-            height: 16.w,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4.r),
-              color: AppColors.primary.withOpacity(0.7),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
-  Widget _buildTitle(int index) {
-    return Container(
+  Widget _buildCleanTitle(int index) {
+    return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Text(
         onboardingContents[index].title(context),
         textAlign: TextAlign.center,
         style: TextStyle(
-          fontSize: 24.sp,
-          fontWeight: FontWeight.bold,
+          fontSize: 20.sp,
+          fontWeight: FontWeight.w700,
           color: AppColors.textBlack,
-          height: 1.3,
-          letterSpacing: -0.5,
+          height: 1.2,
         ),
       ),
     );
   }
 
-  Widget _buildDescription(int index) {
-    return Container(
+  Widget _buildCleanDescription(int index) {
+    return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: Text(
         onboardingContents[index].description(context),
         textAlign: TextAlign.center,
         style: TextStyle(
-          fontSize: 16.sp,
+          fontSize: 14.sp,
           color: AppColors.textGrey,
-          height: 1.6,
-          letterSpacing: 0.2,
+          height: 1.4,
+          fontWeight: FontWeight.w400,
         ),
       ),
     );
   }
 
-  Widget _buildBottomSection() {
+  Widget _buildMinimalBottomSection() {
     return Container(
-      padding: EdgeInsets.all(24.w),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30.r),
-          topRight: Radius.circular(30.r),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.textGrey.withOpacity(0.1),
-            blurRadius: 10.r,
-            offset: Offset(0, -5.h),
-          ),
-        ],
-      ),
+      padding: EdgeInsets.fromLTRB(32.w, 16.h, 32.w, 24.h),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Custom page indicator
-          _buildCustomPageIndicator(),
-
-          SizedBox(height: 32.h),
-
-          // Action buttons
-          _buildActionButtons(),
+          // Simple dot indicator
+          _buildSimpleDotIndicator(),
+          SizedBox(height: 24.h),
+          // Clean action buttons
+          _buildCleanActionButtons(),
         ],
       ),
     );
   }
 
-  Widget _buildCustomPageIndicator() {
+  Widget _buildSimpleDotIndicator() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
         onboardingContents.length,
         (index) => AnimatedContainer(
           duration: const Duration(milliseconds: 300),
-          margin: EdgeInsets.symmetric(horizontal: 4.w),
+          margin: EdgeInsets.symmetric(horizontal: 3.w),
           width: _pageController.hasClients &&
                   _pageController.page?.round() == index
-              ? 24.w
-              : 8.w,
-          height: 8.h,
+              ? 20.w
+              : 6.w,
+          height: 6.h,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4.r),
+            borderRadius: BorderRadius.circular(3.r),
             color: _pageController.hasClients &&
                     _pageController.page?.round() == index
                 ? AppColors.primary
-                : AppColors.primaryLight.withOpacity(0.3),
+                : AppColors.lightGrey,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildCleanActionButtons() {
     return Column(
       children: [
-        // Create Account Button with gradient
+        // Primary button - minimal design
         Container(
           width: double.infinity,
-          height: 56.h,
+          height: 48.h,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [AppColors.primary, AppColors.primaryLight],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ),
-            borderRadius: BorderRadius.circular(16.r),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primary.withOpacity(0.3),
-                blurRadius: 12.r,
-                offset: Offset(0, 6.h),
-              ),
-            ],
+            color: AppColors.primary,
+            borderRadius: BorderRadius.circular(12.r),
           ),
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-              borderRadius: BorderRadius.circular(16.r),
+              borderRadius: BorderRadius.circular(12.r),
               onTap: () {
                 Navigator.push(
                   context,
@@ -501,7 +310,7 @@ class _OnboardingViewState extends State<OnboardingView>
                 child: Text(
                   "onboarding_create_account".tr(context),
                   style: TextStyle(
-                    fontSize: 16.sp,
+                    fontSize: 15.sp,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
                   ),
@@ -510,10 +319,8 @@ class _OnboardingViewState extends State<OnboardingView>
             ),
           ),
         ),
-
         SizedBox(height: 16.h),
-
-        // Login text with modern styling
+        // Login text - clean styling
         GestureDetector(
           onTap: () {
             Navigator.push(
@@ -524,12 +331,12 @@ class _OnboardingViewState extends State<OnboardingView>
               print("Navigate to Login");
             }
           },
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.h),
             child: RichText(
               text: TextSpan(
                 style: TextStyle(
-                  fontSize: 15.sp,
+                  fontSize: 14.sp,
                   color: AppColors.textGrey,
                   fontFamily: context.read<GlobalCubit>().language == "ar"
                       ? 'Tajawal'
@@ -543,9 +350,7 @@ class _OnboardingViewState extends State<OnboardingView>
                     text: ' ${"onboarding_login".tr(context)}',
                     style: TextStyle(
                       color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline,
-                      decorationColor: AppColors.primary.withOpacity(0.5),
+                      fontWeight: FontWeight.w600,
                       fontFamily: context.read<GlobalCubit>().language == "ar"
                           ? 'Tajawal'
                           : "Poppins",

@@ -1,4 +1,3 @@
-// forgot_password_bottom_sheet.dart
 import 'package:cozy/core/component/widgets/app_button.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/features/auth/view/cubit/auth_cubit.dart';
@@ -8,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/component/widgets/app_text_field.dart';
+import '../../../../core/component/widgets/error_message_handler.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/utils/validator.dart';
 import 'custom_bottom_sheet.dart';
@@ -35,57 +35,60 @@ class ForgotPasswordBottomSheet extends StatelessWidget {
                   ),
                 ),
               );
+            } else if (state is AuthFailure) {
+              Navigator.pop(context);
+              ErrorMessageHandler.showErrorToast(
+                  context, state.error.tr(context));
             }
           },
-          child: Form(
-            key: authCubit.formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "auth_forgot_password_title".tr(context),
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textBlack,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+            child: Form(
+              key: authCubit.formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "auth_forgot_password_title".tr(context),
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textBlack,
+                    ),
                   ),
-                ),
-                SizedBox(height: 8.h),
-                Text(
-                  "auth_forgot_password_sheet_subtitle".tr(context),
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: AppColors.textGrey,
+                  SizedBox(height: 8.h),
+                  Text(
+                    "auth_forgot_password_sheet_subtitle".tr(context),
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: AppColors.textGrey,
+                    ),
                   ),
-                ),
-                SizedBox(height: 24.h),
-                AppTextField(
-                  controller: authCubit.forgotPasswordEmailController,
-                  labelText: "auth_email_phone_label".tr(context),
-                  hintText: "auth_email_phone_hint".tr(context),
-                  prefixIcon: Icon(
-                    Icons.email_outlined,
-                    color: AppColors.textGrey.withOpacity(0.7),
+                  SizedBox(height: 24.h),
+                  AppTextField(
+                    controller: authCubit.forgotPasswordEmailController,
+                    labelText: "auth_email_phone_label".tr(context),
+                    enabled: state is AuthLoading ? false : true,
+                    hintText: "auth_email_phone_hint".tr(context),
+                    prefixIcon: Icon(
+                      Icons.email_outlined,
+                      color: AppColors.textGrey.withOpacity(0.7),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) =>
+                        Validators.validateEmail(value, context),
                   ),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) =>
-                      Validators.validateEmail(value, context),
-                ),
-                SizedBox(height: 24.h),
-                AppButton(
-                  text: "auth_send_code_button".tr(context),
-                  isLoading: state is AuthLoading,
-                  onPressed: () {
-                    debugPrint(
-                        'Form key state: ${authCubit.formKey.currentState}');
-
-                    if (authCubit.formKey.currentState!.validate()) {
-                      authCubit.sendForgotPasswordCode(authCubit.formKey);
-                    }
-                  },
-                ),
-              ],
+                  SizedBox(height: 24.h),
+                  AppButton(
+                    text: "auth_send_code_button".tr(context),
+                    isLoading: state is AuthLoading,
+                    onPressed: () {
+                      authCubit.sendForgotPasswordCode();
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         );

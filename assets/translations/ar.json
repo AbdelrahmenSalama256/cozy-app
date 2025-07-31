@@ -598,5 +598,13 @@
   "invalid_phone": "يرجى إدخال رقم هاتف صالح.",
   "password_weak": "كلمة المرور ضعيفة، يرجى استخدام حروف وأرقام",
   "password_too_short": "كلمة المرور قصيرة جدًا (يجب أن تكون 8 أحرف على الأقل)",
-  "require_strong_password": "يتطلب كلمة مرور قوية"
+  "require_strong_password": "يتطلب كلمة مرور قوية",
+  "name": "الاسم",
+  "contact_id": "معرف الاتصال",
+  "contact_status": "حالة الاتصال",
+  "created_at": "تاريخ الإنشاء",
+  "updated_at": "تاريخ التحديث",
+  "logout_success": "تم تسجيل الخروج بنجاح",
+  "logout_failed": "فشل تسجيل الخروج، يرجى المحاولة مرة أخرى",
+  "profile_updated_success": "تم تحديث الملف الشخصي بنجاح"
 }

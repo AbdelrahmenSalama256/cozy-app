@@ -1,65 +1,80 @@
+import 'package:cozy/core/component/custom_loading_indicator.dart';
 import 'package:cozy/core/component/widgets/app_button.dart';
+import 'package:cozy/core/component/widgets/error_message_handler.dart';
 import 'package:cozy/core/constants/app_colors.dart';
+import 'package:cozy/core/constants/app_constant.dart';
 import 'package:cozy/core/constants/language_switcher.dart';
+import 'package:cozy/core/constants/navigation.dart';
+import 'package:cozy/core/cubit/global_cubit.dart';
+import 'package:cozy/core/cubit/global_state.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/features/auth/view/create_account_screen.dart';
 import 'package:cozy/features/auth/view/login_screen.dart';
 import 'package:cozy/features/customer_services/view/customer_service_screen.dart';
 import 'package:cozy/features/profile/view/about_us_screen.dart';
+import 'package:cozy/features/profile/view/addresses_screen.dart';
+import 'package:cozy/features/profile/view/edit_profile_screen.dart';
+import 'package:cozy/features/profile/view/my_orders_screen.dart';
+import 'package:cozy/features/profile/view/notifications_screen.dart';
+import 'package:cozy/features/profile/view/payment_method_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'addresses_screen.dart';
-import 'edit_profile_screen.dart';
-import 'my_orders_screen.dart';
-import 'notifications_screen.dart';
-import 'payment_method_screen.dart';
+import '../../../core/component/custom_toast.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen>
-    with SingleTickerProviderStateMixin {
-  bool isLoggedIn = true; // This would come from your auth state management
-  late AnimationController _animationController;
-
-  final String userName = "John Doe";
-  final String userEmail = "john.doe@example.com";
-  final String userPhone = "+1 234 567 8900";
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.lightGrey,
-      body: SafeArea(
-        child: isLoggedIn ? _buildLoggedInProfile() : _buildGuestProfile(),
+    return BlocProvider(
+      create: (context) => GlobalCubit()..getProfile(),
+      child: BlocConsumer<GlobalCubit, GlobalState>(
+        listener: (context, state) {
+          if (state is LogoutSuccess) {
+            showToast(
+              context,
+              message: state.message.tr(context),
+              state: ToastStates.success,
+              style: ToastStyle.furniture,
+            );
+
+            navigateAndFinish(context, const LoginScreen());
+            context.read<GlobalCubit>().changeBottomNavIndex(0);
+          }
+          if (state is LogoutError) {
+            Navigator.pop(context);
+            ErrorMessageHandler.showErrorToast(
+              context,
+              state.message.tr(context),
+            );
+          }
+        },
+        builder: (context, state) {
+          final cubit = context.read<GlobalCubit>();
+
+          return Scaffold(
+            backgroundColor: AppColors.lightGrey,
+            body: SafeArea(
+              child: state is ProfileLoading
+                  ? const CustomLoadingIndicator()
+                  : AppConstants.token.isNotEmpty
+                      ? _buildLoggedInProfile(context, cubit, state)
+                      : _buildGuestProfile(context),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildLoggedInProfile() {
+  Widget _buildLoggedInProfile(
+      BuildContext context, GlobalCubit cubit, GlobalState state) {
+    final user = cubit.contactResponse?.data.user;
     return SingleChildScrollView(
       child: Column(
         children: [
-          // Header
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
@@ -78,7 +93,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     radius: 50.r,
                     backgroundColor: AppColors.primary,
                     child: Text(
-                      userName.split(' ').map((e) => e[0]).join(''),
+                      user?.name?.split(' ').map((e) => e[0]).join('') ?? 'U',
                       style: TextStyle(
                         fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
@@ -88,7 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   ),
                   SizedBox(height: 16.h),
                   Text(
-                    userName,
+                    user?.name ?? 'User',
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.bold,
@@ -97,7 +112,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    userEmail,
+                    user?.email ?? '',
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: AppColors.textGrey,
@@ -108,10 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               ),
             ),
           ),
-
           SizedBox(height: 20.h),
-
-          // Profile Options
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: Column(
@@ -119,80 +131,55 @@ class _ProfileScreenState extends State<ProfileScreen>
                 _buildProfileOption(
                   icon: Icons.person_outline,
                   title: 'edit_profile'.tr(context),
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const EditProfileScreen(),
-                      ),
-                    );
-                  },
+                          builder: (context) => const EditProfileScreen())),
                 ),
                 _buildProfileOption(
                   icon: Icons.shopping_bag_outlined,
                   title: 'my_orders'.tr(context),
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const MyOrdersScreen(),
-                      ),
-                    );
-                  },
+                          builder: (context) => const MyOrdersScreen())),
                 ),
                 _buildProfileOption(
                   icon: Icons.location_on_outlined,
                   title: 'addresses'.tr(context),
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const AddressesScreen(),
-                      ),
-                    );
-                  },
+                          builder: (context) => const AddressesScreen())),
                 ),
                 _buildProfileOption(
                   icon: Icons.payment_outlined,
                   title: 'payment_methods'.tr(context),
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const PaymentMethodsScreen(),
-                      ),
-                    );
-                  },
+                          builder: (context) => const PaymentMethodsScreen())),
                 ),
                 _buildProfileOption(
                   icon: Icons.support_agent_outlined,
                   title: 'customer_service'.tr(context),
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const CustomerServiceScreen(),
-                      ),
-                    );
-                  },
+                          builder: (context) => const CustomerServiceScreen())),
                 ),
                 _buildProfileOption(
                   icon: Icons.notifications_outlined,
                   title: 'notifications'.tr(context),
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const NotificationsScreen(),
-                      ),
-                    );
-                  },
+                          builder: (context) => const NotificationsScreen())),
                 ),
                 _buildProfileOption(
                   icon: Icons.language_outlined,
                   title: 'language'.tr(context),
                   onTap: () {
-                    // Replace with the LanguageSwitcher widget
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
@@ -211,23 +198,21 @@ class _ProfileScreenState extends State<ProfileScreen>
                 _buildProfileOption(
                   icon: Icons.info_outline,
                   title: 'about_us'.tr(context),
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const AboutUsScreen(),
+                          builder: (context) => const AboutUsScreen())),
+                ),
+                state is LogoutLoading
+                    ? const CustomLoadingIndicator()
+                    : _buildProfileOption(
+                        icon: Icons.logout,
+                        title: 'logout'.tr(context),
+                        onTap: () {
+                          _showLogoutDialog(context, cubit);
+                        },
+                        isDestructive: true,
                       ),
-                    );
-                  },
-                ),
-                _buildProfileOption(
-                  icon: Icons.logout,
-                  title: 'logout'.tr(context),
-                  onTap: () {
-                    _showLogoutDialog();
-                  },
-                  isDestructive: true,
-                ),
               ],
             ),
           ),
@@ -236,7 +221,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  Widget _buildGuestProfile() {
+  Widget _buildGuestProfile(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(20.w),
       child: Column(
@@ -270,27 +255,17 @@ class _ProfileScreenState extends State<ProfileScreen>
             width: double.infinity,
             height: 50.h,
             child: AppButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginScreen(),
-                  ),
-                );
-              },
+              onPressed: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen())),
               text: 'login'.tr(context),
             ),
           ),
           SizedBox(height: 16.h),
           TextButton(
-            onPressed: () {
-              Navigator.push(
+            onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const CreateAccountScreen(),
-                ),
-              );
-            },
+                    builder: (context) => const CreateAccountScreen())),
             child: Text(
               'create_account'.tr(context),
               style: TextStyle(
@@ -360,7 +335,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  void _showLogoutDialog() {
+  void _showLogoutDialog(BuildContext context, GlobalCubit cubit) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -373,10 +348,8 @@ class _ProfileScreenState extends State<ProfileScreen>
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                isLoggedIn = false;
-              });
+              cubit.logout();
+              // No need for Navigator.pop here; handled in listener
             },
             child: Text(
               'logout'.tr(context),

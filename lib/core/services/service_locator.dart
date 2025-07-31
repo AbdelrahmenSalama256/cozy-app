@@ -2,6 +2,7 @@ import 'package:cozy/core/cubit/global_cubit.dart';
 import 'package:cozy/core/database/api/dio_consumer.dart';
 import 'package:cozy/core/network/local_network.dart';
 import 'package:cozy/features/home/data/repo/home_repo.dart';
+import 'package:cozy/features/profile/data/repo/profile_repo.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
@@ -18,6 +19,7 @@ void initServiceLocator() {
   sl.registerLazySingleton(() => RegisterRepo(sl<DioConsumer>()));
   sl.registerLazySingleton(() => LoginRepo(sl<DioConsumer>()));
   sl.registerLazySingleton(() => HomeRepo(sl<DioConsumer>()));
+  sl.registerLazySingleton(() => ProfileRepo(sl<DioConsumer>()));
   // sl.registerLazySingleton(() => DataConnectionChecker());
   // sl.registerLazySingleton(() => NetworkInfoImpl(sl<DataConnectionChecker>()));
   //! Repositorys

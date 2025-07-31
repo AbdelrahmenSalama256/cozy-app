@@ -26,7 +26,7 @@ class ProfileLoaded extends GlobalState {}
 class ProfileError extends GlobalState {
   final String message;
 
-  ProfileError(this.message);
+  ProfileError({required this.message});
 }
 
 class LogoutLoading extends GlobalState {}

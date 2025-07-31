@@ -595,5 +595,13 @@
   "invalid_phone": "Please enter a valid phone number.",
   "require_strong_password": "Require strong password",
   "password_weak": "Password is weak, please use letters and numbers",
-  "password_too_short": "Password is too short (must be at least 8 characters)"
+  "password_too_short": "Password is too short (must be at least 8 characters)",
+  "name": "Name",
+  "contact_id": "Contact ID",
+  "contact_status": "Contact Status",
+  "created_at": "Created At",
+  "updated_at": "Updated At",
+  "logout_success": "Logged out successfully",
+  "logout_failed": "Logout failed, please try again",
+  "profile_updated_success": "Profile updated successfully"
 }

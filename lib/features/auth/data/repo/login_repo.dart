@@ -4,14 +4,14 @@ import 'package:cozy/core/database/api/api_consumer.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/database/api/end_points.dart';
-import '../models/user_login_model.dart';
+import '../../../profile/data/models/contact_model.dart';
 
 class LoginRepo {
   final ApiConsumer api;
 
   LoginRepo(this.api);
 
-  Future<Either<String, UserLoginModel>> loginUser({
+  Future<Either<String, ContactResponse>> loginUser({
     String? username,
     String? password,
   }) async {
@@ -24,13 +24,31 @@ class LoginRepo {
         },
       );
 
+      return Right(ContactResponse.fromJson(response.data));
+    } on ServerException catch (e) {
+      return Left(e.errorModel.detail);
+    } on NoInternetException catch (e) {
+      return Left(e.errorModel.detail);
+    }
+  }
+
+  Future<Either<String, String>> sendForgotPasswordCode(
+      String emailOrPhone) async {
+    try {
+      final response = await api.post(
+        EndPoints.forgotPassword,
+        data: {'email': emailOrPhone},
+        isFormData: true,
+      );
+
       if (response.data is Map<String, dynamic> &&
-          response.data['data'] != null) {
-        final userData = UserLoginModel.fromJson(response.data);
-        return Right(userData);
+          response.data['success'] == true) {
+        final message =
+            response.data['message']?.toString() ?? 'OTP sent successfully';
+        return Right(message);
       } else {
         final errorMessage =
-            response.data['message']?.toString() ?? 'Login failed';
+            response.data['message']?.toString() ?? 'Failed to send OTP';
         return Left(errorMessage);
       }
     } on ServerException catch (e) {
