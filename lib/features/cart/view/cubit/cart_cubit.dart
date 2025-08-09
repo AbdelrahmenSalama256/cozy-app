@@ -1,30 +1,54 @@
-import 'package:cozy/core/constants/widgets/print_util.dart';
-import 'package:cozy/features/cart/data/model/cart_model.dart';
-import 'package:cozy/features/cart/view/cubit/cart_state.dart';
-import 'package:cozy/features/home/data/model/product_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../data/model/cart_model.dart';
+import '../../data/repo/cart_repo.dart';
+import 'cart_state.dart';
+
 class CartCubit extends Cubit<CartState> {
-  CartCubit() : super(CartInitial()) {
-    _cart = Cart()
-        .addItem(sampleProductsNewArrivals[0], quantity: 2)
-        .addItem(sampleProductsPopular[0], quantity: 1);
+  final CartRepo cartRepo;
+
+  CartCubit(this.cartRepo) : super(CartInitial()) {
+    fetchCart();
+  }
+  Cart? cart;
+  Future<void> fetchCart() async {
+    emit(GetCartLoading());
+    final result = await cartRepo.getCartItems();
+    result.fold(
+      (error) => emit(GetCartError(error)),
+      (cartItems) {
+        cart = cartItems;
+        emit(GetCartLoaded());
+      },
+    );
   }
 
-  late Cart _cart;
-
-  Cart get cart => _cart;
-
-  void updateCartItemQuantity(String productId, int newQuantity) {
-    _cart = _cart.updateItemQuantity(productId, newQuantity);
-    emit(CartUpdated());
+  Future<void> removeFromCart(int id) async {
+    emit(CartItemRemovedLoading());
+    final result = await cartRepo.removeFromCart(id);
+    result.fold(
+      (error) => emit(CartItemRemovedError(error)),
+      (cartItems) {
+        // cart = cartItems;
+        emit(CartItemRemovedSuccess(cartItems));
+      },
+    );
   }
 
-  void removeFromCart(String productId) {
-    PrintUtil.debug('Removing item with productId: $productId');
-    PrintUtil.debug('Cart before removal: $_cart');
-    _cart = _cart.removeItem(productId);
-    PrintUtil.debug('Cart after removal: $_cart');
+  Future<void> clearCart() async {
+    emit(ClearCartLoading());
+    final result = await cartRepo.clearCart();
+    result.fold(
+      (error) => emit(ClearCartError(error)),
+      (cartItems) {
+        // cart = cartItems;
+        emit(ClearCartSuccess(cartItems));
+      },
+    );
+  }
+
+  void updateCartItemQuantity(int itemId, int newQuantity) {
+    // cart = cart.updateItemQuantity(itemId, newQuantity);
     emit(CartUpdated());
   }
 }

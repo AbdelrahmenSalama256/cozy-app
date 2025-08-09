@@ -1,6 +1,7 @@
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/features/home/view/widgets/favorite_button.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -15,6 +16,7 @@ class ProductCard extends StatelessWidget {
   final bool isFavorite;
   final VoidCallback? onTap;
   final VoidCallback? onFavoriteTap;
+  final VoidCallback? removeFromWishlist;
 
   const ProductCard({
     super.key,
@@ -22,6 +24,7 @@ class ProductCard extends StatelessWidget {
     required this.name,
     required this.storeName,
     required this.rating,
+    this.removeFromWishlist,
     required this.reviewCount,
     required this.price,
     this.oldPrice,
@@ -32,6 +35,9 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Calculate discount percentage safely
+    final discountPercentage = _calculateDiscountPercentage(price, oldPrice);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -54,16 +60,29 @@ class ProductCard extends StatelessWidget {
                 ClipRRect(
                   borderRadius:
                       BorderRadius.vertical(top: Radius.circular(16.r)),
-                  child: Image.asset(
+                  child: Image.network(
                     imageUrl,
                     width: double.infinity,
                     height: 110.h,
                     fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) =>
+                        loadingProgress == null
+                            ? child
+                            : Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          (loadingProgress.expectedTotalBytes ??
+                                              1)
+                                      : null,
+                                ),
+                              ),
                     errorBuilder: (context, error, stackTrace) => Container(
                       height: 110.h,
                       width: double.infinity,
                       color: AppColors.lightGrey,
-                      child: Icon(Icons.image_not_supported,
+                      child: Icon(CupertinoIcons.photo_on_rectangle,
                           color: AppColors.textGrey, size: 30.sp),
                     ),
                   ),
@@ -73,12 +92,16 @@ class ProductCard extends StatelessWidget {
                   right: 6.w,
                   child: FavoriteButton(
                     isFavorited: isFavorite,
-                    onFavoriteToggle: onFavoriteTap ?? () {},
+                    iconColor:
+                        isFavorite ? AppColors.primary : AppColors.textGrey,
+                    onFavoriteToggle: isFavorite
+                        ? (removeFromWishlist ?? () {})
+                        : (onFavoriteTap ?? () {}),
                     size: 18.sp,
                   ),
                 ),
                 // الخصم
-                if (oldPrice != null)
+                if (oldPrice != null && discountPercentage > 0)
                   Positioned(
                     top: 6.h,
                     left: 6.w,
@@ -90,7 +113,7 @@ class ProductCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6.r),
                       ),
                       child: Text(
-                        '-${(((oldPrice! - price) / oldPrice!) * 100).round()}%',
+                        '-${discountPercentage.round()}%',
                         style: TextStyle(
                           fontSize: 8.sp,
                           fontWeight: FontWeight.bold,
@@ -101,8 +124,6 @@ class ProductCard extends StatelessWidget {
                   ),
               ],
             ),
-
-            // باقي بيانات المنتج
             Padding(
               padding: EdgeInsets.all(8.w),
               child: Column(
@@ -133,7 +154,7 @@ class ProductCard extends StatelessWidget {
                       Icon(Icons.star, color: AppColors.warning, size: 10.sp),
                       SizedBox(width: 2.w),
                       Text(
-                        '$rating ($reviewCount)',
+                        '${rating.isFinite ? rating.toStringAsFixed(1) : '0.0'} ($reviewCount)',
                         style: TextStyle(
                           fontSize: 9.sp,
                           color: AppColors.textGrey,
@@ -145,14 +166,14 @@ class ProductCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        '\$${price.toStringAsFixed(2)}',
+                        '\$${price.isFinite ? price.toStringAsFixed(2) : '0.00'}',
                         style: TextStyle(
                           fontSize: 13.sp,
                           fontWeight: FontWeight.bold,
                           color: AppColors.primary,
                         ),
                       ),
-                      if (oldPrice != null) ...[
+                      if (oldPrice != null && oldPrice!.isFinite) ...[
                         SizedBox(width: 4.w),
                         Text(
                           '\$${oldPrice!.toStringAsFixed(0)}',
@@ -167,10 +188,21 @@ class ProductCard extends StatelessWidget {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
     );
+  }
+
+  double _calculateDiscountPercentage(double price, double? oldPrice) {
+    if (oldPrice == null ||
+        oldPrice == 0.0 ||
+        !oldPrice.isFinite ||
+        !price.isFinite) {
+      return 0.0;
+    }
+    final discount = ((oldPrice - price) / oldPrice) * 100;
+    return discount.isFinite ? discount : 0.0;
   }
 }

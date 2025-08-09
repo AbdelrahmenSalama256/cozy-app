@@ -22,18 +22,20 @@ class EndPoints {
 
   // ! shop
   static const String category = '${baseUrl}categories';
+  static const String allProducts = '${baseUrl}all-products';
+  static const String productDetails = '${baseUrl}product-details';
 
   // ! Wishlist
-  static const String favorites = '${baseUrl}favourite';
-  static const String addProductToWishlist = '${baseUrl}favourite/product';
-  static const String addAccountToWishlist = '${baseUrl}favourite/account';
+  static const String favorites = '${baseUrl}wishlist-details';
+  static const String addProductToWishlist = '${baseUrl}add-to-wishlist';
+  static const String removeFavItem = '${baseUrl}remove-wishlist';
 
   // ! Cart
-  static const String cart = '${baseUrl}carts';
-  static const String addProductToCart = '${baseUrl}carts';
+  static const String cart = '${baseUrl}cart-details';
+  static const String addProductToCart = '${baseUrl}add-to-cart';
   static const String updateCartItemQuantity = '${baseUrl}carts';
-  static const String removeCartItem = '${baseUrl}carts';
-  static const String cartInfo = '${baseUrl}cart-info';
+  static const String removeCartItem = '${baseUrl}remove-cart';
+  static const String clearCart = '${baseUrl}clear-cart';
 
   //// Buissniss Account Case
   //! Create Account

@@ -20,3 +20,22 @@ class HomeCategorySelected extends HomeState {
   final int index;
   HomeCategorySelected({required this.index});
 }
+
+class HomeProductsLoading extends HomeState {}
+
+class HomeProductsError extends HomeState {
+  final String error;
+  HomeProductsError(this.error);
+}
+
+class HomeProductsLoaded extends HomeState {}
+
+class ProductDetailsLoading extends HomeState {}
+
+class ProductDetailsLoaded extends HomeState {}
+
+class ProductDetailsError extends HomeState {
+  final String message;
+
+  ProductDetailsError(this.message);
+}

@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 
 class PrintUtil {
@@ -31,13 +32,22 @@ class PrintUtil {
 
   static void _printMessage(dynamic message, String color, String prefix) {
     if (message is Map || message is List) {
-      message = jsonEncode(message); // Pretty print JSON
+      message = const JsonEncoder.withIndent('  ').convert(message);
     }
 
-    final logMessage = '$color[$prefix]: $message$_reset';
+    final baseMessage = '[$prefix]: $message';
 
     if (kDebugMode) {
-      print(logMessage);
+      const chunkSize = 800; // حجم كل جزء
+      for (var i = 0; i < baseMessage.length; i += chunkSize) {
+        final chunk = baseMessage.substring(
+          i,
+          i + chunkSize > baseMessage.length
+              ? baseMessage.length
+              : i + chunkSize,
+        );
+        print('$color$chunk$_reset'); // اللون لكل chunk
+      }
     }
   }
 }

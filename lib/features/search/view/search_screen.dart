@@ -227,7 +227,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           reviewCount: product.reviewCount,
                           price: product.price,
                           oldPrice: product.oldPrice,
-                          isFavorite: product.isFavorite,
+                          isFavorite: product.isFavourited,
                           onTap: () {
                             // Handle product tap
                           },

@@ -1,162 +1,116 @@
-import 'package:cozy/features/home/data/model/product_model.dart';
-
 class CartItem {
-  final String id;
-  final ProductModel product;
-  int quantity;
-  final DateTime addedAt;
-  String? selectedSize;
-  String? selectedColor;
+  final int? id;
+  final ProductModel? product;
+  final int? quantity;
+  final DateTime? addedAt;
+  final int? variationId;
+  final String? variationName;
 
   CartItem({
-    required this.id,
-    required this.product,
-    required this.quantity,
-    DateTime? addedAt,
-    this.selectedSize,
-    this.selectedColor,
-  }) : addedAt = addedAt ?? DateTime.now();
+    this.id,
+    this.product,
+    this.quantity,
+    this.addedAt,
+    this.variationId,
+    this.variationName,
+  });
 
-  double get totalPrice => product.price * quantity;
-
-  CartItem copyWith({
-    String? id,
-    ProductModel? product,
-    int? quantity,
-    DateTime? addedAt,
-    String? selectedSize,
-    String? selectedColor,
-  }) {
-    return CartItem(
-      id: id ?? this.id,
-      product: product ?? this.product,
-      quantity: quantity ?? this.quantity,
-      addedAt: addedAt ?? this.addedAt,
-      selectedSize: selectedSize ?? this.selectedSize,
-      selectedColor: selectedColor ?? this.selectedColor,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'product': product.toJson(),
-      'quantity': quantity,
-      'addedAt': addedAt.toIso8601String(),
-      'selectedSize': selectedSize,
-      'selectedColor': selectedColor,
-    };
-  }
+  double? get totalPrice => (product?.price ?? 0.0) * (quantity ?? 0);
 
   factory CartItem.fromJson(Map<String, dynamic> json) {
+    final variation = json['variation'] as Map<String, dynamic>? ?? {};
+    final productJson = variation['product'] as Map<String, dynamic>? ?? {};
     return CartItem(
-      id: json['id'],
-      product: ProductModel.fromJson(json['product']),
-      quantity: json['quantity'],
-      addedAt: DateTime.parse(json['addedAt']),
-      selectedSize: json['selectedSize'],
-      selectedColor: json['selectedColor'],
+      id: json['id'] as int?,
+      product: ProductModel.fromJson({
+        ...productJson,
+        'sell_price_inc_tax': variation['sell_price_inc_tax'] ?? '0',
+        'image_url': productJson['image_url'] ?? '',
+      }),
+      quantity: json['quantity'] as int?,
+      addedAt: DateTime.tryParse(json['created_at'] as String? ?? ''),
+      variationId: json['variation_id'] as int?,
+      variationName: variation['name'] as String?,
     );
   }
 }
 
 class Cart {
   final List<CartItem> items;
-  final DateTime lastUpdated;
+  final int cartCount;
+  final double? subtotal;
+  final double? shipping;
+  final double? tax;
+  final double? total;
+  final int? totalItems;
+  final DateTime? lastUpdated;
 
   Cart({
-    List<CartItem>? items,
-    DateTime? lastUpdated,
-  })  : items = items ?? [],
-        lastUpdated = lastUpdated ?? DateTime.now();
-
-  int get totalItems => items.fold(0, (sum, item) => sum + item.quantity);
-
-  double get subtotal => items.fold(0, (sum, item) => sum + item.totalPrice);
-
-  double get shipping => subtotal > 100 ? 0 : 25.0; // Free shipping over $100
-
-  double get tax => subtotal * 0.08; // 8% tax
-
-  double get total => subtotal + shipping + tax;
-
-  bool get isEmpty => items.isEmpty;
-
-  bool get isNotEmpty => items.isNotEmpty;
-
-  CartItem? findItem(String productId) {
-    try {
-      return items.firstWhere((item) => item.product.id == productId);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  Cart addItem(ProductModel product,
-      {int quantity = 1, String? size, String? color}) {
-    final existingItem = findItem(product.id);
-
-    if (existingItem != null) {
-      // Update existing item quantity
-      final updatedItems = items.map((item) {
-        if (item.product.id == product.id) {
-          return item.copyWith(quantity: item.quantity + quantity);
-        }
-        return item;
-      }).toList();
-
-      return Cart(items: updatedItems);
-    } else {
-      // Add new item
-      final newItem = CartItem(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        product: product,
-        quantity: quantity,
-        selectedSize: size,
-        selectedColor: color,
-      );
-
-      return Cart(items: [...items, newItem]);
-    }
-  }
-
-  Cart removeItem(String itemId) {
-    final updatedItems = items.where((item) => item.id != itemId).toList();
-    return Cart(items: updatedItems);
-  }
-
-  Cart updateItemQuantity(String itemId, int newQuantity) {
-    if (newQuantity <= 0) {
-      return removeItem(itemId);
-    }
-
-    final updatedItems = items.map((item) {
-      if (item.id == itemId) {
-        return item.copyWith(quantity: newQuantity);
-      }
-      return item;
-    }).toList();
-
-    return Cart(items: updatedItems);
-  }
-
-  Cart clear() {
-    return Cart(items: []);
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'items': items.map((item) => item.toJson()).toList(),
-      'lastUpdated': lastUpdated.toIso8601String(),
-    };
-  }
+    required this.items,
+    required this.cartCount,
+    this.subtotal,
+    this.shipping,
+    this.tax,
+    this.total,
+    this.totalItems,
+    this.lastUpdated,
+  });
 
   factory Cart.fromJson(Map<String, dynamic> json) {
     return Cart(
-      items: (json['items'] as List)
-          .map((item) => CartItem.fromJson(item))
-          .toList(),
-      lastUpdated: DateTime.parse(json['lastUpdated']),
+      items: (json['data'] as List?)
+              ?.where((e) => e != null)
+              .map((e) => CartItem.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      cartCount: json['cart_count'] as int? ?? 0,
+      subtotal: double.tryParse(json['subtotal']?.toString() ?? '') ?? 0.0,
+      shipping: double.tryParse(json['shipping']?.toString() ?? '') ?? 0.0,
+      tax: double.tryParse(json['tax']?.toString() ?? '') ?? 0.0,
+      total: double.tryParse(json['total']?.toString() ?? '') ?? 0.0,
+      totalItems: json['total_items'] as int? ?? 0,
+      lastUpdated: DateTime.tryParse(json['last_updated'] as String? ?? '') ??
+          DateTime.now(),
+    );
+  }
+}
+
+class ProductModel {
+  final int? id;
+  final String? name;
+  final String? imagePath;
+  final double? price;
+  final String? storeName;
+  final double? rating;
+  final Map<String, String>? specifications;
+
+  ProductModel({
+    this.id,
+    this.name,
+    this.imagePath,
+    this.price,
+    this.storeName,
+    this.rating,
+    this.specifications,
+  });
+
+  factory ProductModel.fromJson(Map<String, dynamic> json) {
+    return ProductModel(
+      id: json['id'] as int?,
+      name: json['name'] as String? ?? 'Unknown',
+      imagePath: json['image_url'] as String? ?? '',
+      price:
+          double.tryParse(json['sell_price_inc_tax'] as String? ?? '0') ?? 0.0,
+      storeName: json['business_id'] != null
+          ? 'Store ${json['business_id']}'
+          : 'Unknown',
+      rating: 4.5,
+      specifications: {
+        'Material': 'Not specified',
+        'Dimensions': 'Not specified',
+        'Color': 'Not specified',
+        'Weight Capacity': 'Not specified',
+      },
     );
   }
 }

@@ -1,57 +1,68 @@
 import 'package:cozy/core/component/widgets/app_button.dart';
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
-import 'package:cozy/features/auth/view/login_screen.dart';
 import 'package:cozy/features/home/view/widgets/product_card.dart';
 import 'package:cozy/features/product/view/product_details_screen.dart';
+import 'package:cozy/features/wishlist/view/cubit/wishlist_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class WishlistScreen extends StatefulWidget {
+import '../../../core/component/custom_loading_indicator.dart';
+import '../../../core/component/custom_toast.dart';
+import '../../../core/constants/navigation.dart';
+import '../../../core/services/service_locator.dart';
+import '../data/repo/wishlist_repo.dart';
+import 'cubit/wishlist_state.dart';
+
+class WishlistScreen extends StatelessWidget {
   const WishlistScreen({super.key});
 
   @override
-  State<WishlistScreen> createState() => _WishlistScreenState();
-}
-
-class _WishlistScreenState extends State<WishlistScreen> {
-  bool isLoggedIn = true;
-  List<Map<String, dynamic>> favoriteProducts = [
-    {
-      'imageUrl': 'https://via.placeholder.com/120',
-      'name': 'item_name_0',
-      'storeName': 'store_name',
-      'rating': 4.5,
-      'reviewCount': 10,
-      'price': 99.99,
-      'oldPrice': 120.00,
-      'isFavorite': true,
-    },
-    {
-      'imageUrl': 'https://via.placeholder.com/120',
-      'name': 'item_name_1',
-      'storeName': 'store_name',
-      'rating': 4.5,
-      'reviewCount': 10,
-      'price': 99.99,
-      'oldPrice': 120.00,
-      'isFavorite': true,
-    },
-  ];
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.lightGrey,
-      body: SafeArea(
-        child: isLoggedIn ? _buildFavoritesContent() : _buildGuestFavorites(),
+    return BlocProvider(
+      create: (context) => WishlistCubit(sl<WishlistRepo>()),
+      child: Scaffold(
+        backgroundColor: AppColors.lightGrey,
+        body: SafeArea(
+          child: BlocListener<WishlistCubit, WishlistState>(
+            listener: (context, state) {
+              if (state is WishlistError) {
+                showToast(context,
+                    message: state.error.tr(context), state: ToastStates.error);
+              }
+              if (state is WishlistItemRemovedSuccess) {
+                showToast(context,
+                    message: state.message.tr(context),
+                    state: ToastStates.success);
+              }
+              if (state is WishlistItemRemovedError) {
+                showToast(context,
+                    message: state.error.tr(context), state: ToastStates.error);
+              }
+            },
+            child: BlocBuilder<WishlistCubit, WishlistState>(
+              builder: (context, state) {
+                final cubit = context.read<WishlistCubit>();
+                if (state is WishlistLoading) {
+                  return const Center(child: CustomLoadingIndicator());
+                }
+
+                return _buildFavoritesContent(context, cubit);
+              },
+            ),
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildFavoritesContent() {
-    if (favoriteProducts.isEmpty) {
-      return _buildEmptyFavorites();
+  Widget _buildFavoritesContent(BuildContext context, WishlistCubit cubit) {
+    if (cubit.wishlist?.items.isEmpty ?? true) {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: _buildEmptyFavorites(context),
+      );
     }
 
     return Column(
@@ -70,7 +81,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
               ),
               const Spacer(),
               Text(
-                '${favoriteProducts.length} ${'items'.tr(context)}',
+                '${cubit.wishlist?.wishlistCount ?? 0} ${'items'.tr(context)}',
                 style: TextStyle(
                   fontSize: 16.sp,
                   color: AppColors.textGrey,
@@ -88,30 +99,27 @@ class _WishlistScreenState extends State<WishlistScreen> {
               mainAxisSpacing: 15.h,
               childAspectRatio: 0.70,
             ),
-            itemCount: favoriteProducts.length,
+            itemCount: cubit.wishlist?.items.length ?? 0,
             itemBuilder: (context, index) {
-              final product = favoriteProducts[index];
+              final item = cubit.wishlist!.items[index];
+              final product = item.product;
               return ProductCard(
-                imageUrl: product['imageUrl'],
-                name: product['name'],
-                storeName: product['storeName'],
-                rating: product['rating'],
-                reviewCount: product['reviewCount'],
-                price: product['price'],
-                oldPrice: product['oldPrice'],
-                isFavorite: product['isFavorite'],
+                imageUrl: product.imageUrl,
+                name: product.name,
+                storeName: product.storeName,
+                rating: product.rating,
+                reviewCount: product.reviewCount,
+                price: product.price,
+                oldPrice: product.oldPrice,
+                isFavorite: true,
                 onTap: () {
-                  Navigator.push(
+                  navigateTo(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const ProductDetailsScreen(),
-                    ),
+                    ProductDetailsScreen(productId: product.id),
                   );
                 },
                 onFavoriteTap: () {
-                  setState(() {
-                    favoriteProducts.removeAt(index);
-                  });
+                  cubit.removeFromWishlist(item.id);
                 },
               );
             },
@@ -121,7 +129,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
     );
   }
 
-  Widget _buildEmptyFavorites() {
+  Widget _buildEmptyFavorites(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -152,63 +160,13 @@ class _WishlistScreenState extends State<WishlistScreen> {
           SizedBox(height: 40.h),
           AppButton(
             onPressed: () {
-              // Navigate to home or categories
+              // navigateTo(
+              //     context, const HomeScreen()); // Assuming HomeScreen exists
             },
             text: 'explore_products'.tr(context),
+            type: AppButtonType.primary,
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildGuestFavorites() {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(20.w),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.favorite_outline,
-              size: 100.sp,
-              color: AppColors.textGrey,
-            ),
-            SizedBox(height: 24.h),
-            Text(
-              'login_to_view_favorites'.tr(context),
-              style: TextStyle(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textBlack,
-              ),
-            ),
-            SizedBox(height: 12.h),
-            Text(
-              'login_favorites_message'.tr(context),
-              style: TextStyle(
-                fontSize: 16.sp,
-                color: AppColors.textGrey,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 40.h),
-            SizedBox(
-              width: double.infinity,
-              height: 50.h,
-              child: AppButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginScreen(),
-                    ),
-                  );
-                },
-                text: 'login'.tr(context),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

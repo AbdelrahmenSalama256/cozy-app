@@ -150,7 +150,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
           // Bottom Section with Total and Place Order
           CheckoutBottomSection(
-            total: widget.cart.total,
+            total: widget.cart.total!,
             isProcessing: isProcessing,
             onPlaceOrder: _placeOrder,
           ),
@@ -267,7 +267,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       MaterialPageRoute(
         builder: (context) => OrderSuccessScreen(
           orderNumber: 'ORD-${DateTime.now().millisecondsSinceEpoch}',
-          total: widget.cart.total,
+          total: widget.cart.total!,
         ),
       ),
     );

@@ -606,5 +606,14 @@
   "updated_at": "تاريخ التحديث",
   "logout_success": "تم تسجيل الخروج بنجاح",
   "logout_failed": "فشل تسجيل الخروج، يرجى المحاولة مرة أخرى",
-  "profile_updated_success": "تم تحديث الملف الشخصي بنجاح"
+  "profile_updated_success": "تم تحديث الملف الشخصي بنجاح",
+  "variations": "التباينات",
+  "available": "متوفر",
+  "no_products": "لا توجد منتجات",
+
+  "no_categories": "لا توجد فئات متاحة",
+  "item_removed_from_cart_successfully": "تمت إزالة العنصر من السلة بنجاح",
+  "cart_cleard_successfully": "تم تفريغ السلة بنجاح",
+  "network_error": "خطأ في الشبكة",
+  "Item removed from wishlist successfully": "تمت إزالة العنصر من المفضلة بنجاح"
 }

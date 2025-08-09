@@ -1,17 +1,37 @@
-import 'package:cozy/core/constants/app_colors.dart';
-import 'package:cozy/core/locale/app_loacl.dart';
-import 'package:cozy/features/home/data/model/category_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/constants/app_colors.dart';
+
 class CategoryCard extends StatelessWidget {
-  final CategoryModel category;
   final VoidCallback onTap;
+  final double? width;
+  final double? height;
+  final double? borderRadius;
+  final Color? backgroundColor;
+  final Color? iconColor;
+  final Color? iconBackgroundColor;
+  final double? iconSize;
+  final String? imageUrl;
+  final String? name;
+  final int? productCount;
+  final String? description;
 
   const CategoryCard({
     super.key,
-    required this.category,
     required this.onTap,
+    this.width,
+    this.height,
+    this.borderRadius = 20,
+    this.backgroundColor = Colors.white,
+    this.iconColor = AppColors.primary,
+    this.iconBackgroundColor,
+    this.iconSize = 16,
+    this.imageUrl,
+    this.name,
+    this.productCount,
+    this.description,
   });
 
   @override
@@ -19,9 +39,11 @@ class CategoryCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        width: width,
+        height: height,
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20.r),
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(borderRadius!.r),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -36,16 +58,30 @@ class CategoryCard extends StatelessWidget {
             Expanded(
               flex: 3,
               child: ClipRRect(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+                borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(borderRadius!.r)),
                 child: Image.network(
-                  "category.imageUrl",
+                  imageUrl ?? '',
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) =>
+                      loadingProgress == null
+                          ? child
+                          : Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes !=
+                                        null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        (loadingProgress.expectedTotalBytes ??
+                                            1)
+                                    : null,
+                              ),
+                            ),
                   errorBuilder: (context, error, stackTrace) => Container(
                     width: double.infinity,
                     color: AppColors.lightGrey,
                     child: Icon(
-                      Icons.category,
+                      CupertinoIcons.photo_on_rectangle,
                       color: AppColors.textGrey,
                       size: 40.sp,
                     ),
@@ -61,7 +97,7 @@ class CategoryCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "category.nameKey".tr(context),
+                      name ?? '',
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
@@ -70,7 +106,7 @@ class CategoryCard extends StatelessWidget {
                     ),
                     SizedBox(height: 4.h),
                     Text(
-                      '$category items',
+                      '${productCount ?? 0} items',
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: AppColors.textGrey,
@@ -84,13 +120,14 @@ class CategoryCard extends StatelessWidget {
                           width: 32.w,
                           height: 32.w,
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.1),
+                            color: iconBackgroundColor ??
+                                iconColor!.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(4.r),
                           ),
                           child: Icon(
                             Icons.arrow_forward,
-                            color: AppColors.primary,
-                            size: 16.sp,
+                            color: iconColor,
+                            size: iconSize!.sp,
                           ),
                         ),
                       ],

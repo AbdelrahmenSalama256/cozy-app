@@ -84,3 +84,31 @@ class LanguageChangingState extends GlobalState {}
 class LanguageChangedState extends GlobalState {}
 
 class GlobalTokenUpdated extends GlobalState {}
+
+class CartLoading extends GlobalState {}
+
+class CartLoaded extends GlobalState {
+  // final List<Cart> cartItems;
+
+  // CartLoaded({required this.cartItems});
+}
+
+class CartError extends GlobalState {
+  final String error;
+
+  CartError(this.error);
+}
+
+class RemoveWishlistLoading extends GlobalState {}
+
+class WishlistItemRemovedError extends GlobalState {
+  final String error;
+
+  WishlistItemRemovedError(this.error);
+}
+
+class WishlistItemRemovedSuccess extends GlobalState {
+  final String message;
+
+  WishlistItemRemovedSuccess(this.message);
+}

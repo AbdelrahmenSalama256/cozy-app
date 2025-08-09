@@ -603,5 +603,14 @@
   "updated_at": "Updated At",
   "logout_success": "Logged out successfully",
   "logout_failed": "Logout failed, please try again",
-  "profile_updated_success": "Profile updated successfully"
+  "profile_updated_success": "Profile updated successfully",
+  "variations": "Variations",
+  "available": "Available",
+  "no_products": "No products found",
+  "no_categories": "No categories available",
+
+  "item_removed_from_cart_successfully": "Item removed from cart successfully",
+  "cart_cleard_successfully": "Cart cleared successfully",
+  "network_error": "Network error",
+  "Item removed from wishlist successfully": "Item removed from wishlist successfully"
 }

@@ -18,7 +18,7 @@ class OrderItem extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(8.r),
             child: Image.network(
-              item.product.imagePath,
+              "${item.product?.imagePath}",
               width: 50.w,
               height: 50.w,
               fit: BoxFit.cover,
@@ -30,7 +30,7 @@ class OrderItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  item.product.imagePath,
+                  "${item.product?.imagePath}",
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
@@ -50,7 +50,7 @@ class OrderItem extends StatelessWidget {
             ),
           ),
           Text(
-            '\$${(item.product.price * item.quantity).toStringAsFixed(2)}',
+            '\$${(item.product!.price! * item.quantity!).toStringAsFixed(2)}',
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w600,

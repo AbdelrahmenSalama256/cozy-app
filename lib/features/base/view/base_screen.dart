@@ -4,6 +4,7 @@ import 'package:cozy/core/cubit/global_state.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/features/cart/view/cart_screen.dart';
 import 'package:cozy/features/category/view/categories_screen.dart';
+import 'package:cozy/features/home/view/cubit/home_cubit.dart';
 import 'package:cozy/features/home/view/home_screen.dart';
 import 'package:cozy/features/profile/view/profile_screen.dart';
 import 'package:cozy/features/wishlist/view/wishlist_screen.dart';
@@ -22,7 +23,10 @@ class BaseScreen extends StatefulWidget {
 
 class _BaseScreenState extends State<BaseScreen> {
   final List<Widget> _screens = [
-    const HomeScreen(),
+    BlocProvider(
+      create: (context) => HomeCubit()..initialize(),
+      child: const HomeScreen(),
+    ),
     const CategoriesScreen(),
     const CartScreen(),
     const WishlistScreen(),

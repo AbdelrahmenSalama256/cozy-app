@@ -3,12 +3,66 @@ import 'package:cozy/core/database/api/api_consumer.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/database/api/end_points.dart';
+import '../../../product/data/model/product_details_model.dart';
 import '../model/category_model.dart';
+import '../model/product_model.dart';
 
 class HomeRepo {
   final ApiConsumer api;
 
   HomeRepo(this.api);
+
+  Future<Either<String, Map<String, dynamic>>> getProducts({
+    int? categoryId,
+    int? page = 1,
+    int? perPage,
+    String? brandId,
+    String? sku,
+    String? name,
+  }) async {
+    try {
+      final queryParams = _buildQueryParams(
+        categoryId: categoryId,
+        page: page,
+        perPage: perPage,
+        brandId: brandId,
+        sku: sku,
+        name: name,
+      );
+      final response =
+          await api.get(EndPoints.allProducts, queryParameters: queryParams);
+      final data = response.data as Map<String, dynamic>;
+      final products = (data['data'] as List<dynamic>?)
+              ?.map(
+                  (json) => ProductModel.fromJson(json as Map<String, dynamic>))
+              .toList() ??
+          [];
+      return Right({'products': products, 'meta': data['meta']});
+    } on ServerException catch (e) {
+      return Left(e.errorModel.detail);
+    } on NoInternetException catch (e) {
+      return Left(e.errorModel.detail);
+    }
+  }
+
+  Map<String, dynamic>? _buildQueryParams({
+    int? categoryId,
+    int? page,
+    int? perPage,
+    String? brandId,
+    String? sku,
+    String? name,
+  }) {
+    final params = <String, dynamic>{
+      if (categoryId != null) 'category_id': categoryId,
+      if (page != null) 'page': page,
+      if (perPage != null) 'per_page': perPage,
+      if (brandId != null) 'brand_id': brandId,
+      if (sku != null) 'sku': sku,
+      if (name != null) 'name': name,
+    };
+    return params.isNotEmpty ? params : null;
+  }
 
   Future<Either<String, List<CategoryModel>>> fetchCategories() async {
     try {
@@ -22,6 +76,23 @@ class HomeRepo {
       return Left(e.errorModel.detail);
     } on NoInternetException catch (e) {
       return Left(e.errorModel.detail);
+    }
+  }
+
+  Future<Either<String, ProductDetailsModel>> getProductDetails(
+      int productId) async {
+    try {
+      final response = await api.get('${EndPoints.productDetails}/$productId');
+      final responseData = response.data as Map<String, dynamic>;
+
+      // Pass the entire response data to the model
+      return Right(ProductDetailsModel.fromJson(responseData));
+    } on ServerException catch (e) {
+      return Left(e.errorModel.detail);
+    } on NoInternetException catch (e) {
+      return Left(e.errorModel.detail);
+    } catch (e) {
+      return Left('Failed to load product details');
     }
   }
 }

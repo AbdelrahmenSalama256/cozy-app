@@ -2,6 +2,7 @@
 class CategoryModel {
   final int? id;
   final String? name;
+  final String? imageUrl;
   final int? businessId;
   final String? shortCode;
   final int? parentId;
@@ -19,6 +20,7 @@ class CategoryModel {
     this.id,
     this.name,
     this.businessId,
+    this.imageUrl,
     this.shortCode,
     this.parentId,
     this.createdBy,
@@ -36,6 +38,7 @@ class CategoryModel {
     return CategoryModel(
       id: json['id'] as int?,
       name: json['name'] as String?,
+      imageUrl: json['image'] as String?,
       businessId: json['business_id'] as int?,
       shortCode: json['short_code'] as String?,
       parentId: json['parent_id'] as int?,

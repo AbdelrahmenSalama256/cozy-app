@@ -4,10 +4,13 @@ import 'package:cozy/core/constants/app_constant.dart';
 import 'package:cozy/core/constants/widgets/print_util.dart';
 import 'package:cozy/core/network/local_network.dart';
 import 'package:cozy/core/services/service_locator.dart';
+import 'package:cozy/features/cart/data/repo/cart_repo.dart';
+import 'package:cozy/features/wishlist/data/repo/wishlist_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../features/cart/data/model/cart_model.dart';
 import '../../features/profile/data/models/contact_model.dart';
 import '../../features/profile/data/repo/profile_repo.dart';
 import 'global_state.dart';
@@ -18,8 +21,8 @@ class GlobalCubit extends Cubit<GlobalState> {
   void init() {
     PrintUtil.warning(
         "User type is ${sl<CacheHelper>().getDataString(key: AppConstants.userType)}");
-    PrintUtil.debug(
-        "User token is ${sl<CacheHelper>().getDataString(key: AppConstants.token)}");
+    PrintUtil.success(
+        "${sl<CacheHelper>().getDataString(key: AppConstants.token)}");
     getProfile();
   }
 
@@ -146,6 +149,47 @@ class GlobalCubit extends Cubit<GlobalState> {
         currentNavIndex = 0;
         PrintUtil.success("Logged out successfully: $message");
         emit(LogoutSuccess(message));
+      },
+    );
+  }
+
+  List<Cart> cartItems = [];
+
+  Future<void> addToCart(
+      {required String productId,
+      required int quantity,
+      required int variation}) async {
+    emit(CartLoading());
+    final result = await sl<CartRepo>().addToCart(
+        productId: productId, quantity: quantity, variationId: variation);
+    result.fold(
+      (error) => emit(CartError(error)),
+      (item) {
+        // cartItems.add(item);
+        emit(CartLoaded());
+      },
+    );
+  }
+
+  Future<void> addtowishlist({required String productId}) async {
+    emit(WishlistLoading());
+    final result = await sl<WishlistRepo>().addToWishlist(productId: productId);
+    result.fold(
+      (error) => emit(WishlistError(error)),
+      (item) {
+        // cartItems.add(item);
+        emit(WishlistSuccess(item));
+      },
+    );
+  }
+
+  Future<void> removeFromWishlist(int id) async {
+    emit(RemoveWishlistLoading());
+    final result = await sl<WishlistRepo>().removeFromWishlist(id);
+    result.fold(
+      (error) => emit(WishlistItemRemovedError(error)),
+      (message) {
+        emit(WishlistItemRemovedSuccess(message));
       },
     );
   }
