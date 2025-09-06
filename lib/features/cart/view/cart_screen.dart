@@ -171,7 +171,7 @@ class CartScreen extends StatelessWidget {
           child: Column(
             children: [
               _buildSummaryRow(
-                  context, 'subtotal'.tr(context), cubit.cart?.subtotal ?? 0),
+                  context, 'subtotal'.tr(context), cubit.cart?.cartTotal ?? 0),
               GestureDetector(
                 onTap: () => _showShippingSheet(context, cubit),
                 child: _buildSummaryRow(
@@ -182,7 +182,7 @@ class CartScreen extends StatelessWidget {
                   context, 'tax'.tr(context), cubit.cart?.tax ?? 0),
               Divider(height: 20.h),
               _buildSummaryRow(
-                  context, 'total'.tr(context), cubit.cart?.total ?? 0,
+                  context, 'total'.tr(context), cubit.cart?.finalTotal ?? 0,
                   isTotal: true),
               SizedBox(height: 20.h),
               AppButton(
@@ -264,7 +264,7 @@ class CartScreen extends StatelessWidget {
               ),
             ),
             Text(
-              '\$${amount.toStringAsFixed(2)}',
+              amount.toStringAsFixed(2),
               style: TextStyle(
                 fontSize: isTotal ? 18.sp : 16.sp,
                 fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,

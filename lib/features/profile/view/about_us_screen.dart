@@ -9,7 +9,7 @@ class AboutUsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightGrey,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,

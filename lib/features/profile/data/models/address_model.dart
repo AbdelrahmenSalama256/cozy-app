@@ -12,13 +12,13 @@ class AddressModel {
 
   AddressModel({
     required this.id,
-    required this.title,
-    required this.name,
+    this.title = 'Address',
+    this.name = '',
     required this.phone,
     required this.street,
     required this.city,
-    required this.state,
-    required this.zipCode,
+    this.state = '',
+    this.zipCode = '',
     required this.country,
     this.isDefault = false,
   });
@@ -51,33 +51,73 @@ class AddressModel {
 
   String get fullAddress => '$street, $city, $state $zipCode, $country';
 
-  Map<String, dynamic> toJson() {
+  // For adding new address
+  Map<String, dynamic> toAddJson() {
     return {
-      'id': id,
-      'title': title,
-      'name': name,
-      'phone': phone,
-      'street': street,
-      'city': city,
-      'state': state,
-      'zipCode': zipCode,
       'country': country,
-      'isDefault': isDefault,
+      'city': city,
+      'address': street,
+      'phone': phone,
+      'is_default': isDefault ? '1' : '0',
+      if (title.isNotEmpty) 'title': title,
+      if (name.isNotEmpty) 'name': name,
+      if (state.isNotEmpty) 'state': state,
+      if (zipCode.isNotEmpty) 'zipCode': zipCode,
+    };
+  }
+
+  // For updating address
+  Map<String, dynamic> toUpdateJson() {
+    return {
+      'country': country,
+      'city': city,
+      'address': street,
+      'phone': phone,
+      'is_default': isDefault ? '1' : '0',
+      if (title.isNotEmpty) 'title': title,
+      if (name.isNotEmpty) 'name': name,
+      if (state.isNotEmpty) 'state': state,
+      if (zipCode.isNotEmpty) 'zipCode': zipCode,
     };
   }
 
   factory AddressModel.fromJson(Map<String, dynamic> json) {
     return AddressModel(
-      id: json['id'],
-      title: json['title'],
-      name: json['name'],
-      phone: json['phone'],
-      street: json['street'],
-      city: json['city'],
-      state: json['state'],
-      zipCode: json['zipCode'],
-      country: json['country'],
-      isDefault: json['isDefault'] ?? false,
+      id: json['id']?.toString() ?? '',
+      title: json.containsKey('title') &&
+              json['title'] != null &&
+              json['title'].toString().isNotEmpty
+          ? json['title'].toString()
+          : 'Address',
+      name: json.containsKey('name') && json['name'] != null
+          ? json['name'].toString()
+          : '',
+      phone: json.containsKey('phone') && json['phone'] != null
+          ? json['phone'].toString()
+          : (json.containsKey('mobile') && json['mobile'] != null
+              ? json['mobile'].toString()
+              : ''),
+      street: json.containsKey('address') && json['address'] != null
+          ? json['address'].toString()
+          : '',
+      city: json.containsKey('city') && json['city'] != null
+          ? json['city'].toString()
+          : '',
+      state: json.containsKey('state') && json['state'] != null
+          ? json['state'].toString()
+          : '',
+      zipCode: json.containsKey('zipCode') && json['zipCode'] != null
+          ? json['zipCode'].toString()
+          : (json.containsKey('postal_code') && json['postal_code'] != null
+              ? json['postal_code'].toString()
+              : ''),
+      country: json.containsKey('country') && json['country'] != null
+          ? json['country'].toString()
+          : '',
+      isDefault: json.containsKey('is_default') &&
+          (json['is_default'] == '1' ||
+              json['is_default'] == 1 ||
+              json['is_default'] == true),
     );
   }
 }

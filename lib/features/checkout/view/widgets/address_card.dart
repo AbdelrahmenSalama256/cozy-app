@@ -1,13 +1,11 @@
-// address_card.dart
+import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
+import 'package:cozy/features/profile/data/models/address_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../data/models/address_model.dart';
-
 class AddressCard extends StatelessWidget {
-  final Address address;
+  final AddressModel address;
   final bool isSelected;
 
   const AddressCard({
@@ -43,7 +41,7 @@ class AddressCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      address.title,
+                      address.name.isNotEmpty ? address.name : address.title,
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w600,
@@ -73,19 +71,22 @@ class AddressCard extends StatelessWidget {
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  address.address,
+                  address.fullAddress,
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: AppColors.textGrey,
                   ),
                 ),
-                Text(
-                  address.city,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: AppColors.textGrey,
+                if (address.phone.isNotEmpty) ...[
+                  SizedBox(height: 4.h),
+                  Text(
+                    address.phone,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: AppColors.textGrey,
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),

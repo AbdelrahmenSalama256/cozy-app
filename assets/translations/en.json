@@ -612,5 +612,6 @@
   "item_removed_from_cart_successfully": "Item removed from cart successfully",
   "cart_cleard_successfully": "Cart cleared successfully",
   "network_error": "Network error",
-  "Item removed from wishlist successfully": "Item removed from wishlist successfully"
+  "Item removed from wishlist successfully": "Item removed from wishlist successfully",
+  "pending": "Pending"
 }

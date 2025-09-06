@@ -44,14 +44,16 @@ class ProfileSection extends StatelessWidget {
           ? Row(
               children: [
                 Container(
-                  width: 48.r,
-                  height: 48.r,
+                  width: 100.w,
+                  height: 100.w,
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     color: AppColors.textPrimary,
                   ),
                   child: ClipOval(
                     child: CustomCachedImage(
+                      w: 100.w,
+                      h: 100.h,
                       imageUrl: userImageUrl,
                       fit: BoxFit.cover,
                     ),
@@ -60,8 +62,10 @@ class ProfileSection extends StatelessWidget {
                 SizedBox(width: 12.w),
                 Text(
                   userName,
-                  style:
-                      TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                      fontSize: 25.sp,
+                      color: AppColors.black,
+                      fontWeight: FontWeight.w500),
                 ),
               ],
             )
@@ -75,7 +79,7 @@ class ProfileSection extends StatelessWidget {
 
                 // Name
                 SizedBox(
-                  width: 90.w, // Fixed width for consistent layout
+                  // width: 90.w, // Fixed width for consistent layout
                   child: Text(
                     userName,
                     style: textStyle ??
@@ -116,8 +120,8 @@ class ProfileSection extends StatelessWidget {
   Widget _buildAvatar() {
     if (isAddNew) {
       return Container(
-        width: (avatarRadius * 2).w,
-        height: (avatarRadius * 2).w,
+        width: 100.w,
+        height: 100.w,
         decoration: BoxDecoration(
           color: const Color(0xffF6F6F6),
           shape: BoxShape.circle,
@@ -137,8 +141,8 @@ class ProfileSection extends StatelessWidget {
     if (userImageUrl.isEmpty) {
       // Empty image URL - show placeholder
       return Container(
-        width: (avatarRadius * 2).w,
-        height: (avatarRadius * 2).w,
+        width: 100.w,
+        height: 100.w,
         decoration: BoxDecoration(
           color: isVendor ? Colors.black : Colors.grey.shade200,
           shape: BoxShape.circle,
@@ -156,8 +160,8 @@ class ProfileSection extends StatelessWidget {
 
     // Has image URL
     return Container(
-      width: (avatarRadius * 2).w,
-      height: (avatarRadius * 2).w,
+      width: 100.w,
+      height: 100.w,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: borderColor != null

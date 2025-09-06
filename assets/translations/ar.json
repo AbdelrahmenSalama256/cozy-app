@@ -615,5 +615,6 @@
   "item_removed_from_cart_successfully": "تمت إزالة العنصر من السلة بنجاح",
   "cart_cleard_successfully": "تم تفريغ السلة بنجاح",
   "network_error": "خطأ في الشبكة",
-  "Item removed from wishlist successfully": "تمت إزالة العنصر من المفضلة بنجاح"
+  "Item removed from wishlist successfully": "تمت إزالة العنصر من المفضلة بنجاح",
+  "pending": "قيد الانتظار"
 }

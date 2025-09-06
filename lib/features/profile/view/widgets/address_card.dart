@@ -51,7 +51,7 @@ class AddressCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4.r),
                 ),
                 child: Text(
-                  address.title,
+                  address.name.isNotEmpty ? address.name : address.title,
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w600,

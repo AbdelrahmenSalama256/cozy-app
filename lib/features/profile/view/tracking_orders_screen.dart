@@ -15,14 +15,13 @@ class OrderTrackingDetailsScreen extends StatelessWidget {
   final int orderItems = 3;
   final double orderTotal = 799.97;
   final String trackingNumber = 'TRK7890123';
-  final String statusText = 'shipped'; // Translation key for status
-  final bool isDelivered =
-      false; // Simulates OrderStatus.shipped for tracking progress
+  final String statusText = 'shipped';
+  final bool isDelivered = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightGrey,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,

@@ -17,7 +17,7 @@ class CategoriesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightGrey,
+      backgroundColor: AppColors.white,
       body: BlocProvider(
         create: (context) => HomeCubit()..fetchCategories(),
         child: BlocBuilder<HomeCubit, HomeState>(

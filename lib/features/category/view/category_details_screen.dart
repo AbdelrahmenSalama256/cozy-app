@@ -64,7 +64,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightGrey,
+      backgroundColor: AppColors.white,
       body: SafeArea(
         child: BlocProvider(
           create: (context) => HomeCubit()..fetchProducts(isRefresh: true),

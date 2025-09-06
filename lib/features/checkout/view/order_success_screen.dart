@@ -27,11 +27,12 @@ class OrderSuccessScreen extends StatelessWidget {
       body: BlocBuilder<GlobalCubit, GlobalState>(
         builder: (context, state) {
           return SafeArea(
-            child: Padding(
+            child: SingleChildScrollView(
               padding: EdgeInsets.all(20.w),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  SizedBox(height: 20.h), // Added top padding
                   Container(
                     width: 120.w,
                     height: 120.w,
@@ -121,7 +122,6 @@ class OrderSuccessScreen extends StatelessWidget {
                   AppButton(
                     onPressed: () {
                       Navigator.pop(context);
-
                       context.read<GlobalCubit>().changeBottomNavIndex(0);
                     },
                     text: 'continue_shopping'.tr(context),
@@ -134,6 +134,7 @@ class OrderSuccessScreen extends StatelessWidget {
                     type: AppButtonType.secondary,
                     text: 'track_order'.tr(context),
                   ),
+                  SizedBox(height: 20.h), // Added bottom padding for safety
                 ],
               ),
             ),

@@ -3,7 +3,7 @@
 class EndPoints {
   static const String baseUrl = "https://cozy-home.cangrowonline.com/api/";
   static const String baseUrlWithoutApi =
-      "https://cozy-home.cangrowonline.com/";
+      "https://cozy-home.cangrowonline.com/uploads/";
   //! Login
   static const String login = "${baseUrl}login";
   static const String getProfile = "${baseUrl}contact-details";
@@ -38,9 +38,20 @@ class EndPoints {
   static const String clearCart = '${baseUrl}clear-cart';
 
   //// Buissniss Account Case
-  //! Create Account
-  static const String createAccount = '${baseUrl}accounts';
-  static const String createAccountStepOne = '${baseUrl}accounts/step-one';
+  //! Addresses
+  static const String getAddresses = '${baseUrl}addresses';
+  static const String addAddress = '${baseUrl}addresses';
+  static const String updateAddress = '${baseUrl}update-address';
+  static const String deleteAddress = '${baseUrl}addresses';
+  static const String setDefaultAddress = '${baseUrl}addresses';
+
+  //! place Orders
+  static const String placeOrder = '${baseUrl}place-order';
+
+  //! Fetch Orders
+  static const String getOrders = '${baseUrl}my-orders';
+  static const String cancelOrder = '${baseUrl}orders';
+  static const String trackOrder = '${baseUrl}track-order';
 }
 
 class ApiKey {

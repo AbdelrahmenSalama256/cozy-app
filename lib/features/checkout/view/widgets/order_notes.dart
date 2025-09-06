@@ -1,13 +1,13 @@
-// order_notes.dart
+import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/features/checkout/view/widgets/section_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../core/constants/app_colors.dart';
-
 class OrderNotesSection extends StatelessWidget {
-  const OrderNotesSection({super.key});
+  final TextEditingController controller;
+
+  const OrderNotesSection({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +18,7 @@ class OrderNotesSection extends StatelessWidget {
         children: [
           SizedBox(height: 12.h),
           TextField(
+            controller: controller,
             maxLines: 3,
             decoration: InputDecoration(
               hintText: 'add_special_instructions'.tr(context),

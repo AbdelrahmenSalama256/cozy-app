@@ -42,6 +42,8 @@ class Cart {
   final double? shipping;
   final double? tax;
   final double? total;
+  final double? cartTotal;
+  final double? finalTotal;
   final int? totalItems;
   final DateTime? lastUpdated;
 
@@ -52,6 +54,8 @@ class Cart {
     this.shipping,
     this.tax,
     this.total,
+    this.cartTotal,
+    this.finalTotal,
     this.totalItems,
     this.lastUpdated,
   });
@@ -67,7 +71,9 @@ class Cart {
       subtotal: double.tryParse(json['subtotal']?.toString() ?? '') ?? 0.0,
       shipping: double.tryParse(json['shipping']?.toString() ?? '') ?? 0.0,
       tax: double.tryParse(json['tax']?.toString() ?? '') ?? 0.0,
-      total: double.tryParse(json['total']?.toString() ?? '') ?? 0.0,
+      total: double.tryParse(json['final_total']?.toString() ?? '') ?? 0.0,
+      cartTotal: double.tryParse(json['cart_total']?.toString() ?? '') ?? 0.0,
+      finalTotal: double.tryParse(json['final_total']?.toString() ?? '') ?? 0.0,
       totalItems: json['total_items'] as int? ?? 0,
       lastUpdated: DateTime.tryParse(json['last_updated'] as String? ?? '') ??
           DateTime.now(),

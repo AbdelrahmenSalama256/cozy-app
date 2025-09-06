@@ -13,7 +13,7 @@ class CustomerServiceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightGrey,
+      backgroundColor: AppColors.white,
       appBar: _buildAppBar(context),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20.w),

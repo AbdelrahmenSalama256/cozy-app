@@ -75,6 +75,7 @@ class UserDetails {
   final String? createdAt;
   final String? updatedAt;
   final String? image;
+  final String? imageUrl;
   final String? fcmToken;
 
   UserDetails({
@@ -94,6 +95,7 @@ class UserDetails {
     this.updatedAt,
     this.image,
     this.fcmToken,
+    this.imageUrl,
   });
 
   factory UserDetails.fromJson(Map<String, dynamic> json) {
@@ -114,6 +116,7 @@ class UserDetails {
       updatedAt: json['updated_at'] as String?,
       image: json['image'] as String?,
       fcmToken: json['fcm_token'] as String?,
+      imageUrl: json['image_url'] as String?,
     );
   }
 
@@ -134,6 +137,7 @@ class UserDetails {
         'updated_at': updatedAt,
         'image': image,
         'fcm_token': fcmToken,
+        'image_url': imageUrl,
       };
 
   UserDetails copyWith({
@@ -152,6 +156,7 @@ class UserDetails {
     String? createdAt,
     String? updatedAt,
     String? image,
+    String? imageUrl,
     String? fcmToken,
   }) {
     return UserDetails(
@@ -171,6 +176,7 @@ class UserDetails {
       updatedAt: updatedAt ?? this.updatedAt,
       image: image ?? this.image,
       fcmToken: fcmToken ?? this.fcmToken,
+      imageUrl: imageUrl ?? this.imageUrl,
     );
   }
 }

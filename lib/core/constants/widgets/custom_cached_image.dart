@@ -1,7 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cozy/core/constants/widgets/custom_shimmer.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:cozy/core/constants/widgets/custom_shimmer.dart';
 
 class CustomCachedImage extends StatelessWidget {
   const CustomCachedImage({
@@ -30,7 +31,15 @@ class CustomCachedImage extends StatelessWidget {
             h: h,
             w: w,
           ),
-          errorWidget: (context, url, error) => const Icon(Icons.error),
+          errorWidget: (context, url, error) => Container(
+              height: h ?? 100.h,
+              width: w ?? 100.w,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(borderRadius ?? 15.r),
+              ),
+              child:
+                  Icon(CupertinoIcons.person, size: 40.r, color: Colors.grey)),
           fit: fit ?? BoxFit.cover,
         ),
       ),

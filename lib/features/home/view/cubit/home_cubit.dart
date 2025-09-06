@@ -18,6 +18,8 @@ class HomeCubit extends Cubit<HomeState> {
   int currentPage = 1;
   bool isLoadingMore = false;
   bool hasMore = true;
+  String selectedVariationId = '';
+  int quantity = 1;
 
   void initialize() {
     fetchCategories();
@@ -88,14 +90,31 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> fetchProductDetails(int productId) async {
     emit(ProductDetailsLoading());
+    // Reset state
+    selectedVariationId = '';
+    quantity = 1;
+
     final result = await homeRepo.getProductDetails(productId);
     result.fold(
       (error) => emit(ProductDetailsError(error)),
       (product) {
-        // productDetails.add(product);
         productDetails = [product];
+        // Set default variation if exists
+        if (product.variations?.isNotEmpty ?? false) {
+          selectedVariationId = product.variations!.first.id?.toString() ?? '';
+        }
         emit(ProductDetailsLoaded());
       },
     );
+  }
+
+  void selectVariation(String variationId) {
+    selectedVariationId = variationId;
+    emit(ProductVariationSelected());
+  }
+
+  void updateQuantity(int newQuantity) {
+    quantity = newQuantity;
+    emit(ProductQuantityUpdated());
   }
 }

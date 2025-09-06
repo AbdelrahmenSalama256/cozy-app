@@ -76,7 +76,11 @@ class EditProfileScreen extends StatelessWidget {
                                       )
                                     : ProfileSection(
                                         userName: user.name ?? '',
-                                        userImageUrl: user.image ?? '',
+                                        userImageUrl: user.imageUrl ?? "",
+                                        textStyle: TextStyle(
+                                            fontSize: 20.sp,
+                                            color: AppColors.black,
+                                            fontWeight: FontWeight.w500),
                                         subtitle: '',
                                         isVendor: true,
                                       ),

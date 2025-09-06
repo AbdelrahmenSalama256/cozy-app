@@ -8,20 +8,24 @@ import 'package:cozy/core/constants/navigation.dart';
 import 'package:cozy/core/cubit/global_cubit.dart';
 import 'package:cozy/core/cubit/global_state.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
+import 'package:cozy/core/services/service_locator.dart';
 import 'package:cozy/features/auth/view/create_account_screen.dart';
 import 'package:cozy/features/auth/view/login_screen.dart';
 import 'package:cozy/features/customer_services/view/customer_service_screen.dart';
 import 'package:cozy/features/profile/view/about_us_screen.dart';
 import 'package:cozy/features/profile/view/addresses_screen.dart';
+import 'package:cozy/features/profile/view/cubit/address_cubit.dart';
 import 'package:cozy/features/profile/view/edit_profile_screen.dart';
 import 'package:cozy/features/profile/view/my_orders_screen.dart';
 import 'package:cozy/features/profile/view/notifications_screen.dart';
 import 'package:cozy/features/profile/view/payment_method_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/component/custom_toast.dart';
+import '../data/repo/address_repo.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -92,14 +96,36 @@ class ProfileScreen extends StatelessWidget {
                   CircleAvatar(
                     radius: 50.r,
                     backgroundColor: AppColors.primary,
-                    child: Text(
-                      user?.name?.split(' ').map((e) => e[0]).join('') ?? 'U',
-                      style: TextStyle(
-                        fontSize: 24.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
+                    child: user?.image == null
+                        ? Text(
+                            user?.name?.split(' ').map((e) => e[0]).join('') ??
+                                'U',
+                            style: TextStyle(
+                              fontSize: 24.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          )
+                        : ClipRRect(
+                            clipBehavior: Clip.hardEdge,
+                            borderRadius: BorderRadius.circular(100.r),
+                            child: Image.network(
+                              user?.imageUrl ?? "",
+                              width: 90.w,
+                              height: 90.w,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
+                                      height: 100.h,
+                                      width: 100.w,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade200,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(CupertinoIcons.person,
+                                          size: 40.r, color: Colors.grey)),
+                            ),
+                          ),
                   ),
                   SizedBox(height: 16.h),
                   Text(
@@ -150,7 +176,12 @@ class ProfileScreen extends StatelessWidget {
                   onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const AddressesScreen())),
+                          builder: (context) => BlocProvider(
+                                create: (context) =>
+                                    AddressCubit(sl<AddressRepo>())
+                                      ..fetchAddresses(),
+                                child: const AddressesScreen(),
+                              ))),
                 ),
                 _buildProfileOption(
                   icon: Icons.payment_outlined,

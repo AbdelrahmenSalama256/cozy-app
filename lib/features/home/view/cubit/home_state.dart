@@ -39,3 +39,8 @@ class ProductDetailsError extends HomeState {
 
   ProductDetailsError(this.message);
 }
+
+class ProductVariationSelected extends HomeState {}
+
+// ProductQuantityUpdated
+class ProductQuantityUpdated extends HomeState {}

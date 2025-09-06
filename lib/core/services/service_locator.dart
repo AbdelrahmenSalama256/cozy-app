@@ -2,7 +2,9 @@ import 'package:cozy/core/cubit/global_cubit.dart';
 import 'package:cozy/core/database/api/dio_consumer.dart';
 import 'package:cozy/core/network/local_network.dart';
 import 'package:cozy/features/cart/data/repo/cart_repo.dart';
+import 'package:cozy/features/checkout/data/repo/checkout_repo.dart';
 import 'package:cozy/features/home/data/repo/home_repo.dart';
+import 'package:cozy/features/profile/data/repo/orders_repo.dart';
 import 'package:cozy/features/profile/data/repo/profile_repo.dart';
 import 'package:cozy/features/wishlist/data/repo/wishlist_repo.dart';
 import 'package:dio/dio.dart';
@@ -10,6 +12,7 @@ import 'package:get_it/get_it.dart';
 
 import '../../features/auth/data/repo/login_repo.dart';
 import '../../features/auth/data/repo/register_repo.dart';
+import '../../features/profile/data/repo/address_repo.dart';
 
 final sl = GetIt.instance;
 void initServiceLocator() {
@@ -24,6 +27,9 @@ void initServiceLocator() {
   sl.registerLazySingleton(() => CartRepo(sl<DioConsumer>()));
   sl.registerLazySingleton(() => WishlistRepo(sl<DioConsumer>()));
   sl.registerLazySingleton(() => ProfileRepo(sl<DioConsumer>()));
+  sl.registerLazySingleton(() => AddressRepo(sl<DioConsumer>()));
+  sl.registerLazySingleton(() => CheckoutRepo(sl<DioConsumer>()));
+  sl.registerLazySingleton(() => OrderRepo(sl<DioConsumer>()));
   // sl.registerLazySingleton(() => DataConnectionChecker());
   // sl.registerLazySingleton(() => NetworkInfoImpl(sl<DataConnectionChecker>()));
   //! Repositorys

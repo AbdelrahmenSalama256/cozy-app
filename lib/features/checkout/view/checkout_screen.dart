@@ -1,18 +1,24 @@
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
+import 'package:cozy/core/services/service_locator.dart';
 import 'package:cozy/features/cart/data/model/cart_model.dart';
+import 'package:cozy/features/checkout/data/repo/checkout_repo.dart';
+import 'package:cozy/features/checkout/view/order_success_screen.dart';
+import 'package:cozy/features/checkout/view/widgets/checkout_bottom_section.dart';
+import 'package:cozy/features/checkout/view/widgets/order_notes.dart';
+import 'package:cozy/features/checkout/view/widgets/order_summary.dart';
+import 'package:cozy/features/checkout/view/widgets/section_container.dart';
+import 'package:cozy/features/profile/data/models/address_model.dart';
+import 'package:cozy/features/profile/view/cubit/address_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../data/models/address_model.dart';
-import '../data/models/payment_method.dart';
-import 'order_success_screen.dart';
+import '../../../core/component/custom_toast.dart';
+import '../../profile/view/cubit/address_state.dart';
+import 'cubit/checkout_cubit.dart';
+import 'cubit/checkout_state.dart';
 import 'widgets/address_card.dart';
-import 'widgets/checkout_bottom_section.dart';
-import 'widgets/order_notes.dart';
-import 'widgets/order_summary.dart';
-import 'widgets/payment_card.dart';
-import 'widgets/section_container.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final Cart cart;
@@ -24,142 +30,146 @@ class CheckoutScreen extends StatefulWidget {
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
-  int selectedAddressIndex = 0;
-  int selectedPaymentIndex = 0;
-  bool isProcessing = false;
+  int? selectedAddressIndex;
+  final TextEditingController notesController = TextEditingController();
 
-  final List<Address> addresses = [
-    Address(
-      id: '1',
-      title: 'Home',
-      address: '123 Main Street, Apt 4B',
-      city: 'New York, NY 10001',
-      isDefault: true,
-    ),
-    Address(
-      id: '2',
-      title: 'Work',
-      address: '456 Business Ave, Suite 200',
-      city: 'New York, NY 10002',
-      isDefault: false,
-    ),
-  ];
-
-  final List<PaymentMethod> paymentMethods = [
-    PaymentMethod(
-      id: '1',
-      type: 'Credit Card',
-      details: '**** **** **** 1234',
-      icon: Icons.credit_card,
-      isDefault: true,
-    ),
-    PaymentMethod(
-      id: '2',
-      type: 'PayPal',
-      details: 'john.doe@email.com',
-      icon: Icons.account_balance_wallet,
-      isDefault: false,
-    ),
-    PaymentMethod(
-      id: '3',
-      type: 'Apple Pay',
-      details: 'Touch ID',
-      icon: Icons.phone_iphone,
-      isDefault: false,
-    ),
-  ];
+  @override
+  void dispose() {
+    notesController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.lightGrey,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: AppColors.textBlack,
-            size: 20.sp,
-          ),
-          onPressed: () => Navigator.pop(context),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => AddressCubit(sl())..fetchAddresses(),
         ),
-        title: Text(
-          'checkout'.tr(context),
-          style: TextStyle(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textBlack,
-          ),
+        BlocProvider(
+          create: (context) => CheckoutCubit(sl<CheckoutRepo>()),
         ),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 20.h),
-
-                  // Order Summary
-                  OrderSummarySection(cart: widget.cart),
-
-                  SizedBox(height: 20.h),
-
-                  // Delivery Address
-                  SectionContainer(
-                    title: 'delivery_address'.tr(context),
-                    actionText: 'change'.tr(context),
-                    onActionPressed: _showAddressSelection,
-                    child: AddressCard(
-                      address: addresses[selectedAddressIndex],
-                      isSelected: true,
-                    ),
-                  ),
-
-                  SizedBox(height: 20.h),
-
-                  // Payment Method
-                  SectionContainer(
-                    title: 'payment_method'.tr(context),
-                    actionText: 'change'.tr(context),
-                    onActionPressed: _showPaymentSelection,
-                    child: PaymentCard(
-                      payment: paymentMethods[selectedPaymentIndex],
-                      isSelected: true,
-                    ),
-                  ),
-
-                  // SizedBox(height: 20.h),
-
-                  // Delivery Options
-                  // DeliveryOptionsSection(),
-
-                  SizedBox(height: 20.h),
-
-                  // Order Notes
-                  OrderNotesSection(),
-                ],
+      ],
+      child: BlocConsumer<CheckoutCubit, CheckoutState>(
+        listener: (context, state) {
+          if (state is CheckoutSuccess) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => OrderSuccessScreen(
+                  orderNumber: state.orderId,
+                  total: widget.cart.total!,
+                ),
               ),
-            ),
-          ),
-          SizedBox(
-            height: 20.h,
-          ),
-          // Bottom Section with Total and Place Order
-          CheckoutBottomSection(
-            total: widget.cart.total!,
-            isProcessing: isProcessing,
-            onPlaceOrder: _placeOrder,
-          ),
-        ],
+            );
+          } else if (state is CheckoutError) {
+            showToast(context, message: state.error, state: ToastStates.error);
+          }
+        },
+        builder: (context, checkoutState) {
+          return BlocBuilder<AddressCubit, AddressState>(
+            builder: (context, addressState) {
+              context.read<AddressCubit>();
+              final isProcessing = checkoutState is CheckoutLoading;
+
+              List<AddressModel> addresses = [];
+              if (addressState is AddressLoaded) {
+                addresses = addressState.addresses;
+                selectedAddressIndex ??=
+                    addresses.indexWhere((a) => a.isDefault);
+                if (selectedAddressIndex! < 0 && addresses.isNotEmpty) {
+                  selectedAddressIndex = 0;
+                }
+              }
+
+              return Scaffold(
+                backgroundColor: AppColors.white,
+                appBar: AppBar(
+                  backgroundColor: Colors.white,
+                  elevation: 0,
+                  leading: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back_ios,
+                      color: AppColors.textBlack,
+                      size: 20.sp,
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  title: Text(
+                    'checkout'.tr(context),
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textBlack,
+                    ),
+                  ),
+                  centerTitle: true,
+                ),
+                body: addressState is AddressLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : Column(
+                        children: [
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(height: 20.h),
+                                  // Order Summary
+                                  OrderSummarySection(cart: widget.cart),
+                                  SizedBox(height: 20.h),
+                                  // Delivery Address
+                                  SectionContainer(
+                                    title: 'delivery_address'.tr(context),
+                                    actionText: 'change'.tr(context),
+                                    onActionPressed: addresses.isEmpty
+                                        ? null
+                                        : () => _showAddressSelection(
+                                            context, addresses),
+                                    child: addresses.isEmpty
+                                        ? Padding(
+                                            padding: EdgeInsets.all(16.w),
+                                            child: Text(
+                                              'no_addresses'.tr(context),
+                                              style: TextStyle(
+                                                fontSize: 14.sp,
+                                                color: AppColors.textGrey,
+                                              ),
+                                            ),
+                                          )
+                                        : AddressCard(
+                                            address: addresses[
+                                                selectedAddressIndex!],
+                                            isSelected: true,
+                                          ),
+                                  ),
+                                  SizedBox(height: 20.h),
+                                  // Order Notes
+                                  OrderNotesSection(
+                                      controller: notesController),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 20.h),
+                          // Bottom Section with Total and Place Order
+                          CheckoutBottomSection(
+                            total: widget.cart.total!,
+                            isProcessing: isProcessing,
+                            onPlaceOrder: () => _placeOrder(context, addresses),
+                          ),
+                        ],
+                      ),
+              );
+            },
+          );
+        },
       ),
     );
   }
 
-  void _showAddressSelection() {
+  void _showAddressSelection(
+      BuildContext context, List<AddressModel> addresses) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -181,7 +191,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             SizedBox(height: 20.h),
             ...addresses.asMap().entries.map((entry) {
               int index = entry.key;
-              Address address = entry.value;
+              AddressModel address = entry.value;
               return GestureDetector(
                 onTap: () {
                   setState(() {
@@ -204,72 +214,24 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  void _showPaymentSelection() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-      ),
-      builder: (context) => Container(
-        padding: EdgeInsets.all(20.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'select_payment_method'.tr(context),
-              style: TextStyle(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 20.h),
-            ...paymentMethods.asMap().entries.map((entry) {
-              int index = entry.key;
-              PaymentMethod payment = entry.value;
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    selectedPaymentIndex = index;
-                  });
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  margin: EdgeInsets.only(bottom: 12.h),
-                  child: PaymentCard(
-                    payment: payment,
-                    isSelected: index == selectedPaymentIndex,
-                  ),
-                ),
-              );
-            }),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _placeOrder() async {
-    setState(() {
-      isProcessing = true;
-    });
-
-    // Simulate order processing
-    await Future.delayed(const Duration(seconds: 2));
-
-    setState(() {
-      isProcessing = false;
-    });
-
-    // Navigate to success screen
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => OrderSuccessScreen(
-          orderNumber: 'ORD-${DateTime.now().millisecondsSinceEpoch}',
-          total: widget.cart.total!,
-        ),
-      ),
-    );
+  void _placeOrder(BuildContext context, List<AddressModel> addresses) {
+    if (addresses.isEmpty) {
+      showToast(context,
+          message: 'please_add_address'.tr(context),
+          state: ToastStates.warning);
+      return;
+    }
+    final checkoutCubit = context.read<CheckoutCubit>();
+    if (widget.cart.finalTotal.toString().isEmpty) {
+      showToast(context,
+          message: 'cart_total_is_empty'.tr(context), state: ToastStates.error);
+      return;
+    } else {
+      checkoutCubit.placeOrder(
+        addressId: addresses[selectedAddressIndex!].id,
+        saleNote: notesController.text,
+        finalTotal: widget.cart.finalTotal.toString(),
+      );
+    }
   }
 }

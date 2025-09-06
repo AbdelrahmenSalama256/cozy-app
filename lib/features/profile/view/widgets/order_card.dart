@@ -5,19 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/component/widgets/app_button.dart';
+import '../../data/models/order_status.dart';
 
 class OrderCard extends StatelessWidget {
   final OrderModel order;
   final VoidCallback onTap;
   final VoidCallback? onTrackTap;
-  final VoidCallback? onCancelTap; // New callback for cancellation
+  final VoidCallback? onCancelTap;
 
   const OrderCard({
     super.key,
     required this.order,
     required this.onTap,
     this.onTrackTap,
-    this.onCancelTap, // Optional callback for cancellation
+    this.onCancelTap,
   });
 
   @override
@@ -25,7 +26,7 @@ class OrderCard extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(4.r),
       ),
       child: InkWell(
@@ -39,7 +40,7 @@ class OrderCard extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    '${'order'.tr(context)} #${order.id}',
+                    '${'order'.tr(context)} #${order.invoiceNo}',
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w600,
@@ -67,7 +68,7 @@ class OrderCard extends StatelessWidget {
               ),
               SizedBox(height: 8.h),
               Text(
-                _formatDate(order.date),
+                _formatDate(order.transactionDate),
                 style: TextStyle(
                   fontSize: 12.sp,
                   color: AppColors.textGrey,
@@ -83,7 +84,7 @@ class OrderCard extends StatelessWidget {
                   ),
                   SizedBox(width: 4.w),
                   Text(
-                    '${order.items} ${'items'.tr(context)}',
+                    '${order.items.length} ${'items'.tr(context)}',
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: AppColors.textGrey,
@@ -91,7 +92,7 @@ class OrderCard extends StatelessWidget {
                   ),
                   const Spacer(),
                   Text(
-                    '\$${order.total.toStringAsFixed(2)}',
+                    '\$${order.finalTotal.toStringAsFixed(2)}',
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
@@ -100,7 +101,7 @@ class OrderCard extends StatelessWidget {
                   ),
                 ],
               ),
-              if (order.trackingNumber != null) ...[
+              if (order.shippingStatus != null) ...[
                 SizedBox(height: 8.h),
                 Row(
                   children: [
@@ -111,7 +112,7 @@ class OrderCard extends StatelessWidget {
                     ),
                     SizedBox(width: 4.w),
                     Text(
-                      '${'tracking'.tr(context)}: ${order.trackingNumber}',
+                      '${'shipping_status'.tr(context)}: ${order.shippingStatus}',
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: AppColors.textGrey,
@@ -123,6 +124,7 @@ class OrderCard extends StatelessWidget {
               SizedBox(height: 12.h),
               Row(
                 children: [
+                  // Show track button for shipped orders
                   if (order.status == OrderStatus.shipped &&
                       onTrackTap != null) ...[
                     Expanded(
@@ -141,7 +143,8 @@ class OrderCard extends StatelessWidget {
                     ),
                     SizedBox(width: 8.w),
                   ],
-                  if (order.status == OrderStatus.processing &&
+                  // Show cancel button for packed (processing) orders
+                  if (order.status == OrderStatus.packed &&
                       onCancelTap != null) ...[
                     Expanded(
                       child: AppButton(
@@ -152,15 +155,16 @@ class OrderCard extends StatelessWidget {
                         type: AppButtonType.secondary,
                         height: 36.h,
                         borderRadius: BorderRadius.circular(8.r),
-                        borderColor: Colors.red,
+                        borderColor: AppColors.red,
                         textStyle: TextStyle(
                           fontSize: 12.sp,
-                          color: Colors.red,
+                          color: AppColors.red,
                         ),
                       ),
                     ),
                     SizedBox(width: 8.w),
                   ],
+                  // Always show view details button
                   Expanded(
                     child: AppButton(
                       text: 'view_details'.tr(context),
@@ -171,7 +175,7 @@ class OrderCard extends StatelessWidget {
                       backgroundColor: AppColors.primary,
                       textStyle: TextStyle(
                         fontSize: 12.sp,
-                        color: Colors.white,
+                        color: AppColors.white,
                       ),
                     ),
                   ),
@@ -224,9 +228,7 @@ class OrderCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: 10.h,
-                ),
+                SizedBox(width: 10.w),
                 Expanded(
                   child: AppButton(
                     text: 'yes_cancel'.tr(context),
@@ -237,10 +239,10 @@ class OrderCard extends StatelessWidget {
                     type: AppButtonType.primary,
                     height: 36.h,
                     borderRadius: BorderRadius.circular(8.r),
-                    backgroundColor: Colors.red,
+                    backgroundColor: AppColors.red,
                     textStyle: TextStyle(
                       fontSize: 14.sp,
-                      color: Colors.white,
+                      color: AppColors.white,
                     ),
                   ),
                 ),
