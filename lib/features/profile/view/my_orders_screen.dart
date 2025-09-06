@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../core/component/custom_loading_indicator.dart';
 import '../../../core/component/custom_toast.dart';
 import '../data/models/order_status.dart';
 import 'cubit/orders_cubit.dart';
@@ -98,7 +99,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen>
           builder: (context, state) {
             final ordersCubit = context.read<OrdersCubit>();
             if (state is OrderLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: CustomLoadingIndicator());
             }
 
             if (state is OrderError) {

@@ -1,3 +1,4 @@
+import 'package:cozy/core/component/custom_loading_indicator.dart';
 import 'package:cozy/core/component/custom_toast.dart';
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
@@ -47,7 +48,7 @@ class AddressesScreen extends StatelessWidget {
           final cubit = context.read<AddressCubit>();
 
           if (state is AddressLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CustomLoadingIndicator());
           } else if (state is AddressLoaded) {
             final addresses = state.addresses;
             return addresses.isEmpty

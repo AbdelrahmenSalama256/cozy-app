@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../core/component/custom_loading_indicator.dart';
 import '../../../core/component/custom_toast.dart';
 import '../../../core/component/widgets/profile_image_picker.dart';
 import '../data/models/contact_model.dart';
@@ -66,7 +67,7 @@ class EditProfileScreen extends StatelessWidget {
                       children: [
                         SizedBox(height: 24.h),
                         globalState is ProfileLoading
-                            ? const Center(child: CircularProgressIndicator())
+                            ? const Center(child: CustomLoadingIndicator())
                             : Center(
                                 child: user.image == null
                                     ? ProfileImagePicker(

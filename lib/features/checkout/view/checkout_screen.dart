@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../core/component/custom_loading_indicator.dart';
 import '../../../core/component/custom_toast.dart';
 import '../../profile/view/cubit/address_state.dart';
 import 'cubit/checkout_cubit.dart';
@@ -106,7 +107,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   centerTitle: true,
                 ),
                 body: addressState is AddressLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const Center(child: CustomLoadingIndicator())
                     : Column(
                         children: [
                           Expanded(
