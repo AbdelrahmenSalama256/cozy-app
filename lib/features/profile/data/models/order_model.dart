@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'order_details_item_model.dart';
 import 'order_status.dart';
 
 class OrderModel {
@@ -19,6 +20,10 @@ class OrderModel {
   final String? additionalNotes;
   final String? shippingAddress;
   final String? shippingStatus;
+  final String? shippingDetails;
+  final String? deliveredTo;
+  final String? deliveryPerson;
+  final double shippingCharges;
   final List<OrderItem> items;
 
   OrderModel({
@@ -38,6 +43,10 @@ class OrderModel {
     this.additionalNotes,
     this.shippingAddress,
     this.shippingStatus,
+    this.shippingDetails,
+    this.deliveredTo,
+    this.deliveryPerson,
+    this.shippingCharges = 0.0,
     required this.items,
   });
 
@@ -65,17 +74,17 @@ class OrderModel {
   Color get statusColor {
     switch (status) {
       case OrderStatus.pending:
-        return Colors.grey; // Grey for pending
+        return Colors.grey;
       case OrderStatus.ordered:
-        return Colors.blue; // Blue for ordered
+        return Colors.blue;
       case OrderStatus.packed:
-        return Colors.orange; // Orange for packed
+        return Colors.orange;
       case OrderStatus.shipped:
-        return Colors.blueAccent; // Blue accent for shipped
+        return Colors.blueAccent;
       case OrderStatus.delivered:
-        return Colors.green; // Green for delivered
+        return Colors.green;
       case OrderStatus.cancelled:
-        return Colors.red; // Red for cancelled
+        return Colors.red;
     }
   }
 
@@ -92,14 +101,15 @@ class OrderModel {
       'total_before_tax': totalBeforeTax,
       'tax_amount': taxAmount,
       'final_total': finalTotal,
-      'shipping_status': status
-          .toString()
-          .split('.')
-          .last, // e.g., 'pending' instead of 'OrderStatus.pending'
+      'status': status.toString().split('.').last,
       'payment_status': paymentStatus,
       'additional_notes': additionalNotes,
       'shipping_address': shippingAddress,
-      // 'shipping_status': shippingStatus,
+      'shipping_status': shippingStatus,
+      'shipping_details': shippingDetails,
+      'delivered_to': deliveredTo,
+      'delivery_person': deliveryPerson,
+      'shipping_charges': shippingCharges,
       'items': items.map((item) => item.toJson()).toList(),
     };
   }
@@ -118,86 +128,59 @@ class OrderModel {
         case 'cancelled':
           return OrderStatus.cancelled;
         case 'final': // Handle the API's 'final' status
-          return OrderStatus.delivered; // Map 'final' to 'delivered'
+          return OrderStatus.delivered;
         default:
-          return OrderStatus.pending; // Default to pending
+          return OrderStatus.pending;
       }
     }
 
+    // Handle both list response and single order response
+    final orderData = json['data'] is Map ? json['data'] : json;
+
     return OrderModel(
-      id: json['id']?.toString() ?? '',
-      businessId: json['business_id']?.toString() ?? '',
-      locationId: json['location_id']?.toString() ?? '',
-      contactId: json['contact_id']?.toString() ?? '',
-      invoiceNo: json['invoice_no']?.toString() ?? '',
-      transactionDate:
-          DateTime.parse(json['transaction_date'] ?? DateTime.now().toString()),
+      id: orderData['id']?.toString() ?? '',
+      businessId: orderData['business_id']?.toString() ?? '',
+      locationId: orderData['location_id']?.toString() ?? '',
+      contactId: orderData['contact_id']?.toString() ?? '',
+      invoiceNo: orderData['invoice_no']?.toString() ?? '',
+      transactionDate: DateTime.parse(
+          orderData['transaction_date'] ?? DateTime.now().toString()),
       createdAt:
-          DateTime.parse(json['created_at'] ?? DateTime.now().toString()),
+          DateTime.parse(orderData['created_at'] ?? DateTime.now().toString()),
       updatedAt:
-          DateTime.parse(json['updated_at'] ?? DateTime.now().toString()),
+          DateTime.parse(orderData['updated_at'] ?? DateTime.now().toString()),
       totalBeforeTax:
-          double.tryParse(json['total_before_tax']?.toString() ?? '0') ?? 0,
-      taxAmount: double.tryParse(json['tax_amount']?.toString() ?? '0') ?? 0,
-      finalTotal: double.tryParse(json['final_total']?.toString() ?? '0') ?? 0,
-      status: parseStatus(json['shipping_status']?.toString()),
-      paymentStatus: json['payment_status']?.toString(),
-      additionalNotes: json['additional_notes']?.toString(),
-      shippingAddress: json['shipping_address']?.toString(),
-      // shippingStatus: json['shipping_status']?.toString(),
-      items: (json['sell_lines'] as List<dynamic>?)
+          double.tryParse(orderData['total_before_tax']?.toString() ?? '0') ??
+              0,
+      taxAmount:
+          double.tryParse(orderData['tax_amount']?.toString() ?? '0') ?? 0,
+      finalTotal:
+          double.tryParse(orderData['final_total']?.toString() ?? '0') ?? 0,
+      status: parseStatus(orderData['shipping_status']?.toString()),
+      paymentStatus: orderData['payment_status']?.toString(),
+      additionalNotes: orderData['additional_notes']?.toString(),
+      shippingAddress: orderData['shipping_address']?.toString(),
+      shippingStatus: orderData['shipping_status']?.toString(),
+      shippingDetails: orderData['shipping_details']?.toString(),
+      deliveredTo: orderData['delivered_to']?.toString(),
+      deliveryPerson: orderData['delivery_person']?.toString(),
+      shippingCharges:
+          double.tryParse(orderData['shipping_charges']?.toString() ?? '0') ??
+              0,
+      items: (orderData['sell_lines'] as List<dynamic>?)
               ?.map((item) => OrderItem.fromJson(item))
               .toList() ??
           [],
     );
   }
-}
 
-class OrderItem {
-  final String id;
-  final String productId;
-  final String productName;
-  final String? productImage;
-  final double unitPrice;
-  final int quantity;
-  final double lineTotal;
-  final String? variations;
-
-  OrderItem({
-    required this.id,
-    required this.productId,
-    required this.productName,
-    this.productImage,
-    required this.unitPrice,
-    required this.quantity,
-    required this.lineTotal,
-    this.variations,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'product_id': productId,
-      'product_name': productName,
-      'product_image': productImage,
-      'unit_price': unitPrice,
-      'quantity': quantity,
-      'line_total': lineTotal,
-      'variations': variations,
-    };
-  }
-
-  factory OrderItem.fromJson(Map<String, dynamic> json) {
-    return OrderItem(
-      id: json['id']?.toString() ?? '',
-      productId: json['product_id']?.toString() ?? '',
-      productName: json['product']?['name']?.toString() ?? 'Unknown Product',
-      productImage: json['product']?['image_url']?.toString(),
-      unitPrice: double.tryParse(json['unit_price']?.toString() ?? '0') ?? 0,
-      quantity: int.tryParse(json['quantity']?.toString() ?? '0') ?? 0,
-      lineTotal: (double.tryParse(json['unit_price']?.toString() ?? '0') ?? 0) *
-          (int.tryParse(json['quantity']?.toString() ?? '0') ?? 0),
-      variations: json['variations']?['name']?.toString(),
-    );
+  // Helper method to create a list of orders from API response
+  static List<OrderModel> fromJsonList(Map<String, dynamic> json) {
+    if (json['success'] == true && json['data'] is List) {
+      return (json['data'] as List)
+          .map((item) => OrderModel.fromJson(item))
+          .toList();
+    }
+    return [];
   }
 }

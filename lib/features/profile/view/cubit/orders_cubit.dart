@@ -39,6 +39,7 @@ class OrdersCubit extends Cubit<OrdersState> {
         emit(OrderDetailsError(error));
       },
       (order) {
+        orders = orders.map((o) => o.id == order.id ? order : o).toList();
         emit(OrderDetailsLoaded(order));
       },
     );

@@ -185,13 +185,16 @@ class _MyOrdersScreenState extends State<MyOrdersScreen>
         return OrderCard(
           order: order,
           onTap: () {
-            navigateTo(
+            Navigator.push(
               context,
-              BlocProvider.value(
-                value: context.read<OrdersCubit>(),
-                child: OrderDetailsScreen(),
+              MaterialPageRoute(
+                builder: (context) {
+                  return OrderDetailsScreen(orderId: order.id);
+                },
               ),
-            );
+            ).whenComplete(() {
+              context.read<OrdersCubit>().getOrders();
+            });
           },
           onTrackTap: order.shippingStatus != null
               ? () {

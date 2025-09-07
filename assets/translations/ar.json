@@ -616,5 +616,12 @@
   "cart_cleard_successfully": "تم تفريغ السلة بنجاح",
   "network_error": "خطأ في الشبكة",
   "Item removed from wishlist successfully": "تمت إزالة العنصر من المفضلة بنجاح",
-  "pending": "قيد الانتظار"
+  "pending": "قيد الانتظار",
+  "order_details": "تفاصيل الطلب",
+  "invoice_number": "رقم الفاتورة",
+  "variation": "النوع",
+  "currency": "ج.م",
+  "shipping_charges": "رسوم الشحن",
+  "retry": "إعادة المحاولة",
+  "ordered": "تم الطلب"
 }

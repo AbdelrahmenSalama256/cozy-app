@@ -613,5 +613,12 @@
   "cart_cleard_successfully": "Cart cleared successfully",
   "network_error": "Network error",
   "Item removed from wishlist successfully": "Item removed from wishlist successfully",
-  "pending": "Pending"
+  "pending": "Pending",
+  "order_details": "Order Details",
+  "invoice_number": "Invoice Number",
+  "variation": "Variation",
+  "currency": "EGP",
+  "shipping_charges": "Shipping Charges",
+  "retry": "Retry",
+  "ordered": "Ordered"
 }

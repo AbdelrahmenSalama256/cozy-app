@@ -61,19 +61,17 @@ class OrderRepo {
   //! Get order details by ID
   Future<Either<String, OrderModel>> getOrderDetails(String orderId) async {
     try {
-      final response = await api.get("${EndPoints.getOrders}/$orderId");
+      final response = await api.get("${EndPoints.getOrdersDetails}/$orderId");
       if (response.data['success']) {
         try {
-          final order = OrderModel.fromJson(response.data['data']);
+          final order = OrderModel.fromJson(response.data);
           return Right(order);
         } catch (e) {
-          PrintUtil.error(
-              'Error parsing order details: $e, JSON: ${response.data['data']}');
-          return Left('Failed to parse order details: $e');
+          PrintUtil.error('Error parsing order details: $e');
+          return Left('Failed to parse order details');
         }
       } else {
-        return Left(
-            'Failed to fetch order details: ${response.data['message'] ?? 'Unknown error'}');
+        return Left('Failed to fetch order details');
       }
     } on ServerException catch (e) {
       return Left(e.errorModel.detail);
@@ -87,10 +85,10 @@ class OrderRepo {
   //! Cancel an order
   Future<Either<String, String>> cancelOrder(String orderId) async {
     try {
-      final response = await api.post(
+      final response = await api.get(
         "${EndPoints.cancelOrder}/$orderId",
-        data: {'status': 'cancelled'},
       );
+
       return Right(response.data['message'] ?? 'Order cancelled successfully');
     } on ServerException catch (e) {
       return Left(e.errorModel.detail);

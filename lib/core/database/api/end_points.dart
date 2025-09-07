@@ -50,7 +50,8 @@ class EndPoints {
 
   //! Fetch Orders
   static const String getOrders = '${baseUrl}my-orders';
-  static const String cancelOrder = '${baseUrl}orders';
+  static const String getOrdersDetails = '${baseUrl}order-details';
+  static const String cancelOrder = '${baseUrl}cancel-order';
   static const String trackOrder = '${baseUrl}track-order';
 }
 
