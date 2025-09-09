@@ -198,7 +198,11 @@ class _MyOrdersScreenState extends State<MyOrdersScreen>
           },
           onTrackTap: order.shippingStatus != null
               ? () {
-                  navigateTo(context, OrderTrackingDetailsScreen());
+                  navigateTo(
+                      context,
+                      OrderTrackingDetailsScreen(
+                        orderId: order.id,
+                      ));
                 }
               : null,
           onCancelTap: order.status == OrderStatus.pending ||

@@ -623,5 +623,7 @@
   "currency": "ج.م",
   "shipping_charges": "رسوم الشحن",
   "retry": "إعادة المحاولة",
-  "ordered": "تم الطلب"
+  "ordered": "تم الطلب",
+  "product_added_successfully": "تمت إضافة المنتج بنجاح",
+  "product_already_in_cart": "المنتج موجود بالفعل في السلة"
 }

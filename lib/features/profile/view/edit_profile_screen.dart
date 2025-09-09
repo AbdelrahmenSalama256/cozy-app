@@ -1,21 +1,21 @@
+// edit_profile_screen.dart
+import 'package:cozy/core/component/custom_loading_indicator.dart';
+import 'package:cozy/core/component/custom_toast.dart';
 import 'package:cozy/core/component/widgets/app_button.dart';
 import 'package:cozy/core/component/widgets/app_text_field.dart';
 import 'package:cozy/core/component/widgets/error_message_handler.dart';
+import 'package:cozy/core/component/widgets/profile_image_picker.dart';
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/cubit/global_cubit.dart';
 import 'package:cozy/core/cubit/global_state.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
+import 'package:cozy/features/profile/data/models/contact_model.dart';
 import 'package:cozy/features/profile/view/cubit/profile_cubit.dart';
 import 'package:cozy/features/profile/view/cubit/profile_state.dart';
+import 'package:cozy/features/profile/view/widgets/profile_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import '../../../core/component/custom_loading_indicator.dart';
-import '../../../core/component/custom_toast.dart';
-import '../../../core/component/widgets/profile_image_picker.dart';
-import '../data/models/contact_model.dart';
-import 'widgets/profile_section.dart';
 
 class EditProfileScreen extends StatelessWidget {
   const EditProfileScreen({super.key});
@@ -28,7 +28,7 @@ class EditProfileScreen extends StatelessWidget {
         BlocProvider(
             create: (context) => ProfileCubit(context.read<GlobalCubit>())),
       ],
-      child: BlocConsumer<GlobalCubit, GlobalState>(
+      child: BlocListener<GlobalCubit, GlobalState>(
         listener: (context, state) {
           if (state is ProfileUpdated) {
             showToast(
@@ -37,70 +37,75 @@ class EditProfileScreen extends StatelessWidget {
               state: ToastStates.success,
               style: ToastStyle.furniture,
             );
+            Navigator.pop(context); // Return to profile screen after update
           } else if (state is ProfileError) {
             ErrorMessageHandler.showErrorToast(
                 context, state.message.tr(context));
           }
         },
-        builder: (context, globalState) {
-          final globalCubit = context.read<GlobalCubit>();
-          final profileCubit = context.read<ProfileCubit>();
-          final user = globalCubit.contactResponse?.data.user ??
-              UserDetails(
-                id: 0,
-                type: '',
-                contactId: '',
-                contactStatus: 'active',
-              );
+        child: BlocBuilder<GlobalCubit, GlobalState>(
+          builder: (context, globalState) {
+            final globalCubit = context.read<GlobalCubit>();
+            final profileCubit = context.read<ProfileCubit>();
+            final user = globalCubit.contactResponse?.data.user ??
+                UserDetails(
+                  id: 0,
+                  type: '',
+                  contactId: '',
+                  contactStatus: 'active',
+                );
 
-          return BlocBuilder<ProfileCubit, ProfileState>(
-            builder: (context, profileState) {
-              return Scaffold(
-                backgroundColor: AppColors.lightGrey,
-                appBar: _buildAppBar(context),
-                body: Form(
-                  key: profileCubit.formKey,
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(20.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 24.h),
-                        globalState is ProfileLoading
-                            ? const Center(child: CustomLoadingIndicator())
-                            : Center(
-                                child: user.image == null
-                                    ? ProfileImagePicker(
-                                        profileImage: profileCubit.profileImage,
-                                        onImageSelected:
-                                            profileCubit.setProfileImage,
-                                      )
-                                    : ProfileSection(
-                                        userName: user.name ?? '',
-                                        userImageUrl: user.imageUrl ?? "",
-                                        textStyle: TextStyle(
-                                            fontSize: 20.sp,
-                                            color: AppColors.black,
-                                            fontWeight: FontWeight.w500),
-                                        subtitle: '',
-                                        isVendor: true,
-                                      ),
-                              ),
-                        SizedBox(height: 32.h),
-                        _buildPersonalInfoSection(context, profileCubit, user),
-                        if (profileCubit.hasChanges) ...[
+            return BlocBuilder<ProfileCubit, ProfileState>(
+              builder: (context, profileState) {
+                return Scaffold(
+                  backgroundColor: AppColors.lightGrey,
+                  appBar: _buildAppBar(context),
+                  body: Form(
+                    key: profileCubit.formKey,
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.all(20.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 24.h),
+                          globalState is ProfileLoading
+                              ? const Center(child: CustomLoadingIndicator())
+                              : Center(
+                                  child: user.image == null
+                                      ? ProfileImagePicker(
+                                          profileImage:
+                                              profileCubit.profileImage,
+                                          onImageSelected:
+                                              profileCubit.setProfileImage,
+                                        )
+                                      : ProfileSection(
+                                          userName: user.name ?? '',
+                                          userImageUrl: user.imageUrl ?? "",
+                                          textStyle: TextStyle(
+                                              fontSize: 20.sp,
+                                              color: AppColors.black,
+                                              fontWeight: FontWeight.w500),
+                                          subtitle: '',
+                                          isVendor: true,
+                                        ),
+                                ),
                           SizedBox(height: 32.h),
-                          _buildSaveButton(context,
-                              globalState is ProfileLoading, profileCubit),
+                          _buildPersonalInfoSection(
+                              context, profileCubit, user),
+                          if (profileCubit.hasChanges) ...[
+                            SizedBox(height: 32.h),
+                            _buildSaveButton(context,
+                                globalState is ProfileLoading, profileCubit),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
-          );
-        },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

@@ -620,5 +620,7 @@
   "currency": "EGP",
   "shipping_charges": "Shipping Charges",
   "retry": "Retry",
-  "ordered": "Ordered"
+  "ordered": "Ordered",
+  "product_added_successfully":"Product added successfully",
+  "product_already_in_cart":"Product already in cart"
 }

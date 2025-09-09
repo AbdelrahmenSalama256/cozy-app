@@ -414,7 +414,7 @@ Widget buildActionButtons(OrderModel order, BuildContext context) {
         _buildSupportAndReorderButtons(context),
         if (order.status == OrderStatus.shipped) ...[
           SizedBox(height: 12.h),
-          _buildTrackOrderButton(context),
+          _buildTrackOrderButton(context, order.id),
         ],
       ],
     ),
@@ -478,12 +478,18 @@ Widget _buildSupportAndReorderButtons(BuildContext context) {
   );
 }
 
-Widget _buildTrackOrderButton(BuildContext context) {
+Widget _buildTrackOrderButton(BuildContext context, final String orderId) {
   return SizedBox(
     width: double.infinity,
     child: AppButton(
       text: 'track_order'.tr(context),
-      onPressed: () => _navigateToTracking(context),
+      onPressed: () {
+        navigateTo(
+            context,
+            OrderTrackingDetailsScreen(
+              orderId: orderId,
+            ));
+      },
       type: AppButtonType.primary,
       height: 48.h,
       borderRadius: BorderRadius.circular(8.r),
@@ -503,10 +509,6 @@ void _contactSupport(BuildContext context) {
 
 void _reorder(BuildContext context) {
   // Handle reorder
-}
-
-void _navigateToTracking(BuildContext context) {
-  navigateTo(context, OrderTrackingDetailsScreen());
 }
 
 void _showCancelOrderDialog(OrderModel order, BuildContext context) {

@@ -112,3 +112,5 @@ class WishlistItemRemovedSuccess extends GlobalState {
 
   WishlistItemRemovedSuccess(this.message);
 }
+
+class ProfileUpdating extends GlobalState {}

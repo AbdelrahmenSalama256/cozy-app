@@ -24,3 +24,5 @@ class ProfileDataUpdated extends ProfileState {
   final bool hasChanges;
   ProfileDataUpdated({required this.hasChanges});
 }
+
+class ProfileUpdating extends ProfileState {}

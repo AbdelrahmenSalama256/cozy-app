@@ -25,6 +25,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/component/custom_toast.dart';
+import '../data/models/contact_model.dart';
 import '../data/repo/address_repo.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -34,48 +35,57 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => GlobalCubit()..getProfile(),
-      child: BlocConsumer<GlobalCubit, GlobalState>(
-        listener: (context, state) {
-          if (state is LogoutSuccess) {
-            showToast(
-              context,
-              message: state.message.tr(context),
-              state: ToastStates.success,
-              style: ToastStyle.furniture,
-            );
+      child: StreamBuilder<ContactResponse?>(
+        stream: context.read<GlobalCubit>().profileStream,
+        builder: (context, snapshot) {
+          return BlocConsumer<GlobalCubit, GlobalState>(
+            listener: (context, state) {
+              if (state is LogoutSuccess) {
+                showToast(
+                  context,
+                  message: state.message.tr(context),
+                  state: ToastStates.success,
+                  style: ToastStyle.furniture,
+                );
+                navigateAndFinish(context, const LoginScreen());
+                context.read<GlobalCubit>().changeBottomNavIndex(0);
+              }
+              if (state is LogoutError) {
+                Navigator.pop(context);
+                ErrorMessageHandler.showErrorToast(
+                  context,
+                  state.message.tr(context),
+                );
+              }
+            },
+            builder: (context, state) {
+              final cubit = context.read<GlobalCubit>();
 
-            navigateAndFinish(context, const LoginScreen());
-            context.read<GlobalCubit>().changeBottomNavIndex(0);
-          }
-          if (state is LogoutError) {
-            Navigator.pop(context);
-            ErrorMessageHandler.showErrorToast(
-              context,
-              state.message.tr(context),
-            );
-          }
-        },
-        builder: (context, state) {
-          final cubit = context.read<GlobalCubit>();
+              // استخدام البيانات من الستريم إذا كانت متاحة
+              final userData = snapshot.data ?? cubit.contactResponse;
 
-          return Scaffold(
-            backgroundColor: AppColors.lightGrey,
-            body: SafeArea(
-              child: state is ProfileLoading
-                  ? const CustomLoadingIndicator()
-                  : AppConstants.token.isNotEmpty
-                      ? _buildLoggedInProfile(context, cubit, state)
-                      : _buildGuestProfile(context),
-            ),
+              return Scaffold(
+                backgroundColor: AppColors.lightGrey,
+                body: SafeArea(
+                  child: state is ProfileLoading
+                      ? const CustomLoadingIndicator()
+                      : AppConstants.token.isNotEmpty
+                          ? _buildLoggedInProfile(
+                              context, cubit, state, userData)
+                          : _buildGuestProfile(context),
+                ),
+              );
+            },
           );
         },
       ),
     );
   }
 
-  Widget _buildLoggedInProfile(
-      BuildContext context, GlobalCubit cubit, GlobalState state) {
-    final user = cubit.contactResponse?.data.user;
+  Widget _buildLoggedInProfile(BuildContext context, GlobalCubit cubit,
+      GlobalState state, ContactResponse? userData) {
+    final user = userData?.data.user;
+
     return SingleChildScrollView(
       child: Column(
         children: [

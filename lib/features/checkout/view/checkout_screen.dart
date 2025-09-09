@@ -60,6 +60,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 builder: (context) => OrderSuccessScreen(
                   orderNumber: state.orderId,
                   total: widget.cart.total!,
+                  orderId: state.orderId,
                 ),
               ),
             );

@@ -1,60 +1,145 @@
+import 'package:cozy/core/component/custom_loading_indicator.dart';
+import 'package:cozy/core/component/custom_toast.dart';
+import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
+import 'package:cozy/core/services/service_locator.dart';
+import 'package:cozy/features/profile/data/models/order_model.dart';
+import 'package:cozy/features/profile/data/models/tracking_event_model.dart';
+import 'package:cozy/features/profile/view/cubit/orders_cubit.dart';
+import 'package:cozy/features/profile/view/cubit/orders_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/component/widgets/app_button.dart';
-import '../../../core/constants/app_colors.dart';
+import '../data/repo/orders_repo.dart';
 
 class OrderTrackingDetailsScreen extends StatelessWidget {
-  OrderTrackingDetailsScreen({super.key});
+  final String orderId;
 
-  // Fake data for UI
-  final String orderId = 'ORD123456';
-  final DateTime orderDate = DateTime(2025, 7, 10);
-  final int orderItems = 3;
-  final double orderTotal = 799.97;
-  final String trackingNumber = 'TRK7890123';
-  final String statusText = 'shipped';
-  final bool isDelivered = false;
+  const OrderTrackingDetailsScreen({super.key, required this.orderId});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.textBlack, size: 20.sp),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          '${'order'.tr(context)} #$orderId'.tr(context),
-          style: TextStyle(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textBlack,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(20.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildTrackingNumberCard(context),
-            SizedBox(height: 20.h),
-            _buildTrackingProgress(context),
-            SizedBox(height: 20.h),
-            _buildOrderSummary(context),
-          ],
-        ),
+    return BlocProvider(
+      create: (context) => OrdersCubit(sl<OrderRepo>())..getOrders(),
+      child: BlocConsumer<OrdersCubit, OrdersState>(
+        listener: (context, state) {
+          if (state is OrderTrackingError) {
+            showToast(
+              context,
+              message: state.error,
+              state: ToastStates.error,
+              duration: const Duration(seconds: 3),
+            );
+          }
+          if (state is OrderLoaded) {
+            if (kDebugMode) {
+              print(
+                  'Orders loaded: ${context.read<OrdersCubit>().orders.map((o) => o.id).toList()}');
+            }
+            // Trigger trackOrder after orders are loaded
+            context.read<OrdersCubit>().trackOrder(orderId);
+          }
+        },
+        builder: (context, state) {
+          final cubit = context.read<OrdersCubit>();
+          final order = cubit.getOrderById(orderId);
+          final trackingEvents = state is OrderTrackingLoaded
+              ? state.trackingEvents
+              : <TrackingEvent>[];
+
+          if (kDebugMode) {
+            print(
+                'Order ID: $orderId, Order found: ${order != null}, Tracking events: ${trackingEvents.length}');
+          }
+
+          if (state is OrderLoading || state is OrderTrackingLoading) {
+            return const Scaffold(
+              body: Center(child: CustomLoadingIndicator()),
+            );
+          }
+
+          if (state is OrderError ||
+              state is OrderTrackingError ||
+              order == null) {
+            return Scaffold(
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      size: 80.sp,
+                      color: AppColors.textGrey,
+                    ),
+                    SizedBox(height: 16.h),
+                    Text(
+                      state is OrderTrackingError
+                          ? 'Tracking error: ${state.error}'
+                          : state is OrderError
+                              ? 'Order error: ${state.error}'
+                              : 'Order with ID $orderId not found'.tr(context),
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: AppColors.textGrey,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 16.h),
+                    AppButton(
+                      onPressed: () {
+                        cubit.getOrders();
+                      },
+                      text: 'retry'.tr(context),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          return Scaffold(
+            backgroundColor: AppColors.white,
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back,
+                    color: AppColors.textBlack, size: 20.sp),
+                onPressed: () => Navigator.pop(context),
+              ),
+              title: Text(
+                '${'order'.tr(context)} #${order.invoiceNo}',
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textBlack,
+                ),
+              ),
+            ),
+            body: SingleChildScrollView(
+              padding: EdgeInsets.all(20.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildTrackingNumberCard(context, order),
+                  SizedBox(height: 20.h),
+                  _buildTrackingProgress(context, trackingEvents),
+                  SizedBox(height: 20.h),
+                  _buildOrderSummary(context, order),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildTrackingNumberCard(BuildContext context) {
+  Widget _buildTrackingNumberCard(BuildContext context, OrderModel order) {
+    final trackingNumber = order.shippingDetails ?? 'N/A';
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(16.w),
@@ -89,7 +174,7 @@ class OrderTrackingDetailsScreen extends StatelessWidget {
                 child: AppButton(
                   text: 'copy'.tr(context),
                   onPressed: () {
-                    // Copy tracking number to clipboard (placeholder)
+                    // Implement clipboard copy
                     if (kDebugMode) {
                       print('Copied tracking number: $trackingNumber');
                     }
@@ -117,7 +202,44 @@ class OrderTrackingDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTrackingProgress(BuildContext context) {
+  Widget _buildTrackingProgress(
+      BuildContext context, List<TrackingEvent> trackingEvents) {
+    // Define tracking steps with explicit String types
+    final steps = [
+      {'title': 'order_confirmed', 'subtitle': 'order_confirmed_subtitle'},
+      {'title': 'processing', 'subtitle': 'processing_subtitle'},
+      {'title': 'shipped', 'subtitle': 'shipped_subtitle'},
+      {'title': 'delivered', 'subtitle': 'delivered_subtitle'},
+      {'title': 'cancelled', 'subtitle': 'cancelled_subtitle'},
+    ];
+
+    // Map tracking events to steps
+    final stepStatus = steps.asMap().map((index, step) {
+      final event = trackingEvents.firstWhere(
+        (e) {
+          final title = e.title.toLowerCase();
+          if (title.contains('cancelled')) {
+            return step['title']!.toLowerCase() == 'cancelled';
+          }
+          return title.contains(step['title']!.toLowerCase());
+        },
+        orElse: () => TrackingEvent(
+          id: '',
+          transactionId: '',
+          title: '',
+          text: '',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+      );
+      return MapEntry(index, {
+        'title': step['title'] as String,
+        'subtitle': step['subtitle'] as String,
+        'isCompleted': event.id.isNotEmpty,
+        'hasNextStep': index < steps.length - 1,
+      });
+    });
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(16.w),
@@ -137,30 +259,15 @@ class OrderTrackingDetailsScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: 20.h),
-          _buildTrackingStep(
-            'order_confirmed'.tr(context),
-            'order_confirmed_subtitle'.tr(context),
-            true,
-            true,
-          ),
-          _buildTrackingStep(
-            'processing'.tr(context),
-            'processing_subtitle'.tr(context),
-            true,
-            true,
-          ),
-          _buildTrackingStep(
-            'shipped'.tr(context),
-            'shipped_subtitle'.tr(context),
-            true,
-            isDelivered,
-          ),
-          _buildTrackingStep(
-            'delivered'.tr(context),
-            'delivered_subtitle'.tr(context),
-            isDelivered,
-            false,
-          ),
+          ...stepStatus.entries.map((entry) {
+            final step = entry.value;
+            return _buildTrackingStep(
+              (step['title'] as String).tr(context),
+              (step['subtitle'] as String).tr(context),
+              step['isCompleted'] as bool,
+              step['hasNextStep'] as bool,
+            );
+          }),
         ],
       ),
     );
@@ -225,7 +332,7 @@ class OrderTrackingDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildOrderSummary(BuildContext context) {
+  Widget _buildOrderSummary(BuildContext context, OrderModel order) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(16.w),
@@ -256,7 +363,7 @@ class OrderTrackingDetailsScreen extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                _formatDate(orderDate),
+                _formatDate(order.transactionDate),
                 style: TextStyle(
                   fontSize: 14.sp,
                   color: AppColors.textBlack,
@@ -276,7 +383,7 @@ class OrderTrackingDetailsScreen extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                '$orderItems',
+                '${order.items.length}',
                 style: TextStyle(
                   fontSize: 14.sp,
                   color: AppColors.textBlack,
@@ -299,7 +406,7 @@ class OrderTrackingDetailsScreen extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                '\$${orderTotal.toStringAsFixed(2)}',
+                '\$${order.finalTotal.toStringAsFixed(2)}',
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,

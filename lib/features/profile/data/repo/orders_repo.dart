@@ -6,6 +6,7 @@ import 'package:cozy/features/profile/data/models/order_model.dart';
 import 'package:dartz/dartz.dart';
 
 import '../models/order_status.dart';
+import '../models/tracking_event_model.dart';
 
 class OrderRepo {
   final ApiConsumer api;
@@ -100,12 +101,14 @@ class OrderRepo {
   }
 
   //! Track order
-  Future<Either<String, Map<String, dynamic>>> trackOrder(
-      String orderId) async {
+  Future<Either<String, List<TrackingEvent>>> trackOrder(String orderId) async {
     try {
       final response = await api.get("${EndPoints.trackOrder}/$orderId");
       if (response.data['success']) {
-        return Right(response.data['data'] ?? {});
+        final trackingEvents = (response.data['data'] as List)
+            .map((event) => TrackingEvent.fromJson(event))
+            .toList();
+        return Right(trackingEvents);
       } else {
         return Left(
             'Failed to track order: ${response.data['message'] ?? 'Unknown error'}');

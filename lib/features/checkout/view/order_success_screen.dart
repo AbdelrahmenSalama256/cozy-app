@@ -3,21 +3,26 @@ import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/constants/navigation.dart';
 import 'package:cozy/core/cubit/global_cubit.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
+import 'package:cozy/core/services/service_locator.dart';
+import 'package:cozy/features/profile/data/repo/orders_repo.dart';
+import 'package:cozy/features/profile/view/cubit/orders_cubit.dart';
+import 'package:cozy/features/profile/view/tracking_orders_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/cubit/global_state.dart';
-import '../../profile/view/tracking_orders_screen.dart';
 
 class OrderSuccessScreen extends StatelessWidget {
   final String orderNumber;
   final double total;
+  final String orderId;
 
   const OrderSuccessScreen({
     super.key,
     required this.orderNumber,
     required this.total,
+    required this.orderId,
   });
 
   @override
@@ -129,7 +134,17 @@ class OrderSuccessScreen extends StatelessWidget {
                   SizedBox(height: 16.h),
                   AppButton(
                     onPressed: () {
-                      navigateTo(context, OrderTrackingDetailsScreen());
+                      navigateTo(
+                        context,
+                        BlocProvider(
+                          create: (context) => OrdersCubit(sl<OrderRepo>())
+                            ..getOrders()
+                            ..trackOrder(orderId),
+                          child: OrderTrackingDetailsScreen(
+                            orderId: orderId,
+                          ),
+                        ),
+                      );
                     },
                     type: AppButtonType.secondary,
                     text: 'track_order'.tr(context),

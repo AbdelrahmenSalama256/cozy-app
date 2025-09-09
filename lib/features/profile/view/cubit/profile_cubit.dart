@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:cozy/core/cubit/global_cubit.dart';
 import 'package:cozy/features/profile/view/cubit/profile_state.dart';
@@ -10,9 +12,11 @@ import '../../data/models/contact_model.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
   final GlobalCubit globalCubit;
+  StreamSubscription? _profileSubscription;
 
   ProfileCubit(this.globalCubit) : super(ProfileInitial()) {
     _initControllers();
+    _setupProfileUpdatesListener();
   }
 
   final TextEditingController nameController = TextEditingController();
@@ -21,6 +25,15 @@ class ProfileCubit extends Cubit<ProfileState> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   XFile? profileImage;
   bool hasChanges = false;
+
+  void _setupProfileUpdatesListener() {
+    _profileSubscription = globalCubit.profileStream.listen((contactResponse) {
+      if (contactResponse != null) {
+        _updateControllers(contactResponse.data.user);
+        checkForChanges();
+      }
+    });
+  }
 
   void _initControllers() {
     final user = globalCubit.contactResponse?.data.user ??
@@ -31,17 +44,34 @@ class ProfileCubit extends Cubit<ProfileState> {
           contactStatus: 'active',
         );
 
-    // Use name if available, otherwise combine first and last name
-    nameController.text = user.name ??
-        (user.firstName != null && user.lastName != null
-            ? '${user.firstName} ${user.lastName}'
-            : '');
-    emailController.text = user.email ?? '';
-    mobileController.text = user.mobile ?? '';
+    _updateControllers(user);
 
     nameController.addListener(checkForChanges);
     emailController.addListener(checkForChanges);
     mobileController.addListener(checkForChanges);
+  }
+
+  void _updateControllers(UserDetails user) {
+    // تحديث الكونترولرز فقط إذا كانت القيم مختلفة
+    final newName = user.name ??
+        (user.firstName != null && user.lastName != null
+            ? '${user.firstName} ${user.lastName}'
+            : '');
+
+    final newEmail = user.email ?? '';
+    final newMobile = user.mobile ?? '';
+
+    if (nameController.text != newName) {
+      nameController.text = newName;
+    }
+
+    if (emailController.text != newEmail) {
+      emailController.text = newEmail;
+    }
+
+    if (mobileController.text != newMobile) {
+      mobileController.text = newMobile;
+    }
   }
 
   void setProfileImage(XFile image) {
@@ -90,12 +120,8 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   Future<void> saveChanges() async {
+    emit(ProfileUpdating());
     if (!formKey.currentState!.validate()) return;
-
-    // Split name into first and last if needed
-    final nameParts = nameController.text.split(' ');
-    if (nameParts.length > 1) {
-    } else {}
 
     await globalCubit.updateProfile(
       name: nameController.text,
@@ -109,6 +135,7 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   @override
   Future<void> close() {
+    _profileSubscription?.cancel();
     nameController.dispose();
     emailController.dispose();
     mobileController.dispose();

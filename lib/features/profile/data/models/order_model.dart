@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'order_details_item_model.dart';
 import 'order_status.dart';
+import 'tracking_event_model.dart';
 
 class OrderModel {
   final String id;
@@ -25,6 +26,7 @@ class OrderModel {
   final String? deliveryPerson;
   final double shippingCharges;
   final List<OrderItem> items;
+  final List<TrackingEvent> trackingEvents; // New field for tracking events
 
   OrderModel({
     required this.id,
@@ -48,6 +50,7 @@ class OrderModel {
     this.deliveryPerson,
     this.shippingCharges = 0.0,
     required this.items,
+    this.trackingEvents = const [], // Default to empty list
   });
 
   // Getters for compatibility with OrderCard
@@ -111,6 +114,7 @@ class OrderModel {
       'delivery_person': deliveryPerson,
       'shipping_charges': shippingCharges,
       'items': items.map((item) => item.toJson()).toList(),
+      'tracking_events': trackingEvents.map((event) => event.toJson()).toList(),
     };
   }
 
@@ -127,14 +131,13 @@ class OrderModel {
           return OrderStatus.delivered;
         case 'cancelled':
           return OrderStatus.cancelled;
-        case 'final': // Handle the API's 'final' status
+        case 'final':
           return OrderStatus.delivered;
         default:
           return OrderStatus.pending;
       }
     }
 
-    // Handle both list response and single order response
     final orderData = json['data'] is Map ? json['data'] : json;
 
     return OrderModel(
@@ -171,10 +174,13 @@ class OrderModel {
               ?.map((item) => OrderItem.fromJson(item))
               .toList() ??
           [],
+      trackingEvents: (orderData['tracking_events'] as List<dynamic>?)
+              ?.map((event) => TrackingEvent.fromJson(event))
+              .toList() ??
+          [],
     );
   }
 
-  // Helper method to create a list of orders from API response
   static List<OrderModel> fromJsonList(Map<String, dynamic> json) {
     if (json['success'] == true && json['data'] is List) {
       return (json['data'] as List)

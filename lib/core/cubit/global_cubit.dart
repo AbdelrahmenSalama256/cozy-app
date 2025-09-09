@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:cozy/core/constants/app_constant.dart';
@@ -28,6 +29,8 @@ class GlobalCubit extends Cubit<GlobalState> {
 
   int currentNavIndex = 0;
   ScrollController controller = ScrollController();
+  Stream<ContactResponse?> get profileStream => _profileController.stream;
+  final _profileController = StreamController<ContactResponse?>.broadcast();
 
   void changeBottomNavIndex(int index) {
     if (currentNavIndex != index) {
@@ -66,6 +69,7 @@ class GlobalCubit extends Cubit<GlobalState> {
     if (token == null) {
       PrintUtil.error("No token found, user is not logged in.");
       emit(ProfileError(message: "No token found, please log in."));
+      _profileController.add(null);
       return;
     }
 
@@ -78,6 +82,7 @@ class GlobalCubit extends Cubit<GlobalState> {
         PrintUtil.success(
             "Loaded user profile from cache: ${contactResponse!.data.user.name}");
         emit(ProfileLoaded());
+        _profileController.add(contactResponse); // إضافة البيانات للستريم
         // Fetch fresh data in the background
         _fetchAndUpdateProfile();
         return;
@@ -96,14 +101,16 @@ class GlobalCubit extends Cubit<GlobalState> {
       (failure) {
         PrintUtil.error("Failed to get profile: $failure");
         emit(ProfileError(message: failure));
+        _profileController.add(null);
       },
-      (contactResponse) {
-        contactResponse = contactResponse;
+      (newContactResponse) {
+        contactResponse = newContactResponse;
         sl<CacheHelper>().setData(
-            AppConstants.userProfile, jsonEncode(contactResponse.toJson()));
+            AppConstants.userProfile, jsonEncode(contactResponse?.toJson()));
         PrintUtil.success(
-            "User profile fetched successfully: ${contactResponse.data.user.name}");
+            "User profile fetched successfully: ${contactResponse?.data.user.name}");
         emit(ProfileLoaded());
+        _profileController.add(contactResponse); // إضافة البيانات للستريم
       },
     );
   }
@@ -114,7 +121,7 @@ class GlobalCubit extends Cubit<GlobalState> {
     String? mobile,
     XFile? image,
   }) async {
-    emit(ProfileLoading());
+    emit(ProfileUpdating());
     final response = await sl<ProfileRepo>().updateProfile(
       name: name,
       email: email,
@@ -128,7 +135,7 @@ class GlobalCubit extends Cubit<GlobalState> {
       },
       (message) {
         PrintUtil.success("Profile updated successfully: $message");
-        getProfile();
+        getProfile(forceRefresh: true); // إعادة تحميل البيانات من السيرفر
         emit(ProfileUpdated());
       },
     );
@@ -192,5 +199,11 @@ class GlobalCubit extends Cubit<GlobalState> {
         emit(WishlistItemRemovedSuccess(message));
       },
     );
+  }
+
+  @override
+  Future<void> close() {
+    _profileController.close();
+    return super.close();
   }
 }
