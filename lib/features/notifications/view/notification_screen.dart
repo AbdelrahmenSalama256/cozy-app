@@ -1,5 +1,6 @@
 import 'package:cozy/core/component/custom_loading_indicator.dart';
 import 'package:cozy/core/constants/app_colors.dart';
+import 'package:cozy/core/constants/widgets/print_util.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/core/services/service_locator.dart';
 import 'package:cozy/features/notifications/view/cubit/notifications_cubit.dart';
@@ -24,7 +25,7 @@ class NotificationsScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppColors.white,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.white,
           elevation: 0,
           leading: IconButton(
             icon: Icon(
@@ -66,7 +67,7 @@ class NotificationsScreen extends StatelessWidget {
         body: BlocBuilder<NotificationsCubit, NotificationsState>(
           builder: (context, state) {
             if (state is NotificationsLoading) {
-              return _buildLoadingState();
+              return _buildLoadingState(context);
             }
 
             if (state is NotificationsError) {
@@ -123,7 +124,9 @@ class NotificationsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadingState() {
+  Widget _buildLoadingState(
+    BuildContext context,
+  ) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -155,12 +158,12 @@ class NotificationsScreen extends StatelessWidget {
         // Navigate to order details
         if (notification.link != null) {
           // Handle order details navigation
-          print('Navigate to order: ${notification.data}');
+          PrintUtil.debug('Navigate to order: ${notification.data}');
         }
         break;
       case NotificationType.promotion:
         // Navigate to promotion
-        print('Navigate to promotion');
+        PrintUtil.debug('Navigate to promotion');
         break;
       case NotificationType.system:
         // Handle system notification

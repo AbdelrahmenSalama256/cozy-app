@@ -3,6 +3,7 @@ import 'package:cozy/core/database/api/dio_consumer.dart';
 import 'package:cozy/core/network/local_network.dart';
 import 'package:cozy/features/cart/data/repo/cart_repo.dart';
 import 'package:cozy/features/checkout/data/repo/checkout_repo.dart';
+import 'package:cozy/features/customer_services/data/repo/customer_service_repo.dart';
 import 'package:cozy/features/home/data/repo/home_repo.dart';
 import 'package:cozy/features/profile/data/repo/orders_repo.dart';
 import 'package:cozy/features/profile/data/repo/profile_repo.dart';
@@ -32,6 +33,7 @@ void initServiceLocator() {
   sl.registerLazySingleton(() => CheckoutRepo(sl<DioConsumer>()));
   sl.registerLazySingleton(() => OrderRepo(sl<DioConsumer>()));
   sl.registerLazySingleton(() => NotificationsRepo(sl<DioConsumer>()));
+  sl.registerLazySingleton(() => CustomerServiceRepo(sl<DioConsumer>()));
   // sl.registerLazySingleton(() => DataConnectionChecker());
   // sl.registerLazySingleton(() => NetworkInfoImpl(sl<DataConnectionChecker>()));
   //! Repositorys

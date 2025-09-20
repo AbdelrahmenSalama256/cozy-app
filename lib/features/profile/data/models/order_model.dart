@@ -61,8 +61,8 @@ class OrderModel {
     switch (status) {
       case OrderStatus.pending:
         return 'pending';
-      case OrderStatus.ordered:
-        return 'ordered';
+      case OrderStatus.orderd:
+        return 'orderd';
       case OrderStatus.packed:
         return 'packed';
       case OrderStatus.shipped:
@@ -78,7 +78,7 @@ class OrderModel {
     switch (status) {
       case OrderStatus.pending:
         return Colors.grey;
-      case OrderStatus.ordered:
+      case OrderStatus.orderd:
         return Colors.blue;
       case OrderStatus.packed:
         return Colors.orange;
@@ -121,8 +121,8 @@ class OrderModel {
   factory OrderModel.fromJson(Map<String, dynamic> json) {
     OrderStatus parseStatus(String? status) {
       switch (status?.toLowerCase()) {
-        case 'ordered':
-          return OrderStatus.ordered;
+        case 'orderd':
+          return OrderStatus.orderd;
         case 'packed':
           return OrderStatus.packed;
         case 'shipped':

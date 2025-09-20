@@ -77,7 +77,7 @@ class ForgotPasswordBottomSheet extends StatelessWidget {
                     ),
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) =>
-                        Validators.validateEmail(value, context),
+                        Validators.validateEmailOrPhone(value, context),
                   ),
                   SizedBox(height: 24.h),
                   AppButton(

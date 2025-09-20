@@ -11,7 +11,6 @@ import 'package:cozy/features/auth/view/cubit/auth_cubit.dart';
 import 'package:cozy/features/auth/view/cubit/auth_state.dart';
 import 'package:cozy/features/auth/view/widgets/custom_bottom_sheet.dart';
 import 'package:cozy/features/auth/view/widgets/forgot_password_bottom_sheet.dart';
-import 'package:cozy/features/auth/view/widgets/social_login_button.dart';
 import 'package:cozy/features/base/view/base_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -137,28 +136,28 @@ class LoginScreen extends StatelessWidget {
                               },
                             ),
                             SizedBox(height: 30.h),
-                            Center(
-                              child: Text(
-                                "auth_or_sign_in_with".tr(context),
-                                style: TextStyle(
-                                    fontSize: 13.sp, color: AppColors.textGrey),
-                              ),
-                            ),
-                            SizedBox(height: 20.h),
-                            SocialLoginButton(
-                              text: "auth_sign_in_google".tr(context),
-                              iconAssetPath:
-                                  "assets/images/icons/google_logo.png",
-                              onPressed: () {},
-                            ),
-                            SizedBox(height: 16.h),
-                            SocialLoginButton(
-                              text: "auth_sign_in_facebook".tr(context),
-                              iconAssetPath:
-                                  "assets/images/icons/facebook_logo.png",
-                              onPressed: () {},
-                            ),
-                            SizedBox(height: 30.h),
+                            // Center(
+                            //   child: Text(
+                            //     "auth_or_sign_in_with".tr(context),
+                            //     style: TextStyle(
+                            //         fontSize: 13.sp, color: AppColors.textGrey),
+                            //   ),
+                            // ),
+                            // SizedBox(height: 20.h),
+                            // SocialLoginButton(
+                            //   text: "auth_sign_in_google".tr(context),
+                            //   iconAssetPath:
+                            //       "assets/images/icons/google_logo.png",
+                            //   onPressed: () {},
+                            // ),
+                            // SizedBox(height: 16.h),
+                            // SocialLoginButton(
+                            //   text: "auth_sign_in_facebook".tr(context),
+                            //   iconAssetPath:
+                            //       "assets/images/icons/facebook_logo.png",
+                            //   onPressed: () {},
+                            // ),
+                            // SizedBox(height: 30.h),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [

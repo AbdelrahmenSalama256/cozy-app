@@ -40,7 +40,7 @@ Widget buildOrderStatusCard(BuildContext context, OrderModel order) {
 Color _getStatusColor(OrderStatus status) {
   switch (status) {
     case OrderStatus.pending:
-    case OrderStatus.ordered:
+    case OrderStatus.orderd:
       return AppColors.warning;
     case OrderStatus.shipped:
       return AppColors.primary;
@@ -408,7 +408,7 @@ Widget buildActionButtons(OrderModel order, BuildContext context) {
     child: Column(
       children: [
         if (order.status == OrderStatus.pending ||
-            order.status == OrderStatus.ordered)
+            order.status == OrderStatus.orderd)
           _buildCancelOrderButton(order, context),
         SizedBox(height: 12.h),
         _buildSupportAndReorderButtons(context),

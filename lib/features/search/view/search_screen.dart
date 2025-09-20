@@ -300,6 +300,7 @@ class _SearchScreenState extends State<SearchScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
+        backgroundColor: AppColors.white,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios,
               color: AppColors.textBlack, size: 20.sp),
@@ -329,7 +330,6 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           SizedBox(width: 8.w),
         ],
-        backgroundColor: AppColors.white,
         elevation: 1,
       ),
       body: BlocBuilder<SearchCubit, SearchState>(

@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../customer_services/view/complaint_screen.dart';
 import '../../customer_services/view/general_inquiry_screen.dart';
 import '../../customer_services/view/return_request_screen.dart';
+import 'support_tickets_screen.dart';
 
 class CustomerServiceScreen extends StatelessWidget {
   const CustomerServiceScreen({super.key});
@@ -24,6 +25,19 @@ class CustomerServiceScreen extends StatelessWidget {
             SizedBox(height: 24.h),
             _buildServiceCard(
               context,
+              'my_tickets'.tr(context),
+              'view_support_tickets'.tr(context),
+              Icons.support_agent_outlined,
+              AppColors.primary,
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SupportTicketsScreen(),
+                ),
+              ),
+            ),
+            _buildServiceCard(
+              context,
               'general_inquiry'.tr(context),
               'general_inquiry_desc'.tr(context),
               Icons.help_outline,
@@ -31,7 +45,7 @@ class CustomerServiceScreen extends StatelessWidget {
               () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const GeneralInquiryScreen(),
+                  builder: (context) => GeneralInquiryScreen(),
                 ),
               ),
             ),

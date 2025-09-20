@@ -1,4 +1,3 @@
-// features/auth/data/repo/login_repo.dart
 import 'package:cozy/core/constants/widgets/errors/exceptions.dart';
 import 'package:cozy/core/database/api/api_consumer.dart';
 import 'package:dartz/dartz.dart';
@@ -37,24 +36,29 @@ class LoginRepo {
     try {
       final response = await api.post(
         EndPoints.forgotPassword,
-        data: {'email': emailOrPhone},
-        isFormData: true,
+        data: {'email': emailOrPhone}, // Send as JSON
+        isFormData: false, // Ensure JSON format
       );
 
-      if (response.data is Map<String, dynamic> &&
-          response.data['success'] == true) {
+      // Handle response based on API structure
+      if (response.data is Map<String, dynamic>) {
+        final success = response.data['success'] == true;
         final message =
             response.data['message']?.toString() ?? 'OTP sent successfully';
-        return Right(message);
+        if (success) {
+          return Right(message);
+        } else {
+          return Left(message);
+        }
       } else {
-        final errorMessage =
-            response.data['message']?.toString() ?? 'Failed to send OTP';
-        return Left(errorMessage);
+        return Left('Unexpected response format');
       }
     } on ServerException catch (e) {
       return Left(e.errorModel.detail);
     } on NoInternetException catch (e) {
       return Left(e.errorModel.detail);
+    } catch (e) {
+      return Left('An unexpected error occurred: $e');
     }
   }
 }

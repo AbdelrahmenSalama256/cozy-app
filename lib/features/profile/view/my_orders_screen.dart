@@ -46,7 +46,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen>
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: AppColors.textBlack),
@@ -139,7 +139,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen>
               children: [
                 _buildOrdersList(ordersCubit.orders),
                 _buildOrdersList(ordersCubit.filterOrders(OrderStatus.pending)),
-                _buildOrdersList(ordersCubit.filterOrders(OrderStatus.ordered)),
+                _buildOrdersList(ordersCubit.filterOrders(OrderStatus.orderd)),
                 _buildOrdersList(ordersCubit.filterOrders(OrderStatus.shipped)),
                 _buildOrdersList(
                     ordersCubit.filterOrders(OrderStatus.delivered)),
@@ -206,7 +206,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen>
                 }
               : null,
           onCancelTap: order.status == OrderStatus.pending ||
-                  order.status == OrderStatus.ordered
+                  order.status == OrderStatus.orderd
               ? () {
                   context.read<OrdersCubit>().cancelOrder(order.id);
                 }

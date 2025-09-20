@@ -1,9 +1,14 @@
+import 'package:cozy/core/component/widgets/app_button.dart';
 import 'package:cozy/core/component/widgets/app_text_field.dart';
+import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../core/component/widgets/app_button.dart';
+import '../../../core/component/custom_toast.dart';
+import 'cubit/customer_service_cubit.dart';
+import 'cubit/customer_service_state.dart';
 
 class ComplaintScreen extends StatefulWidget {
   const ComplaintScreen({super.key});
@@ -12,74 +17,70 @@ class ComplaintScreen extends StatefulWidget {
   State<ComplaintScreen> createState() => _ComplaintScreenState();
 }
 
-class _ComplaintScreenState extends State<ComplaintScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _orderNumberController = TextEditingController();
-  final _subjectController = TextEditingController();
-  final _complaintController = TextEditingController();
-
-  String _complaintType = 'product_quality';
-  final List<String> _complaintTypes = [
-    'product_quality',
-    'customer_service',
-    'delivery_issue',
-    'website_app_issue',
-    'billing_problem',
-    'other'
-  ];
-
-  int _severityLevel = 2;
-
+class _ComplaintScreenState extends State<ComplaintScreen>
+    with AutomaticKeepAliveClientMixin {
   @override
-  void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _orderNumberController.dispose();
-    _subjectController.dispose();
-    _complaintController.dispose();
-    super.dispose();
-  }
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'complaint_feedback'.tr(context),
-          style: TextStyle(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w600,
+    super.build(context);
+
+    return BlocProvider(
+      create: (context) => CustomerServiceCubit()..initializeWithUserData(),
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: AppColors.white,
+          title: Text(
+            'complaint_feedback'.tr(context),
+            style: TextStyle(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
-      ),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(20.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(context),
-              SizedBox(height: 24.h),
-              _buildNameField(context),
-              SizedBox(height: 16.h),
-              _buildEmailField(context),
-              SizedBox(height: 16.h),
-              _buildOrderNumberField(context),
-              SizedBox(height: 16.h),
-              _buildComplaintTypeDropdown(context),
-              SizedBox(height: 16.h),
-              _buildPriorityLevelSlider(context),
-              SizedBox(height: 16.h),
-              _buildSubjectField(context),
-              SizedBox(height: 16.h),
-              _buildDescriptionField(context),
-              SizedBox(height: 24.h),
-              _buildSubmitButton(context),
-            ],
-          ),
+        body: BlocConsumer<CustomerServiceCubit, CustomerServiceState>(
+          listener: (context, state) {
+            if (state is CustomerServiceSuccess) {
+              _showSuccessDialog(context, state.message);
+            } else if (state is CustomerServiceError) {
+              showToast(context,
+                  message: state.message, state: ToastStates.error);
+            }
+          },
+          builder: (context, state) {
+            final cubit = context.read<CustomerServiceCubit>();
+
+            return Form(
+              key: cubit.formKey,
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(20.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildHeader(context),
+                    SizedBox(height: 24.h),
+                    _buildNameField(context, cubit),
+                    SizedBox(height: 16.h),
+                    _buildEmailField(context, cubit),
+                    SizedBox(height: 16.h),
+                    _buildOrderNumberField(context, cubit),
+                    SizedBox(height: 16.h),
+                    _buildComplaintTypeDropdown(context, cubit),
+                    SizedBox(height: 16.h),
+                    _buildPriorityLevelSlider(context, cubit),
+                    SizedBox(height: 16.h),
+                    _buildSubjectField(context, cubit),
+                    SizedBox(height: 16.h),
+                    _buildDescriptionField(context, cubit),
+                    SizedBox(height: 24.h),
+                    _buildSubmitButton(
+                        context, cubit, state is CustomerServiceLoading),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -94,7 +95,7 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
           style: TextStyle(
             fontSize: 24.sp,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: AppColors.textBlack,
           ),
         ),
         SizedBox(height: 8.h),
@@ -102,28 +103,28 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
           'help_us_improve'.tr(context),
           style: TextStyle(
             fontSize: 14.sp,
-            color: Colors.grey[600],
+            color: AppColors.textGrey,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildNameField(BuildContext context) {
+  Widget _buildNameField(BuildContext context, CustomerServiceCubit cubit) {
     return AppTextField(
       labelText: 'full_name'.tr(context),
       hintText: 'enter_full_name'.tr(context),
-      controller: _nameController,
+      controller: cubit.nameController,
       validator: (value) =>
           value!.isEmpty ? 'please_enter_name'.tr(context) : null,
     );
   }
 
-  Widget _buildEmailField(BuildContext context) {
+  Widget _buildEmailField(BuildContext context, CustomerServiceCubit cubit) {
     return AppTextField(
       labelText: 'email_address'.tr(context),
       hintText: 'enter_email'.tr(context),
-      controller: _emailController,
+      controller: cubit.emailController,
       keyboardType: TextInputType.emailAddress,
       validator: (value) {
         if (value!.isEmpty) return 'please_enter_email'.tr(context);
@@ -135,15 +136,17 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
     );
   }
 
-  Widget _buildOrderNumberField(BuildContext context) {
+  Widget _buildOrderNumberField(
+      BuildContext context, CustomerServiceCubit cubit) {
     return AppTextField(
       labelText: 'order_number_optional'.tr(context),
       hintText: 'enter_order_number'.tr(context),
-      controller: _orderNumberController,
+      controller: cubit.orderNumberController,
     );
   }
 
-  Widget _buildComplaintTypeDropdown(BuildContext context) {
+  Widget _buildComplaintTypeDropdown(
+      BuildContext context, CustomerServiceCubit cubit) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -152,7 +155,7 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: AppColors.textBlack,
           ),
         ),
         SizedBox(height: 8.h),
@@ -161,25 +164,21 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Colors.grey[300]!),
+            border: Border.all(color: AppColors.lightGrey),
             borderRadius: BorderRadius.circular(4.r),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
-              value: _complaintType,
+              value: cubit.complaintType,
               isExpanded: true,
-              items: _complaintTypes.map((String type) {
+              items: cubit.complaintTypes.map((String type) {
                 return DropdownMenuItem<String>(
                   value: type,
-                  child: Text(
-                    type.tr(context),
-                  ),
+                  child: Text(type.tr(context)),
                 );
               }).toList(),
               onChanged: (String? newValue) {
-                setState(() {
-                  _complaintType = newValue!;
-                });
+                cubit.updateComplaintType(newValue!);
               },
             ),
           ),
@@ -188,7 +187,8 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
     );
   }
 
-  Widget _buildPriorityLevelSlider(BuildContext context) {
+  Widget _buildPriorityLevelSlider(
+      BuildContext context, CustomerServiceCubit cubit) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -197,7 +197,7 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: AppColors.textBlack,
           ),
         ),
         SizedBox(height: 12.h),
@@ -210,7 +210,7 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
                     'low'.tr(context),
                     style: TextStyle(
                       fontSize: 12.sp,
-                      color: Colors.grey[600],
+                      color: AppColors.textGrey,
                     ),
                   ),
                   SizedBox(height: 4.h),
@@ -218,7 +218,7 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
                     '1',
                     style: TextStyle(
                       fontSize: 10.sp,
-                      color: Colors.grey[500],
+                      color: AppColors.textGrey,
                     ),
                   ),
                 ],
@@ -227,19 +227,17 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
             Expanded(
               flex: 3,
               child: Slider(
-                value: _severityLevel.toDouble(),
+                value: cubit.severityLevel.toDouble(),
                 min: 1,
                 max: 5,
                 divisions: 4,
-                activeColor: _severityLevel <= 2
+                activeColor: cubit.severityLevel <= 2
                     ? Colors.green
-                    : _severityLevel <= 3
+                    : cubit.severityLevel <= 3
                         ? Colors.orange
                         : Colors.red,
                 onChanged: (double value) {
-                  setState(() {
-                    _severityLevel = value.round();
-                  });
+                  cubit.updateSeverityLevel(value.round());
                 },
               ),
             ),
@@ -250,7 +248,7 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
                     'high'.tr(context),
                     style: TextStyle(
                       fontSize: 12.sp,
-                      color: Colors.grey[600],
+                      color: AppColors.textGrey,
                     ),
                   ),
                   SizedBox(height: 4.h),
@@ -258,7 +256,7 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
                     '5',
                     style: TextStyle(
                       fontSize: 10.sp,
-                      color: Colors.grey[500],
+                      color: AppColors.textGrey,
                     ),
                   ),
                 ],
@@ -270,52 +268,74 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
     );
   }
 
-  Widget _buildSubjectField(BuildContext context) {
+  Widget _buildSubjectField(BuildContext context, CustomerServiceCubit cubit) {
     return AppTextField(
       labelText: 'subject'.tr(context),
       hintText: 'subject_hint'.tr(context),
-      controller: _subjectController,
+      controller: cubit.subjectController,
       validator: (value) =>
           value!.isEmpty ? 'please_enter_subject'.tr(context) : null,
     );
   }
 
-  Widget _buildDescriptionField(BuildContext context) {
+  Widget _buildDescriptionField(
+      BuildContext context, CustomerServiceCubit cubit) {
     return AppTextField(
       labelText: 'detailed_description'.tr(context),
       hintText: 'description_hint'.tr(context),
-      controller: _complaintController,
+      controller: cubit.complaintController,
       maxLines: 5,
       validator: (value) =>
           value!.isEmpty ? 'please_enter_description'.tr(context) : null,
     );
   }
 
-  Widget _buildSubmitButton(BuildContext context) {
+  Widget _buildSubmitButton(
+      BuildContext context, CustomerServiceCubit cubit, bool isLoading) {
     return AppButton(
-      onPressed: _submitForm,
+      onPressed: isLoading ? null : () => _submitForm(context, cubit),
       text: 'submit_complaint'.tr(context),
+      type: AppButtonType.primary,
+      backgroundColor: AppColors.warning,
     );
   }
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('complaint_submitted'.tr(context)),
-          content: Text('thank_you_feedback'.tr(context)),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-              child: Text('ok'.tr(context)),
-            ),
-          ],
-        ),
+  void _submitForm(BuildContext context, CustomerServiceCubit cubit) {
+    if (cubit.formKey.currentState!.validate()) {
+      cubit.submitTicket(
+        type: 'complaints',
+        orderNumber: cubit.orderNumberController.text.isEmpty
+            ? null
+            : cubit.orderNumberController.text,
+        severity: cubit.severityLevel,
       );
     }
+  }
+
+  void _showSuccessDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('complaint_submitted'.tr(context)),
+        content: Text(message),
+        actions: [
+          AppButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+            },
+            text: 'ok'.tr(context),
+            type: AppButtonType.secondary,
+            height: 36.h,
+            borderRadius: BorderRadius.circular(8.r),
+            borderColor: AppColors.textGrey,
+            textStyle: TextStyle(
+              fontSize: 14.sp,
+              color: AppColors.textGrey,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

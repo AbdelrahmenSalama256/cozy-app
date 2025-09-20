@@ -2,7 +2,6 @@ import 'package:cozy/core/app/cozy_home.dart';
 import 'package:cozy/core/cubit/global_cubit.dart';
 import 'package:cozy/core/network/local_network.dart';
 import 'package:cozy/core/services/service_locator.dart';
-import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -40,21 +39,16 @@ void main() async {
           create: (context) => sl<GlobalCubit>()..init(),
         ),
       ],
-      child: DevicePreview(
-        enabled: !kReleaseMode,
-
-        // enabled: false,
-        builder: (context) => UpgradeAlert(
-            upgrader: Upgrader(
-              // minAppVersion: "1.0.1",
-              //  debugLogging: true,
-              debugDisplayAlways: true,
-            ),
-            // navigatorKey: AppRouter.router.routerDelegate
-            // .navigatorKey, // Provide a fallback for child
-            dialogStyle: UpgradeDialogStyle.cupertino,
-            child: const CozyHome()),
-      ),
+      child: UpgradeAlert(
+          upgrader: Upgrader(
+            // minAppVersion: "1.0.1",
+            //  debugLogging: true,
+            debugDisplayAlways: true,
+          ),
+          // navigatorKey: AppRouter.router.routerDelegate
+          // .navigatorKey, // Provide a fallback for child
+          dialogStyle: UpgradeDialogStyle.cupertino,
+          child: const CozyHome()),
     ),
   );
 }

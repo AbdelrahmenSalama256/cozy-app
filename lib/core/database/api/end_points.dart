@@ -58,6 +58,10 @@ class EndPoints {
   // ! Offers
   static const String offers = '${baseUrl}offers';
   static const String productByoffers = '${baseUrl}offer-products';
+
+  // ! customer services
+  static const String submitTicket = '${baseUrl}submit-ticket';
+  static const String getSupportTickets = '${baseUrl}support-tickets';
 }
 
 class ApiKey {
