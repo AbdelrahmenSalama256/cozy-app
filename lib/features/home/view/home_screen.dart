@@ -1,9 +1,7 @@
 import 'package:cozy/core/component/custom_loading_indicator.dart';
 import 'package:cozy/core/constants/app_colors.dart';
-import 'package:cozy/core/constants/navigation.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/features/home/view/cubit/home_cubit.dart';
-import 'package:cozy/features/home/view/offers_screen.dart';
 import 'package:cozy/features/home/view/widgets/category_chip.dart';
 import 'package:cozy/features/home/view/widgets/product_card.dart';
 import 'package:cozy/features/product/view/product_details_screen.dart';
@@ -11,11 +9,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../core/constants/navigation.dart';
 import '../../../core/cubit/global_cubit.dart';
 import '../../../core/cubit/global_state.dart';
 import '../../customer_services/view/customer_service_screen.dart';
 import '../../notifications/view/notification_screen.dart';
 import 'cubit/home_state.dart';
+import 'offers_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -71,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
           final cubit = context.read<HomeCubit>();
           final categories = cubit.categories;
           final products = cubit.products;
+          final offers = cubit.offers;
 
           return BlocBuilder<GlobalCubit, GlobalState>(
             builder: (context, globalState) {
@@ -249,93 +250,123 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                       SizedBox(height: 30.h),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        child: GestureDetector(
-                          onTap: () {
-                            navigateTo(context, OffersScreen());
-                          },
-                          child: Container(
-                            height: 150.h,
-                            width: double.infinity,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: AlignmentDirectional.topStart,
-                                end: AlignmentDirectional.bottomEnd,
-                                colors: [
-                                  AppColors.primary,
-                                  AppColors.primaryLight,
-                                ],
+                      if (offers.isNotEmpty)
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          child: GestureDetector(
+                            onTap: () {
+                              navigateTo(
+                                  context,
+                                  OffersScreen(
+                                    offerId: offers.first.id,
+                                    offer: offers.first,
+                                  ));
+                            },
+                            child: Container(
+                              height: 150.h,
+                              width: double.infinity,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: AlignmentDirectional.topStart,
+                                  end: AlignmentDirectional.bottomEnd,
+                                  colors: [
+                                    AppColors.primary,
+                                    AppColors.primaryLight,
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(20.r),
                               ),
-                              borderRadius: BorderRadius.circular(20.r),
-                            ),
-                            child: Stack(
-                              children: [
-                                PositionedDirectional(
-                                  start: 20.w,
-                                  top: 20.h,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'special_offers'.tr(context),
-                                        style: TextStyle(
-                                          fontSize: 20.sp,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      SizedBox(height: 8.h),
-                                      Text(
-                                        'Up to 50% Off',
-                                        style: TextStyle(
-                                          fontSize: 32.sp,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      SizedBox(height: 8.h),
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 16.w,
-                                          vertical: 8.h,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(20.r),
-                                        ),
-                                        child: Text(
-                                          'see_all'.tr(context),
+                              child: Stack(
+                                children: [
+                                  PositionedDirectional(
+                                    start: 20.w,
+                                    top: 20.h,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          context
+                                                      .read<GlobalCubit>()
+                                                      .language ==
+                                                  "en"
+                                              ? offers.first.name
+                                              : offers.first.nameAr,
                                           style: TextStyle(
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.primary,
+                                            fontSize: 20.sp,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.h),
+                                        Text(
+                                          'Up to 50% Off',
+                                          style: TextStyle(
+                                            fontSize: 32.sp,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.h),
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 16.w,
+                                            vertical: 8.h,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(20.r),
+                                          ),
+                                          child: Text(
+                                            'see_all'.tr(context),
+                                            style: TextStyle(
+                                              fontSize: 12.sp,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.primary,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  if (offers.first.imageUrl.isNotEmpty)
+                                    PositionedDirectional(
+                                      end: 20.w,
+                                      bottom: 20.h,
+                                      child: Container(
+                                        width: 80.w,
+                                        height: 80.h,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12.r),
+                                          image: DecorationImage(
+                                            image: NetworkImage(
+                                                offers.first.imageUrl),
+                                            fit: BoxFit.cover,
                                           ),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                Positioned(
-                                  right: -20.w,
-                                  bottom: -20.h,
-                                  child: Container(
-                                    width: 120.w,
-                                    height: 120.w,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(60.r),
+                                    ),
+                                  Positioned(
+                                    right: -20.w,
+                                    bottom: -20.h,
+                                    child: Container(
+                                      width: 120.w,
+                                      height: 120.w,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.1),
+                                        borderRadius:
+                                            BorderRadius.circular(60.r),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
                       SizedBox(height: 30.h),
                       state is HomeProductsLoading
                           ? SizedBox(

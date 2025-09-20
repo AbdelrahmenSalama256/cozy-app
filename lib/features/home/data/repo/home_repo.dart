@@ -5,6 +5,8 @@ import 'package:dartz/dartz.dart';
 import '../../../../core/database/api/end_points.dart';
 import '../../../product/data/model/product_details_model.dart';
 import '../model/category_model.dart';
+import '../model/offer_product_model.dart';
+import '../model/offers_model.dart';
 import '../model/product_model.dart';
 
 class HomeRepo {
@@ -93,6 +95,38 @@ class HomeRepo {
       return Left(e.errorModel.detail);
     } catch (e) {
       return Left('Failed to load product details');
+    }
+  }
+
+  Future<Either<String, List<OfferModel>>> fetchOffers() async {
+    try {
+      final response = await api.get(EndPoints.offers);
+      final data = response.data as Map<String, dynamic>?;
+      final offers = (data?['data'] as List<dynamic>?)
+          ?.map((json) => OfferModel.fromJson(json as Map<String, dynamic>))
+          .toList();
+      return Right(offers ?? []);
+    } on ServerException catch (e) {
+      return Left(e.errorModel.detail);
+    } on NoInternetException catch (e) {
+      return Left(e.errorModel.detail);
+    }
+  }
+
+  Future<Either<String, List<OfferProductModel>>> fetchOfferProducts(
+      int offerId) async {
+    try {
+      final response = await api.get('${EndPoints.productByoffers}/$offerId');
+      final data = response.data as Map<String, dynamic>?;
+      final products = (data?['data'] as List<dynamic>?)
+          ?.map((json) =>
+              OfferProductModel.fromJson(json as Map<String, dynamic>))
+          .toList();
+      return Right(products ?? []);
+    } on ServerException catch (e) {
+      return Left(e.errorModel.detail);
+    } on NoInternetException catch (e) {
+      return Left(e.errorModel.detail);
     }
   }
 }

@@ -3,10 +3,10 @@ import 'package:cozy/core/constants/widgets/print_util.dart';
 import 'package:cozy/core/database/api/api_consumer.dart';
 import 'package:cozy/core/database/api/end_points.dart';
 import 'package:cozy/features/profile/data/models/order_model.dart';
+import 'package:cozy/features/profile/data/models/order_tracking_response.dart';
 import 'package:dartz/dartz.dart';
 
 import '../models/order_status.dart';
-import '../models/tracking_event_model.dart';
 
 class OrderRepo {
   final ApiConsumer api;
@@ -101,24 +101,37 @@ class OrderRepo {
   }
 
   //! Track order
-  Future<Either<String, List<TrackingEvent>>> trackOrder(String orderId) async {
+  Future<Either<String, OrderTrackResponse>> trackOrder(String orderId) async {
     try {
       final response = await api.get("${EndPoints.trackOrder}/$orderId");
-      if (response.data['success']) {
-        final trackingEvents = (response.data['data'] as List)
-            .map((event) => TrackingEvent.fromJson(event))
-            .toList();
-        return Right(trackingEvents);
+
+      if (response.data['success'] == true) {
+        try {
+          final trackResponse = OrderTrackResponse.fromJson(response.data);
+
+          // Validate tracking data
+          if (trackResponse.trackingEvents.isEmpty) {
+            return Left('No tracking events available for this order');
+          }
+
+          return Right(trackResponse);
+        } catch (e, stackTrace) {
+          PrintUtil.error(
+              'Error parsing tracking response: $e\nStack: $stackTrace\nJSON: ${response.data}');
+          return Left('Failed to parse tracking data. Please try again.');
+        }
       } else {
-        return Left(
-            'Failed to track order: ${response.data['message'] ?? 'Unknown error'}');
+        final errorMessage =
+            response.data['message'] ?? 'Failed to track order';
+        return Left(errorMessage);
       }
     } on ServerException catch (e) {
       return Left(e.errorModel.detail);
     } on NoInternetException catch (e) {
       return Left(e.errorModel.detail);
-    } catch (e) {
-      return Left('Failed to track order: $e');
+    } catch (e, stackTrace) {
+      PrintUtil.error('Unexpected error in trackOrder: $e\nStack: $stackTrace');
+      return Left('An unexpected error occurred. Please try again.');
     }
   }
 }

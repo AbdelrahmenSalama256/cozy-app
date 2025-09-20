@@ -1,5 +1,5 @@
 import '../../data/models/order_model.dart';
-import '../../data/models/tracking_event_model.dart';
+import '../../data/models/order_tracking_response.dart';
 
 class OrdersState {
   const OrdersState();
@@ -44,9 +44,8 @@ class OrderDetailsError extends OrdersState {
 class OrderTrackingLoading extends OrdersState {}
 
 class OrderTrackingLoaded extends OrdersState {
-  final List<TrackingEvent> trackingEvents;
-
-  const OrderTrackingLoaded(this.trackingEvents);
+  final OrderTrackResponse tracking;
+  const OrderTrackingLoaded(this.tracking);
 }
 
 class OrderTrackingError extends OrdersState {

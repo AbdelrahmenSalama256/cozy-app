@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../core/component/custom_loading_indicator.dart';
 import '../data/repo/orders_repo.dart';
 import 'widgets/order_details_widgets.dart';
 
@@ -87,7 +88,7 @@ class OrderDetailsScreen extends StatelessWidget {
 
   Widget _buildBodyContent(BuildContext context, OrdersState state) {
     if (state is OrderDetailsLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: CustomLoadingIndicator());
     }
 
     if (state is OrderDetailsError) {

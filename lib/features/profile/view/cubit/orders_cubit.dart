@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:cozy/core/common/logs.dart';
 import 'package:cozy/features/profile/data/models/order_model.dart';
-import 'package:cozy/features/profile/data/models/tracking_event_model.dart';
 
 import '../../data/models/order_status.dart';
+import '../../data/models/order_tracking_response.dart';
 import '../../data/repo/orders_repo.dart';
 import 'orders_state.dart';
 
@@ -13,7 +13,7 @@ class OrdersCubit extends Cubit<OrdersState> {
   OrdersCubit(this.orderRepo) : super(OrderInitial());
 
   List<OrderModel> orders = [];
-  List<TrackingEvent> trackingOrders = [];
+  OrderTrackResponse? currentTrackResponse;
 
   //! Fetch all orders
   Future<void> getOrders() async {
@@ -93,7 +93,6 @@ class OrdersCubit extends Cubit<OrdersState> {
     return orders.where((order) => order.status == status).toList();
   }
 
-//! Track order
   Future<void> trackOrder(String orderId) async {
     emit(OrderTrackingLoading());
     final result = await orderRepo.trackOrder(orderId);
@@ -102,36 +101,9 @@ class OrdersCubit extends Cubit<OrdersState> {
         Print.error(error);
         emit(OrderTrackingError(error));
       },
-      (trackingEvents) {
-        // final index = orders.indexWhere((order) => order.id == orderId);
-        // if (index != -1) {
-        //   orders[index] = OrderModel(
-        //     id: orders[index].id,
-        //     businessId: orders[index].businessId,
-        //     locationId: orders[index].locationId,
-        //     contactId: orders[index].contactId,
-        //     invoiceNo: orders[index].invoiceNo,
-        //     transactionDate: orders[index].transactionDate,
-        //     createdAt: orders[index].createdAt,
-        //     updatedAt: orders[index].updatedAt,
-        //     totalBeforeTax: orders[index].totalBeforeTax,
-        //     taxAmount: orders[index].taxAmount,
-        //     finalTotal: orders[index].finalTotal,
-        //     status: orders[index].status,
-        //     paymentStatus: orders[index].paymentStatus,
-        //     additionalNotes: orders[index].additionalNotes,
-        //     shippingAddress: orders[index].shippingAddress,
-        //     shippingStatus: orders[index].shippingStatus,
-        //     shippingDetails: orders[index].shippingDetails,
-        //     deliveredTo: orders[index].deliveredTo,
-        //     deliveryPerson: orders[index].deliveryPerson,
-        //     shippingCharges: orders[index].shippingCharges,
-        //     items: orders[index].items,
-        //     trackingEvents: trackingEvents,
-        //   );
-        // }
-        trackingOrders = trackingEvents;
-        emit(OrderTrackingLoaded(trackingEvents));
+      (trackResponse) {
+        currentTrackResponse = trackResponse;
+        emit(OrderTrackingLoaded(trackResponse));
       },
     );
   }

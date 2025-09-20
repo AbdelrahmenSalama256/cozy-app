@@ -3,6 +3,8 @@ import 'package:bloc/bloc.dart';
 import '../../../../core/services/service_locator.dart';
 import '../../../product/data/model/product_details_model.dart';
 import '../../data/model/category_model.dart';
+import '../../data/model/offer_product_model.dart';
+import '../../data/model/offers_model.dart';
 import '../../data/model/product_model.dart';
 import '../../data/repo/home_repo.dart';
 import 'home_state.dart';
@@ -13,6 +15,9 @@ class HomeCubit extends Cubit<HomeState> {
 
   List<CategoryModel> categories = [];
   List<ProductModel> products = [];
+  List<OfferModel> offers = [];
+  List<OfferProductModel> offerProducts = []; // Add this
+
   List<ProductDetailsModel> productDetails = [];
   int selectedCategoryIndex = 0;
   int currentPage = 1;
@@ -23,6 +28,8 @@ class HomeCubit extends Cubit<HomeState> {
 
   void initialize() {
     fetchCategories();
+    fetchOffers();
+
     fetchProducts();
   }
 
@@ -116,5 +123,29 @@ class HomeCubit extends Cubit<HomeState> {
   void updateQuantity(int newQuantity) {
     quantity = newQuantity;
     emit(ProductQuantityUpdated());
+  }
+
+  Future<void> fetchOffers() async {
+    emit(HomeOffersLoading());
+    final result = await homeRepo.fetchOffers();
+    result.fold(
+      (error) => emit(HomeOffersError(error)),
+      (data) {
+        offers = data;
+        emit(HomeOffersLoaded(data));
+      },
+    );
+  }
+
+  Future<void> fetchOfferProducts(int offerId) async {
+    emit(HomeOfferProductsLoading());
+    final result = await homeRepo.fetchOfferProducts(offerId);
+    result.fold(
+      (error) => emit(HomeOfferProductsError(error)),
+      (data) {
+        offerProducts = data;
+        emit(HomeOfferProductsLoaded(data));
+      },
+    );
   }
 }

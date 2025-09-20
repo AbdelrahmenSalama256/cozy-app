@@ -18,7 +18,8 @@ class EndPoints {
   //! Forget Password
 
   // ! Notifications
-  static const String notifications = '${baseUrl}notifications';
+  static const String notifications = 'notifications';
+  static const String markAllNotificationsRead = 'notifications/mark-all-read';
 
   // ! shop
   static const String category = '${baseUrl}categories';
@@ -53,6 +54,10 @@ class EndPoints {
   static const String getOrdersDetails = '${baseUrl}order-details';
   static const String cancelOrder = '${baseUrl}cancel-order';
   static const String trackOrder = '${baseUrl}order-tracks';
+
+  // ! Offers
+  static const String offers = '${baseUrl}offers';
+  static const String productByoffers = '${baseUrl}offer-products';
 }
 
 class ApiKey {

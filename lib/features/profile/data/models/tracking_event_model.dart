@@ -1,6 +1,7 @@
+// tracking_event.dart
 class TrackingEvent {
-  final String id;
-  final String transactionId;
+  final int id;
+  final int transactionId;
   final String title;
   final String text;
   final DateTime createdAt;
@@ -17,14 +18,16 @@ class TrackingEvent {
 
   factory TrackingEvent.fromJson(Map<String, dynamic> json) {
     return TrackingEvent(
-      id: json['id'].toString(),
-      transactionId: json['transaction_id'].toString(),
-      title: json['title'] ?? '',
-      text: json['text'] ?? '',
-      createdAt:
-          DateTime.parse(json['created_at'] ?? DateTime.now().toString()),
-      updatedAt:
-          DateTime.parse(json['updated_at'] ?? DateTime.now().toString()),
+      id: json['id'] as int? ?? 0,
+      transactionId: json['transaction_id'] as int? ?? 0,
+      title: json['title']?.toString() ?? '',
+      text: json['text']?.toString() ?? '',
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'])
+          : DateTime.now(),
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'])
+          : DateTime.now(),
     );
   }
 
