@@ -5,6 +5,7 @@ import 'package:dartz/dartz.dart';
 import '../../../../core/database/api/end_points.dart';
 import '../models/notification_model.dart';
 
+//! NotificationsRepo
 class NotificationsRepo {
   final ApiConsumer api;
 

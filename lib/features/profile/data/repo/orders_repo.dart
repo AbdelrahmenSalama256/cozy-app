@@ -8,6 +8,7 @@ import 'package:dartz/dartz.dart';
 
 import '../models/order_status.dart';
 
+//! OrderRepo
 class OrderRepo {
   final ApiConsumer api;
 
@@ -24,7 +25,7 @@ class OrderRepo {
                 return OrderModel.fromJson(json);
               } catch (e) {
                 PrintUtil.error('Error parsing order: $e, JSON: $json');
-                // Return a default order for failed parsing
+
                 return OrderModel(
                   id: json['id']?.toString() ?? 'error',
                   businessId: json['business_id']?.toString() ?? '',
@@ -109,7 +110,7 @@ class OrderRepo {
         try {
           final trackResponse = OrderTrackResponse.fromJson(response.data);
 
-          // Validate tracking data
+
           if (trackResponse.trackingEvents.isEmpty) {
             return Left('No tracking events available for this order');
           }

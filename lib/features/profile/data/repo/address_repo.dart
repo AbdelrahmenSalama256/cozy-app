@@ -7,6 +7,7 @@ import 'package:dartz/dartz.dart';
 
 import '../../../../core/common/logs.dart';
 
+//! AddressRepo
 class AddressRepo {
   final ApiConsumer api;
 
@@ -23,7 +24,7 @@ class AddressRepo {
                 return AddressModel.fromJson(json);
               } catch (e) {
                 Print.error('Error parsing address: $e, JSON: $json');
-                // Return a default address or skip this one
+
                 return AddressModel(
                   id: json['id']?.toString() ?? 'error',
                   phone: json['phone']?.toString() ?? '',
@@ -49,7 +50,7 @@ class AddressRepo {
     }
   }
 
-  // Add a new address - use toAddJson()
+
   Future<Either<String, String>> addAddress(AddressModel address) async {
     try {
       final response = await api.post(

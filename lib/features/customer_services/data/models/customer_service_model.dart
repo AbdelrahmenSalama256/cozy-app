@@ -1,3 +1,4 @@
+//! CustomerServiceRequest
 class CustomerServiceRequest {
   final String name;
   final String email;
@@ -44,6 +45,7 @@ class CustomerServiceRequest {
   }
 }
 
+//! CustomerServiceResponse
 class CustomerServiceResponse {
   final bool success;
   final String message;

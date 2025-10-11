@@ -8,6 +8,7 @@ enum NotificationType {
   unknown
 }
 
+//! NotificationModel
 class NotificationModel {
   final int id;
   final String title;

@@ -12,6 +12,7 @@ import '../services/service_locator.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+//! CozyHome
 class CozyHome extends StatelessWidget {
   const CozyHome({super.key});
 
@@ -50,7 +51,7 @@ class CozyHome extends StatelessWidget {
               //! Theme
 
               //!Routing
-              // home: const SplashScreen(),
+
               home: const SplashScreen(),
             );
           },

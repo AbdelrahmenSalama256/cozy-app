@@ -12,6 +12,7 @@ import '../../../../core/cubit/global_cubit.dart';
 import '../../../../core/network/local_network.dart';
 import 'auth_state.dart';
 
+//! AuthCubit
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial()) {
     usernameController = TextEditingController();
@@ -108,20 +109,20 @@ class AuthCubit extends Cubit<AuthState> {
           emit(AuthFailure(error: error));
         },
         (contactResponse) async {
-          // Save token if available
+
           if (contactResponse.data.token != null) {
             sl<CacheHelper>()
                 .setData(AppConstants.token, contactResponse.data.token!);
           }
 
-          // Save user profile
+
           await sl<CacheHelper>().setData(
               AppConstants.userProfile, jsonEncode(contactResponse.toJson()));
 
           PrintUtil.success(
               "Login successful for user: ${contactResponse.data.user.name}");
 
-          // Update GlobalCubit
+
           sl<GlobalCubit>().contactResponse = contactResponse;
 
           emit(AuthLoginSuccess(message: 'auth_login_success'));

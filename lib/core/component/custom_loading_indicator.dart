@@ -2,6 +2,7 @@ import 'package:cozy/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! CustomLoadingIndicator
 class CustomLoadingIndicator extends StatefulWidget {
   final double? size;
   final Color? color;
@@ -25,6 +26,7 @@ enum LoadingType {
   roomSetup,
 }
 
+//! _CustomLoadingIndicatorState
 class _CustomLoadingIndicatorState extends State<CustomLoadingIndicator>
     with TickerProviderStateMixin {
   late AnimationController _primaryController;
@@ -109,7 +111,7 @@ class _CustomLoadingIndicatorState extends State<CustomLoadingIndicator>
           child: Stack(
             alignment: Alignment.center,
             children: [
-              // Outer rotating furniture icons
+
               Transform.rotate(
                 angle: _rotationAnimation.value * 3.14159,
                 child: SizedBox(
@@ -127,7 +129,7 @@ class _CustomLoadingIndicatorState extends State<CustomLoadingIndicator>
                   ),
                 ),
               ),
-              // Center pulsing home icon
+
               Transform.scale(
                 scale: _scaleAnimation.value,
                 child: FadeTransition(
@@ -165,7 +167,7 @@ class _CustomLoadingIndicatorState extends State<CustomLoadingIndicator>
           child: Stack(
             alignment: Alignment.center,
             children: [
-              // Foundation
+
               Positioned(
                 bottom: size * 0.1,
                 child: AnimatedContainer(
@@ -180,7 +182,7 @@ class _CustomLoadingIndicatorState extends State<CustomLoadingIndicator>
                   ),
                 ),
               ),
-              // Walls
+
               Positioned(
                 bottom: size * 0.2,
                 child: AnimatedContainer(
@@ -198,7 +200,7 @@ class _CustomLoadingIndicatorState extends State<CustomLoadingIndicator>
                   ),
                 ),
               ),
-              // Roof
+
               Positioned(
                 top: size * 0.2,
                 child: AnimatedContainer(
@@ -225,7 +227,7 @@ class _CustomLoadingIndicatorState extends State<CustomLoadingIndicator>
                   ),
                 ),
               ),
-              // Door
+
               Positioned(
                 bottom: size * 0.2,
                 child: AnimatedContainer(
@@ -258,9 +260,9 @@ class _CustomLoadingIndicatorState extends State<CustomLoadingIndicator>
           child: Stack(
             alignment: Alignment.center,
             children: [
-              // Chair assembly animation
+
               _buildChairAssembly(size, color, progress),
-              // Assembly tools
+
               if (progress < 0.8)
                 Positioned(
                   top: size * 0.1,
@@ -291,7 +293,7 @@ class _CustomLoadingIndicatorState extends State<CustomLoadingIndicator>
           child: Stack(
             alignment: Alignment.center,
             children: [
-              // Room outline
+
               Container(
                 width: size * 0.9,
                 height: size * 0.9,
@@ -303,7 +305,7 @@ class _CustomLoadingIndicatorState extends State<CustomLoadingIndicator>
                   borderRadius: BorderRadius.circular(8.r),
                 ),
               ),
-              // Furniture pieces moving into place
+
               _buildMovingFurniture(Icons.chair_outlined, size, color, 0),
               _buildMovingFurniture(Icons.bed_outlined, size, color, 0.25),
               _buildMovingFurniture(
@@ -338,7 +340,7 @@ class _CustomLoadingIndicatorState extends State<CustomLoadingIndicator>
     return Stack(
       alignment: Alignment.center,
       children: [
-        // Chair legs (appear first)
+
         if (progress > 0.2)
           Positioned(
             bottom: size * 0.2,
@@ -361,7 +363,7 @@ class _CustomLoadingIndicatorState extends State<CustomLoadingIndicator>
               color: color.withOpacity(0.6),
             ),
           ),
-        // Chair seat (appears second)
+
         if (progress > 0.5)
           Positioned(
             bottom: size * 0.4,
@@ -375,7 +377,7 @@ class _CustomLoadingIndicatorState extends State<CustomLoadingIndicator>
               ),
             ),
           ),
-        // Chair back (appears last)
+
         if (progress > 0.7)
           Positioned(
             top: size * 0.2,
@@ -414,7 +416,7 @@ class _CustomLoadingIndicatorState extends State<CustomLoadingIndicator>
   }
 }
 
-// Extension for easy usage
+
 extension CustomLoadingExtension on CustomLoadingIndicator {
   static Widget furniture({double? size, Color? color}) {
     return CustomLoadingIndicator(

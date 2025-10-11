@@ -1,4 +1,4 @@
-// features/auth/view/cubit/register_cubit.dart
+
 import 'package:bloc/bloc.dart';
 import 'package:cozy/core/common/logs.dart';
 import 'package:cozy/core/constants/app_constant.dart';
@@ -12,6 +12,7 @@ import 'package:path/path.dart' as path;
 
 import 'register_state.dart';
 
+//! RegisterCubit
 class RegisterCubit extends Cubit<RegisterState> {
   final RegisterRepo registerRepo;
   final String id = DateTime.now().toString();

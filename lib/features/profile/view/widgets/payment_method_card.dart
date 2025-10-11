@@ -4,6 +4,7 @@ import 'package:cozy/features/profile/data/models/payment_method_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! PaymentMethodCard
 class PaymentMethodCard extends StatelessWidget {
   final PaymentMethodModel paymentMethod;
   final VoidCallback onEdit;

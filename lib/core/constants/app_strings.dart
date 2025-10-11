@@ -1,3 +1,4 @@
+//! AppStrings
 class AppStrings {
   static const String noItemsInCart = "noItemsInCart";
   static const String selectVariation = "selectVariation";

@@ -14,6 +14,7 @@ abstract class SearchState {
   bool get hasSearched => false;
 }
 
+//! SearchInitial
 class SearchInitial extends SearchState {
   @override
   final List<String> recentSearches;
@@ -26,16 +27,19 @@ class SearchInitial extends SearchState {
   });
 }
 
+//! SearchLoading
 class SearchLoading extends SearchState {
   @override
   bool get isLoading => true;
 }
 
+//! SearchResultsLoading
 class SearchResultsLoading extends SearchState {
   @override
   bool get isLoading => true;
 }
 
+//! SearchResultsSuccess
 class SearchResultsSuccess extends SearchState {
   final String query;
   final List<ProductModel> products;
@@ -76,6 +80,7 @@ class SearchResultsSuccess extends SearchState {
       selectedFilters.isNotEmpty ? selectedFilters.first : null;
 }
 
+//! SearchFailure
 class SearchFailure extends SearchState {
   final String error;
 

@@ -1,15 +1,16 @@
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:flutter/material.dart';
 
+//! Validators
 class Validators {
   static String? validateEmailOrPhone(String? value, BuildContext context) {
     if (value == null || value.isEmpty) {
       return 'email_or_phone_required'.tr(context);
     }
 
-    // Email validation
+
     final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    // Phone validation
+
     final phoneRegExp = RegExp(r'^\+?[0-9]{10,15}$');
 
     if (!emailRegExp.hasMatch(value) && !phoneRegExp.hasMatch(value)) {

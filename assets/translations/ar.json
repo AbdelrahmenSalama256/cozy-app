@@ -1,13 +1,11 @@
 {
   "example_screen_title": "شاشة تجريبية",
-  "example_screen_description": "هذا نص نموذجي على الشاشة التجريبية لتوضيح كيفية عمل الترجمة مع حزمة 'easy_localization'.",
+  "example_screen_description": "هذا نص نموذجي على الشاشة التجريبية لتوضيح كيفية عمل الترجمة مع حزمة \u0027easy_localization\u0027.",
   "change_language_button": "التبديل إلى الإنجليزية",
   "current_language_label": "اللغة الحالية: العربية",
-
   "splash_app_name": "كوفوكو",
   "splash_app_tagline": "أي تطبيق تسوق بعناصر جديدة",
   "splash_app_version": "الإصدار 0.0.1",
-
   "onboarding_title1": "مجموعات متنوعة من أحدث المنتجات",
   "onboarding_desc1": "اكتشف تشكيلة لا مثيل لها من أحدث الاتجاهات والكلاسيكيات الخالدة، كل ذلك في مكان واحد.",
   "onboarding_title2": "مجموعة كاملة من الألوان والمقاسات",
@@ -17,7 +15,6 @@
   "onboarding_create_account": "إنشاء حساب",
   "onboarding_already_have_account": "هل لديك حساب بالفعل؟",
   "onboarding_login": "تسجيل الدخول",
-
   "auth_create_account_title": "إنشاء حساب",
   "auth_create_account_subtitle": "ابدأ التعلم بإنشاء حسابك.",
   "auth_username_label": "اسم المستخدم",
@@ -29,18 +26,15 @@
   "auth_or_sign_up_with": "أو قم بالتسجيل باستخدام",
   "auth_sign_up_google": "التسجيل باستخدام جوجل",
   "auth_sign_up_facebook": "التسجيل باستخدام فيسبوك",
-
   "auth_verification_title": "التحقق",
   "auth_verification_code_label": "رمز التحقق",
   "auth_verification_message": "لقد أرسلنا رمز التحقق إلى",
   "auth_submit_button": "إرسال",
   "auth_didnt_receive_code": "لم تستلم الرمز؟",
   "auth_resend_code": "إعادة الإرسال",
-
   "auth_register_success_title": "نجاح التسجيل",
   "auth_register_success_message": "تهانينا! تم إنشاء حسابك بنجاح. يرجى تسجيل الدخول للحصول على تجربة مدهشة.",
   "auth_go_to_homepage_button": "الذهاب إلى الصفحة الرئيسية",
-
   "auth_login_title": "تسجيل دخول الحساب",
   "auth_login_subtitle": "يرجى تسجيل الدخول لمتابعة حسابك.",
   "auth_forgot_password_link": "هل نسيت كلمة المرور؟",
@@ -49,11 +43,9 @@
   "auth_sign_in_google": "تسجيل الدخول باستخدام جوجل",
   "auth_sign_in_facebook": "تسجيل الدخول باستخدام فيسبوك",
   "auth_dont_have_account": "ليس لديك حساب؟",
-
   "auth_forgot_password_title": "هل نسيت كلمة المرور",
   "auth_forgot_password_sheet_subtitle": "أدخل بريدك الإلكتروني أو رقم هاتفك لتلقي رمز التحقق.",
   "auth_send_code_button": "إرسال الرمز",
-
   "auth_create_new_password_title": "إنشاء كلمة مرور جديدة",
   "auth_create_new_password_sheet_subtitle": "يجب أن تكون كلمة مرورك الجديدة مختلفة عن كلمات المرور المستخدمة سابقًا.",
   "auth_new_password_label": "كلمة المرور الجديدة",
@@ -64,7 +56,6 @@
   "auth_password_updated_success": "تم تحديث كلمة المرور بنجاح!",
   "auth_forgot_password_otp_sent": "تم إرسال رمز التحقق إلى بريدك الإلكتروني/هاتفك.",
   "auth_invalid_otp": "رمز التحقق غير صالح. يرجى المحاولة مرة أخرى.",
-
   "auth_forgot_password_subtitle": "أدخل بريدك الإلكتروني لتلقي رمز التحقق",
   "auth_create_account_success": "تم إنشاء الحساب بنجاح! يرجى التحقق.",
   "auth_otp_verified_success": "تم التحقق من رمز OTP بنجاح!",
@@ -94,8 +85,6 @@
   "home_new_arrivals": "وصل حديثاً",
   "home_see_all": "عرض الكل",
   "home_category_products_count_suffix": "منتج",
-
-  "search_hint_text": "ابحث عن المنتجات...",
   "search_last_search": "آخر بحث",
   "search_clear_all": "مسح الكل",
   "search_popular_search": "البحث الرائج",
@@ -107,13 +96,11 @@
   "search_followers_count_suffix": "متابع",
   "search_no_results": "لم يتم العثور على منتجات تطابق بحثك.",
   "search_start_typing": "ابدأ الكتابة لرؤية اقتراحات المنتجات.",
-
   "home_search_hint": "ابحث عن منتجات، علامات تجارية...",
   "home_tab_categories": "الفئات",
   "home_new_arrivals_title": "وصل حديثاً",
   "home_popular_products_title": "المنتجات الشائعة",
   "see_all_button": "عرض الكل",
-
   "category_electronics": "إلكترونيات",
   "category_fashion": "أزياء",
   "category_home": "المنزل",
@@ -122,14 +109,12 @@
   "category_books": "كتب",
   "category_toys": "ألعاب",
   "category_more": "المزيد",
-
   "product_modern_chair_key": "كرسي عصري",
   "product_smart_watch_key": "ساعة ذكية سيريس 8",
   "product_running_shoes_key": "حذاء جري ألترا بوست",
   "product_coffee_maker_key": "ماكينة صنع القهوة بالتقطير",
   "product_headphones_key": "سماعات رأس لاسلكية",
   "product_backpack_key": "حقيبة ظهر للسفر",
-
   "store_furni_world_key": "عالم الأثاث",
   "store_tech_galaxy_key": "مجرة التقنية",
   "store_active_gear_key": "أكتيف جير",
@@ -137,9 +122,7 @@
   "store_audio_hub_key": "مركز الصوتيات",
   "store_travel_gear_key": "معدات السفر",
   "store_sample_shop_key": "متجر عام نموذجي",
-
   "currency_usd": "دولار",
-
   "search_appbar_hint": "ابحث عن المنتجات...",
   "search_last_search_title": "آخر بحث",
   "search_clear_all_button": "مسح الكل",
@@ -147,19 +130,16 @@
   "search_results_count": "{count} نتائج",
   "search_no_results_found": "لم يتم العثور على نتائج لـ",
   "error_generic_message": "حدث خطأ: {details}",
-
   "search_recent_1": "أحذية رجالية",
   "search_recent_2": "حافظة لابتوب",
   "search_recent_3": "فستان صيفي",
   "search_popular_query_1": "سماعات أذن لاسلكية",
   "search_popular_query_2": "سجادة يوغا",
   "search_popular_query_3": "خلاط مطبخ",
-
   "filter_brand_key": "العلامة التجارية",
   "filter_price_key": "السعر",
   "filter_color_key": "اللون",
   "filter_rating_key": "التقييم",
-
   "store_status_online": "متصل",
   "store_status_offline": "غير متصل",
   "review_count_text": "{count} مراجعات",
@@ -237,7 +217,6 @@
   "login_favorites_message": "سجل الدخول لرؤية العناصر المفضلة المحفوظة",
   "welcome_guest": "مرحباً ضيف",
   "login_to_access_features": "سجل الدخول للوصول لجميع الميزات والتجربة الشخصية",
-  "login": "تسجيل الدخول",
   "create_account": "إنشاء حساب",
   "edit_profile": "تعديل الملف الشخصي",
   "my_orders": "طلباتي",
@@ -392,7 +371,6 @@
   "follow_us": "تابعنا",
   "select_language": "اختر لغة",
   "close": "إغلاق",
-
   "recent_notifications": "الإشعارات الأخيرة",
   "settings": "الإعدادات",
   "today": "اليوم",
@@ -424,7 +402,6 @@
   "total_amount": "المبلغ الإجمالي",
   "continue_shopping": "متابعة التسوق",
   "furniture_category": "الأثاث",
-
   "featured": "مميز",
   "new": "جديد",
   "popular": "شائع",
@@ -610,7 +587,6 @@
   "variations": "التباينات",
   "available": "متوفر",
   "no_products": "لا توجد منتجات",
-
   "no_categories": "لا توجد فئات متاحة",
   "item_removed_from_cart_successfully": "تمت إزالة العنصر من السلة بنجاح",
   "cart_cleard_successfully": "تم تفريغ السلة بنجاح",
@@ -647,5 +623,11 @@
   "total_tickets": "إجمالي التذاكر",
   "open_tickets": "التذاكر المفتوحة",
   "ticket_number": "تذكرة رقم",
-  "created_date": "تم الإنشاء"
+  "created_date": "تم الإنشاء",
+  "please_select_a_variations": "يرجى اختيار نوع",
+  "continue_as_guest": "المتابعة كضيف",
+  "search_hint_text": "ابحث عن المنتجات...",
+  "login_required": "مطلوب تسجيل الدخول",
+  "login_required_message": "يجب عليك تسجيل الدخول لاستخدام هذه الميزة",
+  "login": "تسجيل الدخول"
 }

@@ -2,6 +2,7 @@ import 'package:cozy/core/component/widgets/app_button.dart';
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/constants/navigation.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
+import 'package:cozy/core/utils/currency_formatter.dart';
 import 'package:cozy/features/profile/data/models/order_model.dart';
 import 'package:cozy/features/profile/view/cubit/orders_cubit.dart';
 import 'package:cozy/features/profile/view/cubit/orders_state.dart';
@@ -244,7 +245,7 @@ Widget _buildQuantityAndPrice(BuildContext context, OrderItem item) {
       ),
       const Spacer(),
       Text(
-        '${item.unitPrice.toStringAsFixed(2)} ${'currency'.tr(context)}',
+        formatCurrency(context, item.unitPrice),
         style: TextStyle(
           fontSize: 14.sp,
           fontWeight: FontWeight.bold,
@@ -257,7 +258,7 @@ Widget _buildQuantityAndPrice(BuildContext context, OrderItem item) {
 
 Widget _buildTotalPrice(BuildContext context, OrderItem item) {
   return Text(
-    '${'total'.tr(context)}: ${item.lineTotal.toStringAsFixed(2)} ${'currency'.tr(context)}',
+    '${'total'.tr(context)}: ${formatCurrency(context, item.lineTotal)}',
     style: TextStyle(
       fontSize: 12.sp,
       fontWeight: FontWeight.w600,
@@ -368,7 +369,7 @@ Widget _buildSummaryRow(BuildContext context, String label, double amount) {
       ),
       const Spacer(),
       Text(
-        '${amount.toStringAsFixed(2)} ${'currency'.tr(context)}',
+        formatCurrency(context, amount),
         style: TextStyle(
           fontSize: 14.sp,
           color: AppColors.textBlack,
@@ -391,7 +392,7 @@ Widget _buildTotalRow(BuildContext context, double total) {
       ),
       const Spacer(),
       Text(
-        '${total.toStringAsFixed(2)} ${'currency'.tr(context)}',
+        formatCurrency(context, total),
         style: TextStyle(
           fontSize: 18.sp,
           fontWeight: FontWeight.bold,
@@ -404,7 +405,7 @@ Widget _buildTotalRow(BuildContext context, double total) {
 
 Widget buildActionButtons(OrderModel order, BuildContext context) {
   return Padding(
-    padding: EdgeInsets.symmetric(horizontal: 20.w),
+    padding: EdgeInsets.symmetric(horizontal: 15.w),
     child: Column(
       children: [
         if (order.status == OrderStatus.pending ||
@@ -503,13 +504,9 @@ Widget _buildTrackOrderButton(BuildContext context, final String orderId) {
   );
 }
 
-void _contactSupport(BuildContext context) {
-  // Handle contact support
-}
+void _contactSupport(BuildContext context) {}
 
-void _reorder(BuildContext context) {
-  // Handle reorder
-}
+void _reorder(BuildContext context) {}
 
 void _showCancelOrderDialog(OrderModel order, BuildContext context) {
   final ordersCubit = context.read<OrdersCubit>();

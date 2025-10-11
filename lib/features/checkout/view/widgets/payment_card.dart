@@ -1,10 +1,11 @@
-// payment_card.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../data/models/payment_method.dart';
 
+//! PaymentCard
 class PaymentCard extends StatelessWidget {
   final PaymentMethod payment;
   final bool isSelected;

@@ -3,6 +3,7 @@ import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! LastSearchChip
 class LastSearchChip extends StatelessWidget {
   final String
       queryKey; // This can be the direct string or a key for localization
@@ -18,8 +19,8 @@ class LastSearchChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Check if queryKey is likely a localization key or a direct string
-    // This is a simple heuristic; a more robust solution might involve checking if the key exists in translations.
+
+
     bool isLocalizationKey =
         queryKey.contains('_key') || queryKey.startsWith('search_recent_');
     String displayText = isLocalizationKey ? queryKey.tr(context) : queryKey;

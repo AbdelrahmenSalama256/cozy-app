@@ -3,6 +3,7 @@ import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! StoreInfoCard
 class StoreInfoCard extends StatelessWidget {
   const StoreInfoCard({super.key});
 
@@ -31,7 +32,7 @@ class StoreInfoCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColors.lightGrey,
               borderRadius: BorderRadius.circular(8.r),
-              // Placeholder for store logo
+
               image: const DecorationImage(
                 image: NetworkImage(
                     "https://via.placeholder.com/150/771796/FFFFFF?Text=Logo"),

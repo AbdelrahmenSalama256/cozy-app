@@ -12,6 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/component/widgets/app_button.dart';
 import 'cubit/address_state.dart';
 
+//! AddressesScreen
 class AddressesScreen extends StatelessWidget {
   const AddressesScreen({super.key});
 

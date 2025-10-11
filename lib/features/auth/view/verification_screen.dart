@@ -13,6 +13,7 @@ import 'package:pinput/pinput.dart';
 import '../../../core/component/custom_toast.dart';
 import 'widgets/create_new_password_bottom_sheet.dart';
 
+//! VerificationScreen
 class VerificationScreen extends StatelessWidget {
   final String emailOrPhoneForOtp;
   const VerificationScreen({super.key, required this.emailOrPhoneForOtp});

@@ -1,5 +1,6 @@
 import 'package:cozy/core/constants/widgets/print_util.dart';
 
+//! ProductModel
 class ProductModel {
   final String id;
   final String nameKey;

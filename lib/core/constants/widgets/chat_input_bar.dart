@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! ChatInputBar
 class ChatInputBar extends StatefulWidget {
   final Function(String)? onSendMessage; // جعلها اختيارية
   final Function(File)? onImagePicked; // جعلها اختيارية
@@ -20,6 +21,7 @@ class ChatInputBar extends StatefulWidget {
   State<ChatInputBar> createState() => _ChatInputBarState();
 }
 
+//! _ChatInputBarState
 class _ChatInputBarState extends State<ChatInputBar>
     with SingleTickerProviderStateMixin {
   final TextEditingController _controller = TextEditingController();
@@ -56,7 +58,7 @@ class _ChatInputBarState extends State<ChatInputBar>
             children: [
               SizedBox(width: 8.w),
 
-              // الحقل النصي باستخدام الويدجت المخصصة
+
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(

@@ -1,3 +1,4 @@
+//! ContactResponse
 class ContactResponse {
   final bool success;
   final String message;
@@ -24,6 +25,7 @@ class ContactResponse {
       };
 }
 
+//! ContactData
 class ContactData {
   final String? token;
   final int id;
@@ -59,6 +61,7 @@ class ContactData {
       };
 }
 
+//! UserDetails
 class UserDetails {
   final int id;
   final int? businessId;

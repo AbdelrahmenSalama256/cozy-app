@@ -1,4 +1,4 @@
-// core/utils/password_strength_toggle.dart (renamed to match your project structure)
+
 import 'package:cozy/core/component/widgets/app_text_field.dart';
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! PasswordFieldWithToggle
 class PasswordFieldWithToggle extends StatefulWidget {
   final TextEditingController controller;
   final String labelText;
@@ -33,6 +34,7 @@ class PasswordFieldWithToggle extends StatefulWidget {
       _PasswordFieldWithToggleState();
 }
 
+//! _PasswordFieldWithToggleState
 class _PasswordFieldWithToggleState extends State<PasswordFieldWithToggle> {
   bool isStrongPassword = false;
 
@@ -72,11 +74,11 @@ class _PasswordFieldWithToggleState extends State<PasswordFieldWithToggle> {
             setState(() {
               isStrongPassword = value;
             });
-            // // Re-validate the form when toggle changes
-            // final form = Form.of(context);
-            // if (form.validate()) {
-            //   form.save();
-            // }
+
+
+
+
+
           },
           label: "require_strong_password".tr(context),
         ),
@@ -85,6 +87,7 @@ class _PasswordFieldWithToggleState extends State<PasswordFieldWithToggle> {
   }
 }
 
+//! PasswordStrengthToggle
 class PasswordStrengthToggle extends StatelessWidget {
   final bool value;
   final ValueChanged<bool> onChanged;

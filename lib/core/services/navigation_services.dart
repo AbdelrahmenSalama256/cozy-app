@@ -1,22 +1,28 @@
+
+
+
+
+
 import 'package:flutter/material.dart';
 
-class NavigationService {
-  static final GlobalKey<NavigatorState> navigatorKey =
-      GlobalKey<NavigatorState>();
+import '../app/cozy_home.dart' show navigatorKey;
 
-  // Safe navigation methods that check for null
+//! NavigationService
+class NavigationService {
+
+  static GlobalKey<NavigatorState> get navigator => navigatorKey;
+
   static Future<dynamic>? navigateTo(String routeName, {Object? arguments}) {
-    if (navigatorKey.currentState != null) {
-      return navigatorKey.currentState!
-          .pushNamed(routeName, arguments: arguments);
+    if (navigator.currentState != null) {
+      return navigator.currentState!.pushNamed(routeName, arguments: arguments);
     }
     return null;
   }
 
   static Future<dynamic>? navigateToReplacement(String routeName,
       {Object? arguments}) {
-    if (navigatorKey.currentState != null) {
-      return navigatorKey.currentState!
+    if (navigator.currentState != null) {
+      return navigator.currentState!
           .pushReplacementNamed(routeName, arguments: arguments);
     }
     return null;
@@ -24,8 +30,8 @@ class NavigationService {
 
   static Future<dynamic>? navigateToAndRemoveUntil(String routeName,
       {Object? arguments, bool Function(Route<dynamic>)? predicate}) {
-    if (navigatorKey.currentState != null) {
-      return navigatorKey.currentState!.pushNamedAndRemoveUntil(
+    if (navigator.currentState != null) {
+      return navigator.currentState!.pushNamedAndRemoveUntil(
         routeName,
         predicate ?? (route) => false,
         arguments: arguments,
@@ -35,30 +41,12 @@ class NavigationService {
   }
 
   static void goBack({dynamic result}) {
-    if (navigatorKey.currentState != null &&
-        navigatorKey.currentState!.canPop()) {
-      navigatorKey.currentState!.pop(result);
+    if (navigator.currentState != null && navigator.currentState!.canPop()) {
+      navigator.currentState!.pop(result);
     }
   }
 
   static bool canGoBack() {
-    return navigatorKey.currentState != null &&
-        navigatorKey.currentState!.canPop();
+    return navigator.currentState != null && navigator.currentState!.canPop();
   }
 }
-// // Example of navigating with arguments
-// NavigationService.navigateTo(
-//   AppRoutes.registerFirstName,
-//   arguments: {
-//     'email': _emailController.text,
-//     'password': _passwordController.text,
-//   },
-// );
-
-// // Example of navigating and removing all previous routes
-// NavigationService.navigateToAndRemoveUntil(
-//   AppRoutes.login,
-// );
-
-// // Example of going back
-// NavigationService.goBack();

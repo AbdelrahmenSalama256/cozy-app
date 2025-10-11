@@ -4,6 +4,7 @@ import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! HelpSupportScreen
 class HelpSupportScreen extends StatelessWidget {
   const HelpSupportScreen({super.key});
 

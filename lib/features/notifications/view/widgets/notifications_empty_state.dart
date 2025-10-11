@@ -3,6 +3,7 @@ import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! NotificationsEmptyState
 class NotificationsEmptyState extends StatelessWidget {
   const NotificationsEmptyState({super.key});
 

@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../custom_toast.dart';
 
+//! ProfileImagePicker
 class ProfileImagePicker extends StatelessWidget {
   final XFile? profileImage;
   final Function(XFile) onImageSelected;

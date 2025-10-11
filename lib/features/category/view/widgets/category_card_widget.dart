@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
 
+//! CategoryCard
 class CategoryCard extends StatelessWidget {
   final VoidCallback onTap;
   final double? width;
@@ -98,10 +99,12 @@ class CategoryCard extends StatelessWidget {
                   children: [
                     Text(
                       name ?? '',
+                      maxLines: 1,
                       style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w500,
                         color: AppColors.textBlack,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     SizedBox(height: 4.h),

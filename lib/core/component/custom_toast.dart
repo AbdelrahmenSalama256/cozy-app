@@ -10,10 +10,10 @@ void showToast(
   Duration duration = const Duration(seconds: 3),
   ToastStyle style = ToastStyle.minimal,
 }) {
-  // Remove any existing toast
+
   ScaffoldMessenger.of(context).removeCurrentSnackBar();
 
-  // Show custom furniture-themed toast
+
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: _buildToastContent(message, state, style),
@@ -55,6 +55,7 @@ enum ToastStyle {
   minimal,
 }
 
+//! _FurnitureToast
 class _FurnitureToast extends StatefulWidget {
   final String message;
   final ToastStates state;
@@ -68,6 +69,7 @@ class _FurnitureToast extends StatefulWidget {
   State<_FurnitureToast> createState() => _FurnitureToastState();
 }
 
+//! _FurnitureToastState
 class _FurnitureToastState extends State<_FurnitureToast>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
@@ -147,7 +149,7 @@ class _FurnitureToastState extends State<_FurnitureToast>
               ),
               child: Row(
                 children: [
-                  // Animated furniture icon
+
                   Transform.rotate(
                     angle: _iconRotation.value,
                     child: Container(
@@ -166,7 +168,7 @@ class _FurnitureToastState extends State<_FurnitureToast>
                   ),
                   SizedBox(width: 12.w),
 
-                  // Message content
+
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,7 +195,7 @@ class _FurnitureToastState extends State<_FurnitureToast>
                     ),
                   ),
 
-                  // Decorative furniture shape
+
                   _buildDecorativeShape(),
                 ],
               ),
@@ -218,6 +220,7 @@ class _FurnitureToastState extends State<_FurnitureToast>
   }
 }
 
+//! _HomeToast
 class _HomeToast extends StatefulWidget {
   final String message;
   final ToastStates state;
@@ -231,6 +234,7 @@ class _HomeToast extends StatefulWidget {
   State<_HomeToast> createState() => _HomeToastState();
 }
 
+//! _HomeToastState
 class _HomeToastState extends State<_HomeToast>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
@@ -285,14 +289,14 @@ class _HomeToastState extends State<_HomeToast>
           ),
           child: Row(
             children: [
-              // Animated home building
+
               SizedBox(
                 width: 50.w,
                 height: 50.w,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    // Foundation
+
                     if (_buildAnimation.value > 0.2)
                       Positioned(
                         bottom: 5.h,
@@ -306,7 +310,7 @@ class _HomeToastState extends State<_HomeToast>
                           ),
                         ),
                       ),
-                    // Walls
+
                     if (_buildAnimation.value > 0.4)
                       Positioned(
                         bottom: 11.h,
@@ -324,7 +328,7 @@ class _HomeToastState extends State<_HomeToast>
                           ),
                         ),
                       ),
-                    // Roof
+
                     if (_buildAnimation.value > 0.6)
                       Positioned(
                         top: 10.h,
@@ -340,7 +344,7 @@ class _HomeToastState extends State<_HomeToast>
 
               SizedBox(width: 16.w),
 
-              // Message content
+
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -374,6 +378,7 @@ class _HomeToastState extends State<_HomeToast>
   }
 }
 
+//! _RoomToast
 class _RoomToast extends StatelessWidget {
   final String message;
   final ToastStates state;
@@ -397,7 +402,7 @@ class _RoomToast extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Room layout icon
+
           Container(
             width: 40.w,
             height: 40.w,
@@ -414,7 +419,7 @@ class _RoomToast extends StatelessWidget {
 
           SizedBox(width: 12.w),
 
-          // Message
+
           Expanded(
             child: Text(
               message,
@@ -431,6 +436,7 @@ class _RoomToast extends StatelessWidget {
   }
 }
 
+//! _MinimalToast
 class _MinimalToast extends StatelessWidget {
   final String message;
   final ToastStates state;
@@ -473,7 +479,8 @@ class _MinimalToast extends StatelessWidget {
   }
 }
 
-// Custom painter for furniture shapes
+
+//! _FurnitureShapePainter
 class _FurnitureShapePainter extends CustomPainter {
   final Color color;
   final ToastStates state;
@@ -505,7 +512,7 @@ class _FurnitureShapePainter extends CustomPainter {
   }
 
   void _drawChair(Canvas canvas, Size size, Paint paint) {
-    // Simple chair outline
+
     final path = Path();
     path.moveTo(size.width * 0.2, size.height * 0.8);
     path.lineTo(size.width * 0.2, size.height * 0.4);
@@ -520,7 +527,7 @@ class _FurnitureShapePainter extends CustomPainter {
   }
 
   void _drawBrokenFurniture(Canvas canvas, Size size, Paint paint) {
-    // Broken lines
+
     canvas.drawLine(
       Offset(size.width * 0.2, size.height * 0.2),
       Offset(size.width * 0.8, size.height * 0.8),
@@ -534,7 +541,7 @@ class _FurnitureShapePainter extends CustomPainter {
   }
 
   void _drawCaution(Canvas canvas, Size size, Paint paint) {
-    // Triangle
+
     final path = Path();
     path.moveTo(size.width * 0.5, size.height * 0.2);
     path.lineTo(size.width * 0.2, size.height * 0.8);
@@ -544,7 +551,7 @@ class _FurnitureShapePainter extends CustomPainter {
   }
 
   void _drawTruck(Canvas canvas, Size size, Paint paint) {
-    // Simple truck shape
+
     canvas.drawRect(
       Rect.fromLTWH(size.width * 0.1, size.height * 0.4, size.width * 0.8,
           size.height * 0.4),
@@ -563,7 +570,7 @@ class _FurnitureShapePainter extends CustomPainter {
   }
 
   void _drawHome(Canvas canvas, Size size, Paint paint) {
-    // Simple house
+
     final path = Path();
     path.moveTo(size.width * 0.5, size.height * 0.2);
     path.lineTo(size.width * 0.2, size.height * 0.5);
@@ -578,7 +585,7 @@ class _FurnitureShapePainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-// Helper functions
+
 Color _getToastColor(ToastStates state) {
   switch (state) {
     case ToastStates.success:
@@ -660,7 +667,7 @@ String _getToastTitle(BuildContext context, ToastStates state) {
   }
 }
 
-// Extension for easy usage
+
 extension FurnitureToastExtension on BuildContext {
   void showFurnitureToast(
     String message, {

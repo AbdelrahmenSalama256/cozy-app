@@ -41,12 +41,8 @@ void main() async {
       ],
       child: UpgradeAlert(
           upgrader: Upgrader(
-            // minAppVersion: "1.0.1",
-            //  debugLogging: true,
-            debugDisplayAlways: true,
+            debugLogging: kDebugMode,
           ),
-          // navigatorKey: AppRouter.router.routerDelegate
-          // .navigatorKey, // Provide a fallback for child
           dialogStyle: UpgradeDialogStyle.cupertino,
           child: const CozyHome()),
     ),

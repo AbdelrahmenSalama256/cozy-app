@@ -1,4 +1,4 @@
-// order_summary.dart
+
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +8,7 @@ import '../../../cart/data/model/cart_model.dart';
 import 'order_item.dart';
 import 'section_container.dart';
 
+//! OrderSummarySection
 class OrderSummarySection extends StatelessWidget {
   final Cart cart;
 
@@ -22,7 +23,7 @@ class OrderSummarySection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 16.h),
-          // Cart Items Preview
+
           ...cart.items.take(2).map((item) => OrderItem(item: item)),
 
           if (cart.items.length > 2)

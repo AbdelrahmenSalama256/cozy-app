@@ -1,8 +1,13 @@
+import 'package:cozy/core/common/common.dart';
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
+import 'package:cozy/core/services/service_locator.dart';
+import 'package:cozy/features/profile/data/models/about_model.dart';
+import 'package:cozy/features/profile/data/repo/about_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! AboutUsScreen
 class AboutUsScreen extends StatelessWidget {
   const AboutUsScreen({super.key});
 
@@ -26,165 +31,189 @@ class AboutUsScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(20.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Company Logo/Image
-            Center(
-              child: Container(
-                width: 120.w,
-                height: 120.w,
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: Icon(
-                  Icons.store,
-                  size: 60.sp,
-                  color: Colors.white,
-                ),
-              ),
-            ),
+      body: FutureBuilder(
+        future: sl<AboutRepo>().fetchAbout(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final either = snapshot.data!;
+          return either.fold(
+            (error) => Center(
+                child: Text(error.tr(context),
+                    style:
+                        TextStyle(fontSize: 16.sp, color: AppColors.textGrey))),
+            (about) => _buildContent(context, about),
+          );
+        },
+      ),
+    );
+  }
 
-            SizedBox(height: 24.h),
-
-            Center(
-              child: Text(
-                'furniture_store'.tr(context),
-                style: TextStyle(
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textBlack,
-                ),
-              ),
-            ),
-
-            SizedBox(height: 8.h),
-
+  Widget _buildContent(BuildContext context, AboutResponse data) {
+    final lang = Localizations.localeOf(context).languageCode;
+    final aboutTitle =
+        lang == 'ar' ? (data.about.titleAr ?? '') : (data.about.title ?? '');
+    final aboutDesc = lang == 'ar'
+        ? (data.about.descriptionAr ?? '')
+        : (data.about.description ?? '');
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(20.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (aboutTitle.isNotEmpty)
             Center(
               child: Text(
-                'Version 1.0.0',
+                aboutTitle,
                 style: TextStyle(
-                  fontSize: 14.sp,
-                  color: AppColors.textGrey,
-                ),
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textBlack),
               ),
             ),
-
-            SizedBox(height: 32.h),
-
-            _buildSection(
-              'our_story'.tr(context),
-              'We are passionate about bringing quality furniture to your home. Founded in 2020, our mission is to make beautiful, comfortable furniture accessible to everyone.',
-            ),
-
-            _buildSection(
-              'our_mission'.tr(context),
-              'To provide high-quality furniture that combines style, comfort, and affordability. We believe everyone deserves a beautiful home.',
-            ),
-
-            _buildSection(
-              'our_values'.tr(context),
-              '• Quality craftsmanship\n• Customer satisfaction\n• Sustainable practices\n• Innovation in design\n• Affordable pricing',
-            ),
-
-            SizedBox(height: 24.h),
-
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(20.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(4.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'contact_information'.tr(context),
-                    style: TextStyle(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textBlack,
-                    ),
-                  ),
-                  SizedBox(height: 16.h),
-                  _buildContactItem(
-                      Icons.email_outlined, 'support@furniturestore.com'),
-                  _buildContactItem(Icons.phone_outlined, '+1 (555) 123-4567'),
-                  _buildContactItem(Icons.location_on_outlined,
-                      '123 Furniture St, Design City, DC 12345'),
-                  _buildContactItem(
-                      Icons.language_outlined, 'www.furniturestore.com'),
-                ],
-              ),
-            ),
-
-            SizedBox(height: 24.h),
-
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(20.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(4.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'follow_us'.tr(context),
-                    style: TextStyle(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textBlack,
-                    ),
-                  ),
-                  SizedBox(height: 16.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildSocialButton(Icons.facebook, 'Facebook'),
-                      _buildSocialButton(Icons.camera_alt, 'Instagram'),
-                      _buildSocialButton(Icons.alternate_email, 'Twitter'),
-                      _buildSocialButton(Icons.video_library, 'YouTube'),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            SizedBox(height: 24.h),
-
-            Center(
-              child: Text(
-                '© 2024 Furniture Store. All rights reserved.',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: AppColors.textGrey,
-                ),
-                textAlign: TextAlign.center,
-              ),
+          if (aboutDesc.isNotEmpty) ...[
+            SizedBox(height: 12.h),
+            Text(
+              aboutDesc,
+              style: TextStyle(
+                  fontSize: 14.sp, color: AppColors.textGrey, height: 1.5),
             ),
           ],
-        ),
+          SizedBox(height: 24.h),
+          if (data.about.content.isNotEmpty)
+            Column(
+              children: data.about.content
+                  .map((e) => _buildSection(e.title ?? '', e.description ?? ''))
+                  .toList(),
+            ),
+          SizedBox(height: 24.h),
+          _buildSocialSection(context, data.social),
+          SizedBox(height: 24.h),
+          _buildStatsSection(context, data.statistics),
+        ],
       ),
+    );
+  }
+
+  Widget _buildSocialSection(BuildContext context, SocialLinks social) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(20.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4.r),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 2)),
+        ],
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text('follow_us'.tr(context),
+            style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textBlack)),
+        SizedBox(height: 16.h),
+        Wrap(spacing: 16.w, runSpacing: 10.h, children: [
+          if ((social.facebook ?? '').isNotEmpty)
+            _buildSocialButton(
+                context, Icons.facebook, 'Facebook', social.facebook),
+          if ((social.instagram ?? '').isNotEmpty)
+            _buildSocialButton(
+                context, Icons.camera_alt, 'Instagram', social.instagram),
+          if ((social.twitter ?? '').isNotEmpty)
+            _buildSocialButton(
+                context, Icons.alternate_email, 'Twitter', social.twitter),
+          if ((social.youtube ?? '').isNotEmpty)
+            _buildSocialButton(
+                context, Icons.video_library, 'YouTube', social.youtube),
+          if ((social.linkedin ?? '').isNotEmpty)
+            _buildSocialButton(
+                context, Icons.work_outline, 'LinkedIn', social.linkedin),
+        ])
+      ]),
+    );
+  }
+
+  Widget _buildStatsSection(
+      BuildContext context, StatisticsSection statistics) {
+    final lang = Localizations.localeOf(context).languageCode;
+    final tagline = lang == 'ar'
+        ? (statistics.taglineAr ?? statistics.tagline ?? '')
+        : (statistics.tagline ?? '');
+    final desc = lang == 'ar'
+        ? (statistics.descriptionAr ?? statistics.description ?? '')
+        : (statistics.description ?? '');
+    if (statistics.content.isEmpty && tagline.isEmpty && desc.isEmpty)
+      return const SizedBox();
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(20.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4.r),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 2))
+        ],
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        if (tagline.isNotEmpty)
+          Text(tagline,
+              style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textBlack)),
+        if (desc.isNotEmpty) ...[
+          SizedBox(height: 8.h),
+          Text(desc,
+              style: TextStyle(fontSize: 14.sp, color: AppColors.textGrey)),
+        ],
+        SizedBox(height: 12.h),
+        if (statistics.content.isNotEmpty)
+          Wrap(
+            spacing: 12.w,
+            runSpacing: 12.h,
+            children: statistics.content
+                .map(
+                  (s) => Container(
+                    width: 150.w,
+                    padding: EdgeInsets.all(12.w),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(6.r),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2)),
+                      ],
+                    ),
+                    child: Column(children: [
+                      Text(s.stats ?? '',
+                          style: TextStyle(
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primary)),
+                      SizedBox(height: 4.h),
+                      Text(
+                          (lang == 'ar'
+                              ? (s.titleAr ?? s.title ?? '')
+                              : (s.title ?? '')),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 12.sp, color: AppColors.textGrey)),
+                    ]),
+                  ),
+                )
+                .toList(),
+          )
+      ]),
     );
   }
 
@@ -228,56 +257,36 @@ class AboutUsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildContactItem(IconData icon, String text) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 12.h),
-      child: Row(
+  Widget _buildSocialButton(
+      BuildContext context, IconData icon, String platform, String? url) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(28.r),
+      onTap: () => launchCustomUrl(context, url),
+      child: Column(
         children: [
-          Icon(
-            icon,
-            size: 20.sp,
-            color: AppColors.primary,
+          Container(
+            width: 50.w,
+            height: 50.w,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(25.r),
+            ),
+            child: Icon(
+              icon,
+              size: 24.sp,
+              color: AppColors.primary,
+            ),
           ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: AppColors.textBlack,
-              ),
+          SizedBox(height: 8.h),
+          Text(
+            platform,
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: AppColors.textGrey,
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildSocialButton(IconData icon, String platform) {
-    return Column(
-      children: [
-        Container(
-          width: 50.w,
-          height: 50.w,
-          decoration: BoxDecoration(
-            color: AppColors.primary.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(25.r),
-          ),
-          child: Icon(
-            icon,
-            size: 24.sp,
-            color: AppColors.primary,
-          ),
-        ),
-        SizedBox(height: 8.h),
-        Text(
-          platform,
-          style: TextStyle(
-            fontSize: 12.sp,
-            color: AppColors.textGrey,
-          ),
-        ),
-      ],
     );
   }
 }

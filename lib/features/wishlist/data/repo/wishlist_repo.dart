@@ -5,6 +5,7 @@ import '../../../../core/constants/widgets/errors/exceptions.dart';
 import '../../../../core/database/api/end_points.dart';
 import '../model/wishlist_model.dart';
 
+//! WishlistRepo
 class WishlistRepo {
   final ApiConsumer api;
   WishlistRepo(this.api);

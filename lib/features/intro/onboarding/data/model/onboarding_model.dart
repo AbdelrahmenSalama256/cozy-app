@@ -1,6 +1,7 @@
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:flutter/material.dart';
 
+//! OnboardingModel
 class OnboardingModel {
   final String imagePath;
   final String titleKey;

@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! BaseScreen
 class BaseScreen extends StatefulWidget {
   const BaseScreen({super.key});
 
@@ -21,6 +22,7 @@ class BaseScreen extends StatefulWidget {
   State<BaseScreen> createState() => _BaseScreenState();
 }
 
+//! _BaseScreenState
 class _BaseScreenState extends State<BaseScreen> {
   final List<Widget> _screens = [
     BlocProvider(
@@ -47,10 +49,11 @@ class _BaseScreenState extends State<BaseScreen> {
           child: PopScope(
             onPopInvoked: (didPop) {},
             child: Scaffold(
-              backgroundColor: Colors.transparent,
+              backgroundColor: Colors.white,
               extendBody: true,
               extendBodyBehindAppBar: true,
-              body: _screens[cubit.currentNavIndex],
+              body: SafeArea(
+                  bottom: true, child: _screens[cubit.currentNavIndex]),
               bottomNavigationBar: Container(
                 decoration: BoxDecoration(
                   color: Colors.transparent,

@@ -8,6 +8,7 @@ import 'package:cozy/features/intro/onboarding/view/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! SplashScreen
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -15,6 +16,7 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashViewState();
 }
 
+//! _SplashViewState
 class _SplashViewState extends State<SplashScreen>
     with TickerProviderStateMixin {
   late AnimationController _mainController;
@@ -32,19 +34,19 @@ class _SplashViewState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    // Main animation controller
+
     _mainController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2000),
     );
 
-    // Background animation controller
+
     _backgroundController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 3000),
     );
 
-    // Particle animation controller
+
     _particleController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 4000),
@@ -56,7 +58,7 @@ class _SplashViewState extends State<SplashScreen>
   }
 
   void _initializeAnimations() {
-    // Logo scale animation with bounce effect
+
     _scaleAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(
       CurvedAnimation(
         parent: _mainController,
@@ -64,7 +66,7 @@ class _SplashViewState extends State<SplashScreen>
       ),
     );
 
-    // Logo fade animation
+
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _mainController,
@@ -72,7 +74,7 @@ class _SplashViewState extends State<SplashScreen>
       ),
     );
 
-    // Text slide animation
+
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 2),
       end: Offset.zero,
@@ -83,7 +85,7 @@ class _SplashViewState extends State<SplashScreen>
       ),
     );
 
-    // Logo rotation animation
+
     _rotationAnimation = Tween<double>(begin: -0.1, end: 0.0).animate(
       CurvedAnimation(
         parent: _mainController,
@@ -91,7 +93,7 @@ class _SplashViewState extends State<SplashScreen>
       ),
     );
 
-    // Background gradient animation
+
     _backgroundAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _backgroundController,
@@ -99,7 +101,7 @@ class _SplashViewState extends State<SplashScreen>
       ),
     );
 
-    // Particle animation
+
     _particleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _particleController,
@@ -154,13 +156,13 @@ class _SplashViewState extends State<SplashScreen>
         builder: (context, child) {
           return Stack(
             children: [
-              // Animated background
+
               _buildAnimatedBackground(),
-              // Floating furniture particles
+
               _buildFloatingFurnitureParticles(),
-              // Main content
+
               _buildMainContent(),
-              // Furniture decorative shapes
+
               _buildFurnitureDecorativeShapes(),
             ],
           );
@@ -230,16 +232,16 @@ class _SplashViewState extends State<SplashScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Logo container with creative background
+
           _buildLogoContainer(),
           SizedBox(height: 40.h),
-          // Brand name with animation
+
           _buildBrandName(),
           SizedBox(height: 8.h),
-          // Tagline
+
           _buildTagline(),
           SizedBox(height: 60.h),
-          // Version text
+
           _buildVersionText(),
         ],
       ),
@@ -250,7 +252,7 @@ class _SplashViewState extends State<SplashScreen>
     return Stack(
       alignment: Alignment.center,
       children: [
-        // Outer glow effect
+
         Container(
           width: 200.w,
           height: 200.w,
@@ -265,7 +267,7 @@ class _SplashViewState extends State<SplashScreen>
           ),
         ),
 
-        // Middle decorative ring
+
         Container(
           width: 160.w,
           height: 160.w,
@@ -278,7 +280,7 @@ class _SplashViewState extends State<SplashScreen>
           ),
         ),
 
-        // Inner background
+
         Container(
           width: 140.w,
           height: 140.w,
@@ -295,7 +297,7 @@ class _SplashViewState extends State<SplashScreen>
           ),
         ),
 
-        // Animated logo
+
         Transform.rotate(
           angle: _rotationAnimation.value,
           child: ScaleTransition(
@@ -430,7 +432,7 @@ class _SplashViewState extends State<SplashScreen>
   Widget _buildFurnitureDecorativeShapes() {
     return Stack(
       children: [
-        // Top left - Sofa shape
+
         Positioned(
           top: 100.h,
           left: 30.w,
@@ -440,7 +442,7 @@ class _SplashViewState extends State<SplashScreen>
           ),
         ),
 
-        // Top right - Chair shape
+
         Positioned(
           top: 80.h,
           right: 40.w,
@@ -450,7 +452,7 @@ class _SplashViewState extends State<SplashScreen>
           ),
         ),
 
-        // Middle left - Table shape
+
         Positioned(
           top: 300.h,
           left: 20.w,
@@ -460,7 +462,7 @@ class _SplashViewState extends State<SplashScreen>
           ),
         ),
 
-        // Bottom right - Lamp shape
+
         Positioned(
           bottom: 180.h,
           right: 35.w,
@@ -470,7 +472,7 @@ class _SplashViewState extends State<SplashScreen>
           ),
         ),
 
-        // Bottom left - Bed shape
+
         Positioned(
           bottom: 220.h,
           left: 25.w,
@@ -480,7 +482,7 @@ class _SplashViewState extends State<SplashScreen>
           ),
         ),
 
-        // Middle right - Cabinet shape
+
         Positioned(
           top: 400.h,
           right: 20.w,
@@ -493,14 +495,14 @@ class _SplashViewState extends State<SplashScreen>
     );
   }
 
-  // Sofa shape
+
   Widget _buildSofaShape() {
     return SizedBox(
       width: 45.w,
       height: 30.w,
       child: Stack(
         children: [
-          // Sofa base
+
           Positioned(
             bottom: 0,
             child: Container(
@@ -512,7 +514,7 @@ class _SplashViewState extends State<SplashScreen>
               ),
             ),
           ),
-          // Sofa back
+
           Positioned(
             top: 0,
             left: 5.w,
@@ -530,14 +532,14 @@ class _SplashViewState extends State<SplashScreen>
     );
   }
 
-  // Chair shape
+
   Widget _buildChairShape() {
     return SizedBox(
       width: 35.w,
       height: 40.w,
       child: Stack(
         children: [
-          // Chair seat
+
           Positioned(
             bottom: 15.h,
             child: Container(
@@ -549,7 +551,7 @@ class _SplashViewState extends State<SplashScreen>
               ),
             ),
           ),
-          // Chair back
+
           Positioned(
             top: 0,
             left: 5.w,
@@ -562,7 +564,7 @@ class _SplashViewState extends State<SplashScreen>
               ),
             ),
           ),
-          // Chair legs
+
           Positioned(
             bottom: 0,
             left: 8.w,
@@ -586,14 +588,14 @@ class _SplashViewState extends State<SplashScreen>
     );
   }
 
-  // Table shape
+
   Widget _buildTableShape() {
     return SizedBox(
       width: 40.w,
       height: 35.w,
       child: Stack(
         children: [
-          // Table top
+
           Positioned(
             top: 10.h,
             child: Container(
@@ -605,7 +607,7 @@ class _SplashViewState extends State<SplashScreen>
               ),
             ),
           ),
-          // Table legs
+
           ...List.generate(4, (index) {
             return Positioned(
               bottom: 0,
@@ -623,14 +625,14 @@ class _SplashViewState extends State<SplashScreen>
     );
   }
 
-  // Lamp shape
+
   Widget _buildLampShape() {
     return SizedBox(
       width: 25.w,
       height: 45.w,
       child: Stack(
         children: [
-          // Lamp shade
+
           Positioned(
             top: 0,
             child: Container(
@@ -647,7 +649,7 @@ class _SplashViewState extends State<SplashScreen>
               ),
             ),
           ),
-          // Lamp pole
+
           Positioned(
             top: 20.h,
             left: 11.w,
@@ -657,7 +659,7 @@ class _SplashViewState extends State<SplashScreen>
               color: Colors.white.withOpacity(0.1),
             ),
           ),
-          // Lamp base
+
           Positioned(
             bottom: 0,
             left: 7.w,
@@ -675,14 +677,14 @@ class _SplashViewState extends State<SplashScreen>
     );
   }
 
-  // Bed shape
+
   Widget _buildBedShape() {
     return SizedBox(
       width: 50.w,
       height: 30.w,
       child: Stack(
         children: [
-          // Bed base
+
           Positioned(
             bottom: 5.h,
             child: Container(
@@ -694,7 +696,7 @@ class _SplashViewState extends State<SplashScreen>
               ),
             ),
           ),
-          // Headboard
+
           Positioned(
             top: 0,
             right: 0,
@@ -707,7 +709,7 @@ class _SplashViewState extends State<SplashScreen>
               ),
             ),
           ),
-          // Pillow
+
           Positioned(
             top: 8.h,
             right: 8.w,
@@ -725,7 +727,7 @@ class _SplashViewState extends State<SplashScreen>
     );
   }
 
-  // Cabinet shape
+
   Widget _buildCabinetShape() {
     return Container(
       width: 30.w,
@@ -736,7 +738,7 @@ class _SplashViewState extends State<SplashScreen>
       ),
       child: Column(
         children: [
-          // Top shelf
+
           Container(
             width: 30.w,
             height: 18.w,
@@ -759,7 +761,7 @@ class _SplashViewState extends State<SplashScreen>
               ),
             ),
           ),
-          // Bottom shelf
+
           SizedBox(
             width: 30.w,
             height: 18.w,

@@ -2,13 +2,14 @@ import 'package:cozy/core/component/custom_toast.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:flutter/material.dart';
 
+//! ErrorMessageHandler
 class ErrorMessageHandler {
   static String processErrorMessage(
     BuildContext context,
     String errorMessage, {
     int maxLength = 100,
   }) {
-    // Check if the error message is too long or contains HTML
+
     final displayMessage = errorMessage.length > maxLength ||
             errorMessage.contains('<html') ||
             errorMessage.contains('<!DOCTYPE')

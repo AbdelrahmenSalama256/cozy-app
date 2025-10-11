@@ -8,6 +8,7 @@ import '../../../../core/database/api/end_points.dart';
 import '../models/customer_service_model.dart';
 import '../models/support_ticket_model.dart';
 
+//! CustomerServiceRepo
 class CustomerServiceRepo {
   final ApiConsumer api;
 
@@ -25,7 +26,7 @@ class CustomerServiceRepo {
     String? severity,
   }) async {
     try {
-      // Data field contains ticket details (excluding type and subject)
+
       final ticketData = {
         'name': name,
         'email': email,
@@ -34,7 +35,7 @@ class CustomerServiceRepo {
         'message': message,
       };
 
-      // Add optional fields if provided
+
       if (orderNumber != null && orderNumber.isNotEmpty) {
         ticketData['order_number'] = orderNumber;
       }
@@ -43,7 +44,7 @@ class CustomerServiceRepo {
         ticketData['severity'] = severity;
       }
 
-      // Create the request body with data as a JSON string and type/subject at top level
+
       final data = {
         'data': jsonEncode(ticketData),
         'type': type,

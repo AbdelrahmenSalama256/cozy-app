@@ -13,6 +13,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/cubit/global_state.dart';
 
+//! OrderSuccessScreen
 class OrderSuccessScreen extends StatelessWidget {
   final String orderNumber;
   final double total;

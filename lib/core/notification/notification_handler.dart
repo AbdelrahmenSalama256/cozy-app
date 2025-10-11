@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import '../../core/common/logs.dart';
 import 'local_notification_handler.dart';
 
+//! NotificationHandler
 class NotificationHandler {
   static FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
   static String? fcmToken = '';

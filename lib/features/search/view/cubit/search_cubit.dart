@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'search_state.dart';
 
+//! SearchCubit
 class SearchCubit extends Cubit<SearchState> {
   SearchCubit()
       : super(SearchInitial(

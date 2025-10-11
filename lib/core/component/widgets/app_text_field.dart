@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! AppTextField
 class AppTextField extends StatefulWidget {
   final TextEditingController controller;
   final String? labelText;
@@ -63,6 +64,7 @@ class AppTextField extends StatefulWidget {
   State<AppTextField> createState() => _AppTextFieldState();
 }
 
+//! _AppTextFieldState
 class _AppTextFieldState extends State<AppTextField> {
   bool _obscureText = false;
   bool _hasFocus = false;

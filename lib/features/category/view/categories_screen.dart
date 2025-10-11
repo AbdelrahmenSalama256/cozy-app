@@ -11,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'widgets/category_card_widget.dart';
 
+//! CategoriesScreen
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({super.key});
 
@@ -26,7 +27,6 @@ class CategoriesScreen extends StatelessWidget {
             return SafeArea(
               child: Column(
                 children: [
-                  // Header
                   Padding(
                     padding: EdgeInsets.all(20.w),
                     child: Row(
@@ -42,8 +42,6 @@ class CategoriesScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-
-                  // Categories Grid
                   state is HomeLoading
                       ? const Expanded(child: CustomLoadingIndicator())
                       : state is HomeError
@@ -60,7 +58,7 @@ class CategoriesScreen extends StatelessWidget {
                             )
                           : Expanded(
                               child: GridView.builder(
-                                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                                padding: EdgeInsets.symmetric(horizontal: 15.w),
                                 gridDelegate:
                                     const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2,
@@ -82,6 +80,7 @@ class CategoriesScreen extends StatelessWidget {
                                         context,
                                         CategoryDetailsScreen(
                                           categoryId: category.id ?? 0,
+                                          categoryName: category.name,
                                         ),
                                       );
                                     },

@@ -11,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/component/custom_toast.dart';
 
+//! CreateNewPasswordBottomSheet
 class CreateNewPasswordBottomSheet extends StatefulWidget {
   const CreateNewPasswordBottomSheet({super.key});
 
@@ -19,6 +20,7 @@ class CreateNewPasswordBottomSheet extends StatefulWidget {
       _CreateNewPasswordBottomSheetState();
 }
 
+//! _CreateNewPasswordBottomSheetState
 class _CreateNewPasswordBottomSheetState
     extends State<CreateNewPasswordBottomSheet> {
   final _formKey = GlobalKey<FormState>();

@@ -12,65 +12,80 @@ class ServerException implements Exception {
 }
 
 //!No Internet
+//! NoInternetException
 class NoInternetException implements Exception {
   final ErrorModel errorModel;
   NoInternetException(this.errorModel);
 }
 
 //!CacheExeption
+//! CacheException
 class CacheException implements Exception {
   final String errorMessage;
   CacheException({required this.errorMessage});
 }
 
+//! BadCertificateException
 class BadCertificateException extends ServerException {
   BadCertificateException(super.errorModel);
 }
 
+//! ConnectionTimeoutException
 class ConnectionTimeoutException extends ServerException {
   ConnectionTimeoutException(super.errorModel);
 }
 
+//! BadResponseException
 class BadResponseException extends ServerException {
   BadResponseException(super.errorModel);
 }
 
+//! ReceiveTimeoutException
 class ReceiveTimeoutException extends ServerException {
   ReceiveTimeoutException(super.errorModel);
 }
 
+//! ConnectionErrorException
 class ConnectionErrorException extends ServerException {
   ConnectionErrorException(super.errorModel);
 }
 
+//! SendTimeoutException
 class SendTimeoutException extends ServerException {
   SendTimeoutException(super.errorModel);
 }
 
+//! UnauthorizedException
 class UnauthorizedException extends ServerException {
   UnauthorizedException(super.errorModel);
 }
 
+//! ForbiddenException
 class ForbiddenException extends ServerException {
   ForbiddenException(super.errorModel);
 }
 
+//! NotFoundException
 class NotFoundException extends ServerException {
   NotFoundException(super.errorModel);
 }
 
+//! CofficientException
 class CofficientException extends ServerException {
   CofficientException(super.errorModel);
 }
 
+//! CancelException
 class CancelException extends ServerException {
   CancelException(super.errorModel);
 }
 
+//! UnknownException
 class UnknownException extends ServerException {
   UnknownException(super.errorModel);
 }
 
+//! handleDioException
 handleDioException(DioException e) {
   switch (e.type) {
     case DioExceptionType.connectionError:
@@ -97,12 +112,12 @@ handleDioException(DioException e) {
           sl<CacheHelper>().removeData(key: AppConstants.userType);
           sl<CacheHelper>().removeData(key: AppConstants.wssToken);
           sl<CacheHelper>().removeData(key: AppConstants.cookie);
-          // navigatorKey.currentState?.pushAndRemoveUntil(
-          //   MaterialPageRoute(builder: (context) {
-          //     return const SplashScreen();
-          //   }),
-          //   (route) => false,
-          // );
+
+
+
+
+
+
           throw UnauthorizedException(ErrorModel.fromJson(e.response!.data));
 
         case 403: //forbidden

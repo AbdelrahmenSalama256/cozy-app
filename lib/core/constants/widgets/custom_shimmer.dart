@@ -4,6 +4,7 @@ import 'package:cozy/core/constants/app_colors.dart';
 
 import 'package:shimmer/shimmer.dart';
 
+//! CustomShimmer
 class CustomShimmer extends StatelessWidget {
   const CustomShimmer({
     super.key,
@@ -24,7 +25,7 @@ class CustomShimmer extends StatelessWidget {
         bottom: bottomPadding ?? 0,
       ),
       child: Shimmer.fromColors(
-        // ignore: deprecated_member_use
+
         baseColor: AppColors.lightGrey.withOpacity(0.4),
         highlightColor: AppColors.white,
         child: Container(

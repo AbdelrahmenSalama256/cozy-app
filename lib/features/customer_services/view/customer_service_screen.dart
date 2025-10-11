@@ -2,17 +2,64 @@ import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cozy/core/cubit/global_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cozy/features/auth/view/login_screen.dart';
+import 'package:cozy/core/component/widgets/app_button.dart';
 
 import '../../customer_services/view/complaint_screen.dart';
 import '../../customer_services/view/general_inquiry_screen.dart';
 import '../../customer_services/view/return_request_screen.dart';
 import 'support_tickets_screen.dart';
 
+//! CustomerServiceScreen
 class CustomerServiceScreen extends StatelessWidget {
   const CustomerServiceScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final global = context.read<GlobalCubit>();
+    if (!global.isAuthenticated) {
+      return Scaffold(
+        backgroundColor: AppColors.white,
+        appBar: _buildAppBar(context),
+        body: Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.lock_outline, size: 80.sp, color: AppColors.textGrey),
+                SizedBox(height: 16.h),
+                Text('login_required'.tr(context),
+                    style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: AppColors.textBlack)),
+                SizedBox(height: 8.h),
+                Text('login_required_message'.tr(context),
+                    textAlign: TextAlign.center, style: TextStyle(fontSize: 14.sp, color: AppColors.textGrey)),
+                SizedBox(height: 16.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AppButton(
+                      text: 'login'.tr(context),
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+                      },
+                    ),
+                    SizedBox(width: 12.w),
+                    AppButton(
+                      text: 'start_shopping'.tr(context),
+                      type: AppButtonType.text,
+                      onPressed: () => context.read<GlobalCubit>().changeBottomNavIndex(0),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+      );
+    }
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: _buildAppBar(context),

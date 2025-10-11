@@ -4,6 +4,7 @@ import 'order_details_item_model.dart';
 import 'order_status.dart';
 import 'tracking_event_model.dart';
 
+//! OrderModel
 class OrderModel {
   final String id;
   final String businessId;
@@ -53,7 +54,7 @@ class OrderModel {
     this.trackingEvents = const [], // Default to empty list
   });
 
-  // Getters for compatibility with OrderCard
+
   DateTime get date => transactionDate;
   double get total => finalTotal;
 

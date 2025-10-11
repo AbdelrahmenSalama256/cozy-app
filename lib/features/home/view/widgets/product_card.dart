@@ -1,10 +1,12 @@
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
+import 'package:cozy/core/utils/currency_formatter.dart';
 import 'package:cozy/features/home/view/widgets/favorite_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! ProductCard
 class ProductCard extends StatelessWidget {
   final String imageUrl;
   final String name;
@@ -35,7 +37,7 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Calculate discount percentage safely
+
     final discountPercentage = _calculateDiscountPercentage(price, oldPrice);
 
     return GestureDetector(
@@ -68,14 +70,23 @@ class ProductCard extends StatelessWidget {
                     loadingBuilder: (context, child, loadingProgress) =>
                         loadingProgress == null
                             ? child
-                            : Center(
-                                child: CircularProgressIndicator(
-                                  value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          (loadingProgress.expectedTotalBytes ??
-                                              1)
-                                      : null,
+                            : Container(
+                                width: double.infinity,
+                                height: 110.h,
+                                decoration: BoxDecoration(
+                                  color: AppColors.lightGrey,
+                                ),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes !=
+                                            null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            (loadingProgress
+                                                    .expectedTotalBytes ??
+                                                1)
+                                        : null,
+                                  ),
                                 ),
                               ),
                     errorBuilder: (context, error, stackTrace) => Container(
@@ -100,7 +111,7 @@ class ProductCard extends StatelessWidget {
                     size: 18.sp,
                   ),
                 ),
-                // الخصم
+
                 if (oldPrice != null && discountPercentage > 0)
                   Positioned(
                     top: 6.h,
@@ -166,7 +177,9 @@ class ProductCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        '\$${price.isFinite ? price.toStringAsFixed(2) : '0.00'}',
+                        price.isFinite
+                            ? formatCurrency(context, price)
+                            : formatCurrency(context, 0),
                         style: TextStyle(
                           fontSize: 13.sp,
                           fontWeight: FontWeight.bold,
@@ -176,7 +189,7 @@ class ProductCard extends StatelessWidget {
                       if (oldPrice != null && oldPrice!.isFinite) ...[
                         SizedBox(width: 4.w),
                         Text(
-                          '\$${oldPrice!.toStringAsFixed(0)}',
+                          formatCurrency(context, oldPrice!),
                           style: TextStyle(
                             fontSize: 10.sp,
                             color: AppColors.textGrey,

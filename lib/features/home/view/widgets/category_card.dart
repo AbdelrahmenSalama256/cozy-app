@@ -4,6 +4,7 @@ import 'package:cozy/features/home/data/model/category_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! LargeCategoryCard
 class LargeCategoryCard extends StatelessWidget {
   final CategoryModel category;
   final VoidCallback onTap;
@@ -46,9 +47,11 @@ class LargeCategoryCard extends StatelessWidget {
                       children: [
                         Text(
                           category.name!.tr(context),
+                          maxLines: 1,
                           style: TextStyle(
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.bold,
+                            overflow: TextOverflow.ellipsis,
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w700,
                             color: AppColors.white,
                             shadows: [
                               Shadow(

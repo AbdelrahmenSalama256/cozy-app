@@ -18,6 +18,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/component/custom_toast.dart';
 
+//! LoginScreen
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
@@ -135,29 +136,39 @@ class LoginScreen extends StatelessWidget {
                                 authCubit.attemptLogin(formKey);
                               },
                             ),
+                            SizedBox(height: 12.h),
+                            AppButton(
+                              text: 'continue_as_guest'.tr(context),
+                              type: AppButtonType.secondary,
+                              onPressed: () {
+                                // Ensure we are in guest mode (no token) and go to app
+                                context.read<GlobalCubit>().changeBottomNavIndex(0);
+                                navigateAndFinish(context, const BaseScreen());
+                              },
+                            ),
                             SizedBox(height: 30.h),
-                            // Center(
-                            //   child: Text(
-                            //     "auth_or_sign_in_with".tr(context),
-                            //     style: TextStyle(
-                            //         fontSize: 13.sp, color: AppColors.textGrey),
-                            //   ),
-                            // ),
-                            // SizedBox(height: 20.h),
-                            // SocialLoginButton(
-                            //   text: "auth_sign_in_google".tr(context),
-                            //   iconAssetPath:
-                            //       "assets/images/icons/google_logo.png",
-                            //   onPressed: () {},
-                            // ),
-                            // SizedBox(height: 16.h),
-                            // SocialLoginButton(
-                            //   text: "auth_sign_in_facebook".tr(context),
-                            //   iconAssetPath:
-                            //       "assets/images/icons/facebook_logo.png",
-                            //   onPressed: () {},
-                            // ),
-                            // SizedBox(height: 30.h),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [

@@ -1,11 +1,13 @@
-// checkout_bottom_section.dart
+
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cozy/core/utils/currency_formatter.dart';
 
 import '../../../../core/component/widgets/app_button.dart';
 import '../../../../core/constants/app_colors.dart';
 
+//! CheckoutBottomSection
 class CheckoutBottomSection extends StatelessWidget {
   final double total;
   final bool isProcessing;
@@ -47,7 +49,7 @@ class CheckoutBottomSection extends StatelessWidget {
                 ),
               ),
               Text(
-                '\$${total.toStringAsFixed(2)}',
+                formatCurrency(context, total),
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,

@@ -1,9 +1,11 @@
+import 'package:cozy/core/component/custom_toast.dart';
 import 'package:cozy/core/component/widgets/app_button.dart';
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! NotificationsScreen
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
 
@@ -11,6 +13,7 @@ class NotificationsScreen extends StatefulWidget {
   State<NotificationsScreen> createState() => _NotificationsScreenState();
 }
 
+//! _NotificationsScreenState
 class _NotificationsScreenState extends State<NotificationsScreen> {
   bool pushNotifications = true;
   bool emailNotifications = true;
@@ -63,8 +66,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ),
             ),
             SizedBox(height: 24.h),
-
-            // General Notifications
             _buildSectionHeader('general_notifications'.tr(context)),
             _buildNotificationTile(
               'push_notifications'.tr(context),
@@ -84,10 +85,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               smsNotifications,
               (value) => setState(() => smsNotifications = value),
             ),
-
             SizedBox(height: 24.h),
-
-            // Order Notifications
             _buildSectionHeader('order_notifications'.tr(context)),
             _buildNotificationTile(
               'order_updates'.tr(context),
@@ -95,10 +93,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               orderUpdates,
               (value) => setState(() => orderUpdates = value),
             ),
-
             SizedBox(height: 24.h),
-
-            // Marketing Notifications
             _buildSectionHeader('marketing_notifications'.tr(context)),
             _buildNotificationTile(
               'promotional_offers'.tr(context),
@@ -124,9 +119,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               stockAlerts,
               (value) => setState(() => stockAlerts = value),
             ),
-
             SizedBox(height: 32.h),
-
             SizedBox(
               width: double.infinity,
               height: 50.h,
@@ -211,11 +204,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   void _saveSettings() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('settings_saved'.tr(context)),
-        backgroundColor: AppColors.success,
-      ),
-    );
+    showToast(context,
+        message: 'settings_saved'.tr(context), state: ToastStates.success);
   }
 }

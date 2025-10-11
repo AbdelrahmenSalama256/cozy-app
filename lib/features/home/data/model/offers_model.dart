@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//! OfferModel
 class OfferModel {
   final int id;
   final String name;

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../data/repo/address_repo.dart';
 import 'address_state.dart';
 
+//! AddressCubit
 class AddressCubit extends Cubit<AddressState> {
   final AddressRepo addressRepo;
 
@@ -13,7 +14,7 @@ class AddressCubit extends Cubit<AddressState> {
 
   List<AddressModel> addresses = [];
 
-  // Form controllers
+
   final formKey = GlobalKey<FormState>();
   final titleController = TextEditingController();
   final nameController = TextEditingController();
@@ -27,7 +28,7 @@ class AddressCubit extends Cubit<AddressState> {
   bool isEditing = false;
   String? editingAddressId;
 
-  // Initialize form for adding or editing an address
+
   void initializeForm({AddressModel? address}) {
     if (address != null) {
       isEditing = true;
@@ -57,13 +58,13 @@ class AddressCubit extends Cubit<AddressState> {
     emit(AddressFormInitialized(isEditing: isEditing, isDefault: isDefault));
   }
 
-  // Update isDefault toggle
+
   void toggleDefault(bool value) {
     isDefault = value;
     emit(AddressFormUpdated(isDefault: isDefault));
   }
 
-  // Save address (add or update)
+
   Future<void> saveAddress() async {
     if (!formKey.currentState!.validate()) {
       emit(AddressFormInvalid());
@@ -99,7 +100,7 @@ class AddressCubit extends Cubit<AddressState> {
     );
   }
 
-  // Fetch all addresses
+
   Future<void> fetchAddresses() async {
     emit(AddressLoading());
     final result = await addressRepo.getAddresses();
@@ -115,7 +116,7 @@ class AddressCubit extends Cubit<AddressState> {
     );
   }
 
-  // Delete an address
+
   Future<void> deleteAddress(String addressId) async {
     emit(AddressLoading());
     final result = await addressRepo.deleteAddress(addressId);
@@ -132,7 +133,7 @@ class AddressCubit extends Cubit<AddressState> {
     );
   }
 
-  // Set an address as default
+
   Future<void> setDefaultAddress(String addressId) async {
     emit(AddressLoading());
     final result = await addressRepo.setDefaultAddress(addressId);

@@ -2,6 +2,7 @@ import 'package:cozy/core/constants/app_colors.dart';
 
 import 'package:flutter/material.dart';
 
+//! AppRadio
 class AppRadio<T> extends StatelessWidget {
   final T value;
   final T groupValue;

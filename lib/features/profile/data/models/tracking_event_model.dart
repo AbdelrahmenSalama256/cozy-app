@@ -1,4 +1,5 @@
-// tracking_event.dart
+
+//! TrackingEvent
 class TrackingEvent {
   final int id;
   final int transactionId;

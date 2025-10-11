@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//! OfferProductModel
 class OfferProductModel {
   final int id;
   final String name;
@@ -86,6 +87,7 @@ class OfferProductModel {
   }
 }
 
+//! Brand
 class Brand {
   final int id;
   final String name;
@@ -117,6 +119,7 @@ class Brand {
   }
 }
 
+//! Category
 class Category {
   final int id;
   final String name;
@@ -148,6 +151,7 @@ class Category {
   }
 }
 
+//! Unit
 class Unit {
   final int id;
   final String actualName;
@@ -168,6 +172,7 @@ class Unit {
   }
 }
 
+//! ProductVariation
 class ProductVariation {
   final int id;
   final String name;
@@ -191,6 +196,7 @@ class ProductVariation {
   }
 }
 
+//! Variation
 class Variation {
   final int id;
   final String name;
@@ -217,6 +223,7 @@ class Variation {
   }
 }
 
+//! ProductLocation
 class ProductLocation {
   final int id;
   final String name;

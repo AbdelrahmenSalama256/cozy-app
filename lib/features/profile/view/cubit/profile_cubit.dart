@@ -10,6 +10,7 @@ import 'package:path/path.dart' as path;
 import '../../../../core/common/logs.dart';
 import '../../data/models/contact_model.dart';
 
+//! ProfileCubit
 class ProfileCubit extends Cubit<ProfileState> {
   final GlobalCubit globalCubit;
   StreamSubscription? _profileSubscription;
@@ -52,7 +53,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   void _updateControllers(UserDetails user) {
-    // تحديث الكونترولرز فقط إذا كانت القيم مختلفة
+
     final newName = user.name ??
         (user.firstName != null && user.lastName != null
             ? '${user.firstName} ${user.lastName}'
@@ -102,7 +103,7 @@ class ProfileCubit extends Cubit<ProfileState> {
           contactStatus: 'active',
         );
 
-    // Compare with current user data
+
     final currentName = user.name ??
         (user.firstName != null && user.lastName != null
             ? '${user.firstName} ${user.lastName}'

@@ -13,6 +13,7 @@ import '../data/model/offers_model.dart';
 import 'cubit/home_cubit.dart';
 import 'cubit/home_state.dart';
 
+//! OffersScreen
 class OffersScreen extends StatelessWidget {
   final int offerId;
   final OfferModel? offer;

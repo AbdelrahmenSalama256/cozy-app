@@ -11,6 +11,7 @@ enum NotificationType {
   promotion,
 }
 
+//! NotificationItem
 class NotificationItem {
   final String id;
   final String userName;
@@ -35,6 +36,7 @@ class NotificationItem {
   });
 }
 
+//! NotificationItemWidget
 class NotificationItemWidget extends StatelessWidget {
   final NotificationItem notification;
   final VoidCallback onTap;

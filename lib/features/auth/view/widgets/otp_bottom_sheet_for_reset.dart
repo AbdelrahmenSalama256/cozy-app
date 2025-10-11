@@ -13,6 +13,7 @@ import 'package:pinput/pinput.dart';
 import '../../../../core/component/custom_toast.dart';
 import 'custom_bottom_sheet.dart';
 
+//! OtpBottomSheetForReset
 class OtpBottomSheetForReset extends StatefulWidget {
   final String emailOrPhoneForOtp;
   const OtpBottomSheetForReset({super.key, required this.emailOrPhoneForOtp});
@@ -21,6 +22,7 @@ class OtpBottomSheetForReset extends StatefulWidget {
   State<OtpBottomSheetForReset> createState() => _OtpBottomSheetForResetState();
 }
 
+//! _OtpBottomSheetForResetState
 class _OtpBottomSheetForResetState extends State<OtpBottomSheetForReset> {
   final _formKey = GlobalKey<FormState>();
 
@@ -62,7 +64,7 @@ class _OtpBottomSheetForResetState extends State<OtpBottomSheetForReset> {
           child: Form(
             key: _formKey,
             child: SingleChildScrollView(
-              // padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,

@@ -3,12 +3,14 @@ import 'package:cozy/core/cubit/global_cubit.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/features/auth/view/create_account_screen.dart';
 import 'package:cozy/features/auth/view/login_screen.dart';
+import 'package:cozy/features/base/view/base_screen.dart';
 import 'package:cozy/features/intro/onboarding/data/model/onboarding_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! OnboardingView
 class OnboardingView extends StatefulWidget {
   const OnboardingView({super.key});
 
@@ -16,6 +18,7 @@ class OnboardingView extends StatefulWidget {
   State<OnboardingView> createState() => _OnboardingViewState();
 }
 
+//! _OnboardingViewState
 class _OnboardingViewState extends State<OnboardingView>
     with TickerProviderStateMixin {
   final PageController _pageController = PageController();
@@ -55,9 +58,7 @@ class _OnboardingViewState extends State<OnboardingView>
       body: SafeArea(
         child: Column(
           children: [
-            // Minimal header
             _buildMinimalHeader(),
-            // Main content with flexible space
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
@@ -72,7 +73,6 @@ class _OnboardingViewState extends State<OnboardingView>
                 },
               ),
             ),
-            // Fixed bottom section
             _buildMinimalBottomSection(),
           ],
         ),
@@ -86,7 +86,6 @@ class _OnboardingViewState extends State<OnboardingView>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Simple brand
           Row(
             children: [
               Container(
@@ -113,7 +112,6 @@ class _OnboardingViewState extends State<OnboardingView>
               ),
             ],
           ),
-          // Clean skip button
           TextButton(
             onPressed: () {
               Navigator.pushReplacement(
@@ -156,13 +154,10 @@ class _OnboardingViewState extends State<OnboardingView>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(height: 20.h),
-                    // Clean image container - responsive size
                     _buildCleanImageContainer(index),
                     SizedBox(height: 32.h),
-                    // Minimal title
                     _buildCleanTitle(index),
                     SizedBox(height: 12.h),
-                    // Simple description
                     _buildCleanDescription(index),
                     SizedBox(height: 20.h),
                   ],
@@ -176,7 +171,6 @@ class _OnboardingViewState extends State<OnboardingView>
   }
 
   Widget _buildCleanImageContainer(int index) {
-    // Make image size responsive to screen height
     final imageSize = MediaQuery.of(context).size.height * 0.25;
 
     return Container(
@@ -225,7 +219,7 @@ class _OnboardingViewState extends State<OnboardingView>
 
   Widget _buildCleanDescription(int index) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      padding: EdgeInsets.symmetric(horizontal: 15.w),
       child: Text(
         onboardingContents[index].description(context),
         textAlign: TextAlign.center,
@@ -245,10 +239,8 @@ class _OnboardingViewState extends State<OnboardingView>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Simple dot indicator
           _buildSimpleDotIndicator(),
           SizedBox(height: 24.h),
-          // Clean action buttons
           _buildCleanActionButtons(),
         ],
       ),
@@ -283,7 +275,6 @@ class _OnboardingViewState extends State<OnboardingView>
   Widget _buildCleanActionButtons() {
     return Column(
       children: [
-        // Primary button - minimal design
         Container(
           width: double.infinity,
           height: 48.h,
@@ -320,7 +311,6 @@ class _OnboardingViewState extends State<OnboardingView>
           ),
         ),
         SizedBox(height: 16.h),
-        // Login text - clean styling
         GestureDetector(
           onTap: () {
             Navigator.push(
@@ -358,6 +348,23 @@ class _OnboardingViewState extends State<OnboardingView>
                   ),
                 ],
               ),
+            ),
+          ),
+        ),
+        SizedBox(height: 8.h),
+        TextButton(
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const BaseScreen()),
+            );
+          },
+          child: Text(
+            'continue_as_guest'.tr(context),
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: AppColors.primary,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),

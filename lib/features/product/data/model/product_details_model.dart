@@ -1,5 +1,6 @@
 import 'package:html/parser.dart' as html_parser;
 
+//! ProductDetailsModel
 class ProductDetailsModel {
   final int? id;
   final String? name;
@@ -33,9 +34,43 @@ class ProductDetailsModel {
     this.selectedVariationId = '',
   });
 
+  ProductDetailsModel copyWith({
+    int? id,
+    String? name,
+    String? imageUrl,
+    String? description,
+    List<String>? imageUrls,
+    double? price,
+    double? oldPrice,
+    String? storeName,
+    double? rating,
+    Map<String, String>? specifications,
+    bool? isFavorite,
+    bool? isFavourited,
+    List<ProductVariation>? variations,
+    String? selectedVariationId,
+  }) {
+    return ProductDetailsModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      imageUrl: imageUrl ?? this.imageUrl,
+      description: description ?? this.description,
+      imageUrls: imageUrls ?? this.imageUrls,
+      price: price ?? this.price,
+      oldPrice: oldPrice ?? this.oldPrice,
+      storeName: storeName ?? this.storeName,
+      rating: rating ?? this.rating,
+      specifications: specifications ?? this.specifications,
+      isFavorite: isFavorite ?? this.isFavorite,
+      isFavourited: isFavourited ?? this.isFavourited,
+      variations: variations ?? this.variations,
+      selectedVariationId: selectedVariationId ?? this.selectedVariationId,
+    );
+  }
+
   factory ProductDetailsModel.fromJson(Map<String, dynamic> json) {
     try {
-      // Safely handle the data array
+
       final dataList = json['data'] as List? ?? [];
       if (dataList.isEmpty) {
         throw Exception('No product data found');
@@ -43,11 +78,11 @@ class ProductDetailsModel {
 
       final productData = dataList.first as Map<String, dynamic>;
 
-      // Parse variations with proper null checks
+
       final variations = (productData['product_variations'] as List? ?? [])
           .expand((pv) => (pv['variations'] as List? ?? []).map((v) {
                 final variation = ProductVariation.fromJson(v);
-                // Get quantity from variation_location_details
+
                 final locationDetails =
                     (v['variation_location_details'] as List? ?? []);
                 if (locationDetails.isNotEmpty) {
@@ -60,10 +95,10 @@ class ProductDetailsModel {
               }))
           .toList();
 
-      // final variations =
-      //     variationsJson.map((v) => ProductVariation.fromJson(v)).toList();
 
-      // Clean HTML from product_description
+
+
+
       final descriptionRaw =
           productData['product_description']?.toString() ?? '';
       final document = html_parser.parse(descriptionRaw);
@@ -72,7 +107,7 @@ class ProductDetailsModel {
       final firstVariation = variations.isNotEmpty ? variations.first : null;
       final price = firstVariation?.price ?? 0.0;
 
-      // Safely handle brand name
+
       final brand = productData['brand'] as Map<String, dynamic>?;
       final storeName = brand?['name']?.toString() ?? 'Unknown';
 
@@ -102,6 +137,7 @@ class ProductDetailsModel {
   }
 }
 
+//! ProductVariation
 class ProductVariation {
   final int? id;
   final String? name;

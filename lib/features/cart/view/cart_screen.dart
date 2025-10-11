@@ -7,23 +7,74 @@ import 'package:cozy/core/constants/navigation.dart';
 import 'package:cozy/core/cubit/global_cubit.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/core/services/service_locator.dart';
+import 'package:cozy/core/utils/currency_formatter.dart';
+import 'package:cozy/features/auth/view/login_screen.dart';
 import 'package:cozy/features/cart/data/repo/cart_repo.dart';
 import 'package:cozy/features/cart/view/cubit/cart_cubit.dart';
 import 'package:cozy/features/cart/view/widgets/cart_item_card.dart';
-import 'package:cozy/features/checkout/view/checkout_screen.dart';
 import 'package:cozy/features/product/view/product_details_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../checkout/view/checkout_screen.dart';
 import 'cubit/cart_state.dart';
 
+//! CartScreen
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final global = context.read<GlobalCubit>();
+
+    if (!global.isAuthenticated) {
+      return Scaffold(
+        backgroundColor: AppColors.lightGrey,
+        body: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.lock_outline,
+                      size: 100.sp, color: AppColors.textGrey),
+                  SizedBox(height: 24.h),
+                  Text(
+                    'login_required'.tr(context),
+                    style: TextStyle(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack),
+                  ),
+                  SizedBox(height: 12.h),
+                  Text(
+                    'login_required_message'.tr(context),
+                    style:
+                        TextStyle(fontSize: 16.sp, color: AppColors.textGrey),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 24.h),
+                  AppButton(
+                    text: 'login'.tr(context),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      );
+                    },
+                    type: AppButtonType.primary,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return BlocProvider(
       create: (context) => CartCubit(sl<CartRepo>())..fetchCart(),
       child: Scaffold(
@@ -71,6 +122,11 @@ class CartScreen extends StatelessWidget {
   }
 
   Widget _buildCartContent(BuildContext context, CartCubit cubit) {
+    if (cubit.cart == null) {
+      // No cart loaded yet
+      return const Center(child: CustomLoadingIndicator());
+    }
+
     if (cubit.cart!.items.isEmpty) {
       return _buildEmptyCart(context);
     }
@@ -132,7 +188,7 @@ class CartScreen extends StatelessWidget {
         ),
         Expanded(
           child: ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            padding: EdgeInsets.symmetric(horizontal: 15.w),
             itemCount: cubit.cart?.items.length,
             itemBuilder: (context, index) {
               final cartItem = cubit.cart?.items[index];
@@ -188,6 +244,14 @@ class CartScreen extends StatelessWidget {
               AppButton(
                 text: 'checkout'.tr(context),
                 onPressed: () {
+                  final global = context.read<GlobalCubit>();
+                  if (!global.isAuthenticated) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    );
+                    return;
+                  }
                   navigateTo(context, CheckoutScreen(cart: cubit.cart!));
                 },
                 type: AppButtonType.primary,
@@ -201,7 +265,7 @@ class CartScreen extends StatelessWidget {
 
   Widget _buildEmptyCart(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      padding: EdgeInsets.symmetric(horizontal: 15.w),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -264,7 +328,7 @@ class CartScreen extends StatelessWidget {
               ),
             ),
             Text(
-              amount.toStringAsFixed(2),
+              formatCurrency(context, amount),
               style: TextStyle(
                 fontSize: isTotal ? 18.sp : 16.sp,
                 fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
@@ -319,7 +383,7 @@ class CartScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 16.h),
                     Text(
-                      'Cost: \$${(cubit.cart?.shipping ?? 0).toStringAsFixed(2)}',
+                      'Cost: ${formatCurrency(context, (cubit.cart?.shipping ?? 0))}',
                       style: TextStyle(
                         fontSize: 16.sp,
                         color: AppColors.textBlack,
@@ -387,7 +451,7 @@ class CartScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 16.h),
                   Text(
-                    'Cost: \$${(cubit.cart?.shipping ?? 0).toStringAsFixed(2)}',
+                    'Cost: ${formatCurrency(context, (cubit.cart?.shipping ?? 0))}',
                     style: TextStyle(
                       fontSize: 16.sp,
                       color: AppColors.textBlack,

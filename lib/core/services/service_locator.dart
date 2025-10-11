@@ -15,6 +15,8 @@ import '../../features/auth/data/repo/login_repo.dart';
 import '../../features/auth/data/repo/register_repo.dart';
 import '../../features/notifications/data/repo/notifications_repo.dart';
 import '../../features/profile/data/repo/address_repo.dart';
+import '../data/repo/settings_repo.dart';
+import '../../features/profile/data/repo/about_repo.dart';
 
 final sl = GetIt.instance;
 void initServiceLocator() {
@@ -34,7 +36,9 @@ void initServiceLocator() {
   sl.registerLazySingleton(() => OrderRepo(sl<DioConsumer>()));
   sl.registerLazySingleton(() => NotificationsRepo(sl<DioConsumer>()));
   sl.registerLazySingleton(() => CustomerServiceRepo(sl<DioConsumer>()));
-  // sl.registerLazySingleton(() => DataConnectionChecker());
-  // sl.registerLazySingleton(() => NetworkInfoImpl(sl<DataConnectionChecker>()));
+  sl.registerLazySingleton(() => SettingsRepo(sl<DioConsumer>()));
+  sl.registerLazySingleton(() => AboutRepo(sl<DioConsumer>()));
+
+
   //! Repositorys
 }

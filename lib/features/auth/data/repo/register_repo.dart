@@ -1,4 +1,4 @@
-// features/auth/data/repo/register_repo.dart
+
 import 'package:cozy/core/constants/widgets/errors/exceptions.dart';
 import 'package:cozy/core/database/api/api_consumer.dart';
 import 'package:cozy/core/notification/notification_handler.dart';
@@ -8,6 +8,7 @@ import 'package:dartz/dartz.dart';
 import '../../../../core/common/common.dart';
 import '../../../../core/database/api/end_points.dart';
 
+//! RegisterRepo
 class RegisterRepo {
   final ApiConsumer api;
 

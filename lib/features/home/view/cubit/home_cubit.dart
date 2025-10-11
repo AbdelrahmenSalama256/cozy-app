@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../core/services/service_locator.dart';
 import '../../../product/data/model/product_details_model.dart';
@@ -9,12 +10,16 @@ import '../../data/model/product_model.dart';
 import '../../data/repo/home_repo.dart';
 import 'home_state.dart';
 
+//! HomeCubit
 class HomeCubit extends Cubit<HomeState> {
   final HomeRepo homeRepo = sl<HomeRepo>();
   HomeCubit() : super(HomeInitial());
 
   List<CategoryModel> categories = [];
   List<ProductModel> products = [];
+  TextEditingController searchController = TextEditingController();
+  String searchQuery = '';
+
   List<OfferModel> offers = [];
   List<OfferProductModel> offerProducts = []; // Add this
 
@@ -25,6 +30,22 @@ class HomeCubit extends Cubit<HomeState> {
   bool hasMore = true;
   String selectedVariationId = '';
   int quantity = 1;
+
+  List<ProductModel> get filteredProducts {
+    if (searchQuery.trim().isEmpty) return products;
+    final q = searchQuery.toLowerCase().trim();
+    return products.where((p) {
+      final name = (p.nameKey).toLowerCase();
+      final store = (p.storeNameKey).toLowerCase();
+      return name.contains(q) || store.contains(q);
+    }).toList();
+  }
+
+  void setSearchQuery(String query) {
+    searchController.text = query;
+    searchQuery = query;
+    emit(HomeProductsLoaded());
+  }
 
   void initialize() {
     fetchCategories();
@@ -97,7 +118,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> fetchProductDetails(int productId) async {
     emit(ProductDetailsLoading());
-    // Reset state
+
     selectedVariationId = '';
     quantity = 1;
 
@@ -106,7 +127,7 @@ class HomeCubit extends Cubit<HomeState> {
       (error) => emit(ProductDetailsError(error)),
       (product) {
         productDetails = [product];
-        // Set default variation if exists
+
         if (product.variations?.isNotEmpty ?? false) {
           selectedVariationId = product.variations!.first.id?.toString() ?? '';
         }
@@ -147,5 +168,22 @@ class HomeCubit extends Cubit<HomeState> {
         emit(HomeOfferProductsLoaded(data));
       },
     );
+  }
+
+  void setProductFavouriteById(String productId, bool isFavourite) {
+    final index = products.indexWhere((p) => p.id == productId);
+    if (index != -1) {
+      products[index] = products[index].copyWith(isFavourited: isFavourite);
+      emit(HomeProductsLoaded());
+    }
+  }
+
+  void setProductDetailsFavourite(bool isFavourite) {
+    if (productDetails.isNotEmpty) {
+      final last = productDetails.last;
+      productDetails[productDetails.length - 1] =
+          last.copyWith(isFavourited: isFavourite);
+      emit(ProductDetailsLoaded());
+    }
   }
 }

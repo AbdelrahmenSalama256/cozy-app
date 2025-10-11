@@ -4,6 +4,7 @@ import '../../data/models/notification_model.dart';
 import '../../data/repo/notifications_repo.dart';
 import 'notifications_state.dart';
 
+//! NotificationsCubit
 class NotificationsCubit extends Cubit<NotificationsState> {
   final NotificationsRepo notificationsRepo;
 
@@ -28,7 +29,7 @@ class NotificationsCubit extends Cubit<NotificationsState> {
     result.fold(
       (error) => emit(NotificationsError(error)),
       (success) {
-        // Update local state
+
         final index = notifications.indexWhere((n) => n.id == notificationId);
         if (index != -1) {
           final updatedNotification = NotificationModel(
@@ -53,7 +54,7 @@ class NotificationsCubit extends Cubit<NotificationsState> {
     result.fold(
       (error) => emit(NotificationsError(error)),
       (success) {
-        // Update all notifications to read
+
         notifications = notifications.map((notification) {
           return NotificationModel(
             id: notification.id,

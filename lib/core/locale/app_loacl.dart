@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+//! AppLocalizations
 class AppLocalizations {
   final Locale? locale;
   AppLocalizations({this.locale});
@@ -28,6 +29,7 @@ class AppLocalizations {
   }
 }
 
+//! _AppLocalDelegate
 class _AppLocalDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalDelegate();
   @override

@@ -7,6 +7,7 @@ import 'package:cozy/core/network/local_network.dart';
 import 'package:cozy/core/services/service_locator.dart';
 import 'package:cozy/features/cart/data/repo/cart_repo.dart';
 import 'package:cozy/features/wishlist/data/repo/wishlist_repo.dart';
+import 'package:cozy/core/data/repo/settings_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -14,8 +15,10 @@ import 'package:image_picker/image_picker.dart';
 import '../../features/cart/data/model/cart_model.dart';
 import '../../features/profile/data/models/contact_model.dart';
 import '../../features/profile/data/repo/profile_repo.dart';
+import '../../features/wishlist/data/model/wishlist_model.dart';
 import 'global_state.dart';
 
+//! GlobalCubit
 class GlobalCubit extends Cubit<GlobalState> {
   GlobalCubit() : super(GlobalInitial());
 
@@ -24,6 +27,9 @@ class GlobalCubit extends Cubit<GlobalState> {
         "User type is ${sl<CacheHelper>().getDataString(key: AppConstants.userType)}");
     PrintUtil.success(
         "${sl<CacheHelper>().getDataString(key: AppConstants.token)}");
+
+    _initCurrency();
+    _fetchAndApplySettings();
     getProfile();
   }
 
@@ -60,6 +66,74 @@ class GlobalCubit extends Cubit<GlobalState> {
 
   ContactResponse? contactResponse;
 
+  String currencyCode = "EGP";
+  String currencySymbol = "LE";
+
+  void _initCurrency() {
+    final cache = sl<CacheHelper>();
+    final cachedCode = cache.getDataString(key: AppConstants.currencyCode);
+    final cachedSymbol = cache.getDataString(key: AppConstants.currencySymbol);
+    if (cachedCode != null && cachedCode.isNotEmpty) {
+      currencyCode = cachedCode;
+    }
+    if (cachedSymbol != null && cachedSymbol.isNotEmpty) {
+      currencySymbol = cachedSymbol;
+    } else {
+      currencySymbol = _defaultSymbolForCodeAscii(currencyCode);
+    }
+  }
+
+  void changeCurrency({required String code, String? symbol}) {
+    currencyCode = code;
+    currencySymbol = symbol ?? _defaultSymbolForCodeAscii(code);
+    final cache = sl<CacheHelper>();
+    cache.setData(AppConstants.currencyCode, currencyCode);
+    cache.setData(AppConstants.currencySymbol, currencySymbol);
+    emit(CurrencyChangedState(currencyCode, currencySymbol));
+  }
+
+  String _defaultSymbolForCodeAscii(String code) {
+    switch (code.toUpperCase()) {
+      case 'USD':
+        return '\$';
+      case 'EGP':
+        return 'EGP';
+      case 'SAR':
+        return 'SAR';
+      case 'AED':
+        return 'AED';
+      case 'EUR':
+        return 'EUR';
+      case 'GBP':
+        return 'GBP';
+      default:
+        return '\$';
+    }
+  }
+
+  bool get isAuthenticated {
+    final token = sl<CacheHelper>().getDataString(key: AppConstants.token);
+    return token != null && token.isNotEmpty;
+  }
+
+  Future<void> _fetchAndApplySettings() async {
+    try {
+      final result = await sl<SettingsRepo>().fetchSettings();
+      result.fold((error) {
+        // ignore errors silently; keep defaults
+      }, (settings) {
+        if ((settings.currency ?? '').isNotEmpty) {
+          // Update currency symbol from settings; assume SAR unless overridden later
+          changeCurrency(code: currencyCode.isNotEmpty ? currencyCode : 'SAR', symbol: settings.currency);
+        }
+        // Optionally, store name/logo for later use
+        // Could cache via CacheHelper if needed
+      });
+    } catch (_) {
+      // swallow
+    }
+  }
+
   Future<void> getProfile({bool forceRefresh = false}) async {
     emit(ProfileLoading());
 
@@ -73,7 +147,6 @@ class GlobalCubit extends Cubit<GlobalState> {
       return;
     }
 
-    // Load from cache if available and not forcing refresh
     if (!forceRefresh &&
         cacheHelper.getDataString(key: AppConstants.userProfile) != null) {
       try {
@@ -83,7 +156,7 @@ class GlobalCubit extends Cubit<GlobalState> {
             "Loaded user profile from cache: ${contactResponse!.data.user.name}");
         emit(ProfileLoaded());
         _profileController.add(contactResponse); // إضافة البيانات للستريم
-        // Fetch fresh data in the background
+
         _fetchAndUpdateProfile();
         return;
       } catch (e) {
@@ -91,7 +164,6 @@ class GlobalCubit extends Cubit<GlobalState> {
       }
     }
 
-    // Fetch from server if no cache or forceRefresh is true
     await _fetchAndUpdateProfile();
   }
 
@@ -172,7 +244,6 @@ class GlobalCubit extends Cubit<GlobalState> {
     result.fold(
       (error) => emit(CartError(error)),
       (item) {
-        // cartItems.add(item);
         emit(CartLoaded());
       },
     );
@@ -184,21 +255,50 @@ class GlobalCubit extends Cubit<GlobalState> {
     result.fold(
       (error) => emit(WishlistError(error)),
       (item) {
-        // cartItems.add(item);
         emit(WishlistSuccess(item));
+        // notify listeners that a product was added to wishlist so UI can update
+        emit(WishlistStatusChanged(productId: productId, isFavourite: true));
       },
     );
   }
 
-  Future<void> removeFromWishlist(int id) async {
+  Future<void> removeFromWishlist(int id, {String? productId}) async {
     emit(RemoveWishlistLoading());
     final result = await sl<WishlistRepo>().removeFromWishlist(id);
     result.fold(
       (error) => emit(WishlistItemRemovedError(error)),
       (message) {
         emit(WishlistItemRemovedSuccess(message));
+        // notify UI to update product favourite state if productId was provided
+        if (productId != null) {
+          emit(WishlistStatusChanged(productId: productId, isFavourite: false));
+        }
       },
     );
+  }
+
+  Future<void> removeProductFromWishlistByProductId(String productId) async {
+    try {
+      final wishlistResult = await sl<WishlistRepo>().getWishlist();
+      wishlistResult.fold((error) {
+        emit(WishlistItemRemovedError(error));
+      }, (wishlist) async {
+        WishlistItem? found;
+        for (var item in wishlist.items) {
+          if (item.productId.toString() == productId) {
+            found = item;
+            break;
+          }
+        }
+        if (found != null) {
+          await removeFromWishlist(found.id, productId: productId);
+        } else {
+          emit(WishlistItemRemovedError('wishlist_item_not_found'));
+        }
+      });
+    } catch (e) {
+      emit(WishlistItemRemovedError(e.toString()));
+    }
   }
 
   @override

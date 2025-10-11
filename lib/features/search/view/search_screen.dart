@@ -13,6 +13,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/component/custom_loading_indicator.dart';
 
+//! SearchScreen
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
@@ -20,6 +21,7 @@ class SearchScreen extends StatefulWidget {
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
+//! _SearchScreenState
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
 
@@ -229,10 +231,10 @@ class _SearchScreenState extends State<SearchScreen> {
                           oldPrice: product.oldPrice,
                           isFavorite: product.isFavourited,
                           onTap: () {
-                            // Handle product tap
+
                           },
                           onFavoriteTap: () {
-                            // Handle favorite tap
+
                           },
                         );
                       },

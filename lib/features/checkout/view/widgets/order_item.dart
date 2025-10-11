@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cozy/core/utils/currency_formatter.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../cart/data/model/cart_model.dart';
 
+//! OrderItem
 class OrderItem extends StatelessWidget {
   final CartItem item;
 
@@ -50,7 +52,7 @@ class OrderItem extends StatelessWidget {
             ),
           ),
           Text(
-            '\$${(item.product!.price! * item.quantity!).toStringAsFixed(2)}',
+            formatCurrency(context, (item.product!.price! * item.quantity!)),
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w600,

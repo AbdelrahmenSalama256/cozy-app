@@ -9,6 +9,7 @@ enum HeaderAlignment { left, center, right, spaceBetween }
 
 enum HeaderStyle { standard, transparent, elevated }
 
+//! AppHeader
 class AppHeader extends StatelessWidget {
   final String? title;
   final TextStyle? titleStyle;
@@ -69,7 +70,7 @@ class AppHeader extends StatelessWidget {
       leadingWidget = leading;
     } else if (shouldShowBackButton) {
       leadingWidget = Container(
-        // margin: EdgeInsets.only(left: 16.w),
+
         width: 45.w,
         height: 45.h,
         alignment: Alignment.center,
@@ -78,7 +79,7 @@ class AppHeader extends StatelessWidget {
           shape: BoxShape.circle,
         ),
         child: IconButton(
-          // padding: EdgeInsets.zero,
+
           icon: const Icon(Icons.arrow_back_ios_new_outlined,
               color: Color(0xff444444)),
           onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
@@ -142,7 +143,7 @@ class AppHeader extends StatelessWidget {
               children: [leadingWidget ?? const SizedBox()],
             ),
           ),
-        // Handle title alignment with if statements
+
         if (titleContent != null) ...[
           if (centerTitle == true) ...[
             Expanded(

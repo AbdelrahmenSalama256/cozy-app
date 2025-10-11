@@ -9,6 +9,8 @@ import 'package:cozy/features/auth/data/repo/register_repo.dart';
 import 'package:cozy/features/auth/view/cubit/register_cubit.dart';
 import 'package:cozy/features/auth/view/cubit/register_state.dart';
 import 'package:cozy/features/auth/view/verification_screen.dart';
+import 'package:cozy/features/base/view/base_screen.dart';
+import '../../../core/constants/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,6 +20,7 @@ import '../../../core/component/widgets/profile_image_picker.dart';
 import '../../../core/services/service_locator.dart';
 import '../../../core/utils/password_strength_toggle.dart';
 
+//! CreateAccountScreen
 class CreateAccountScreen extends StatelessWidget {
   const CreateAccountScreen({super.key});
 
@@ -176,29 +179,37 @@ class CreateAccountScreen extends StatelessWidget {
                                     registerCubit.attemptAccountCreation();
                                   }
                                 }),
+                            SizedBox(height: 12.h),
+                            AppButton(
+                              text: 'continue_as_guest'.tr(context),
+                              type: AppButtonType.secondary,
+                              onPressed: () {
+                                navigateAndFinish(context, const BaseScreen());
+                              },
+                            ),
                             SizedBox(height: 30.h),
-                            // Center(
-                            //   child: Text(
-                            //     "auth_or_sign_up_with".tr(context),
-                            //     style: TextStyle(
-                            //         fontSize: 13.sp, color: AppColors.textGrey),
-                            //   ),
-                            // ),
-                            // SizedBox(height: 20.h),
-                            // SocialLoginButton(
-                            //   text: "auth_sign_up_google".tr(context),
-                            //   iconAssetPath:
-                            //       "assets/images/icons/google_logo.png",
-                            //   onPressed: () {},
-                            // ),
-                            // SizedBox(height: 16.h),
-                            // SocialLoginButton(
-                            //   text: "auth_sign_up_facebook".tr(context),
-                            //   iconAssetPath:
-                            //       "assets/images/icons/facebook_logo.png",
-                            //   onPressed: () {},
-                            // ),
-                            // SizedBox(height: 20.h),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                           ],
                         ),
                       ),

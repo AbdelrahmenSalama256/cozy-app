@@ -3,6 +3,7 @@ import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! StoreInfoCard
 class StoreInfoCard extends StatelessWidget {
   final String logoUrl;
   final String nameKey;
@@ -30,14 +31,14 @@ class StoreInfoCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(4.r),
 
         border: Border.all(color: AppColors.lightGrey.withOpacity(0.5)),
-        // boxShadow: [
-        //   BoxShadow(
-        //     color: Colors.grey.withOpacity(0.08),
-        //     spreadRadius: 1,
-        //     blurRadius: 3,
-        //     offset: const Offset(0, 1),
-        //   ),
-        // ],
+
+
+
+
+
+
+
+
       ),
       child: Row(
         children: [

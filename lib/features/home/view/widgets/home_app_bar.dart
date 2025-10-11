@@ -3,6 +3,7 @@ import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! HomeAppBar
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback onSearchTap;
   final VoidCallback onNotificationTap;
@@ -35,13 +36,13 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               radius: 20.r,
               backgroundImage: AssetImage(userAvatarUrl),
               onBackgroundImageError: (exception, stackTrace) {
-                // Handle error
+
               },
               backgroundColor: AppColors.lightGrey,
             ),
             SizedBox(width: 12.w),
             Flexible(
-              // Changed from Expanded to Flexible with loose fit
+
               child: Text(
                 '${'home_greeting_user'.tr(context)} $userName',
                 style: TextStyle(

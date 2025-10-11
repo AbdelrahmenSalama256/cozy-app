@@ -1,5 +1,6 @@
 import 'package:image_picker/image_picker.dart';
 
+//! UserRegistrationModel
 class UserRegistrationModel {
   final String username;
   final String email;

@@ -1,6 +1,8 @@
 import 'package:cozy/core/component/widgets/app_button.dart';
 import 'package:cozy/core/constants/app_colors.dart';
+import 'package:cozy/core/cubit/global_cubit.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
+import 'package:cozy/features/auth/view/login_screen.dart';
 import 'package:cozy/features/home/view/widgets/product_card.dart';
 import 'package:cozy/features/product/view/product_details_screen.dart';
 import 'package:cozy/features/wishlist/view/cubit/wishlist_cubit.dart';
@@ -15,11 +17,59 @@ import '../../../core/services/service_locator.dart';
 import '../data/repo/wishlist_repo.dart';
 import 'cubit/wishlist_state.dart';
 
+//! WishlistScreen
 class WishlistScreen extends StatelessWidget {
   const WishlistScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final global = context.read<GlobalCubit>();
+    if (!global.isAuthenticated) {
+      return Scaffold(
+        backgroundColor: AppColors.lightGrey,
+        body: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.lock_outline,
+                      size: 100.sp, color: AppColors.textGrey),
+                  SizedBox(height: 24.h),
+                  Text(
+                    'login_required'.tr(context),
+                    style: TextStyle(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack),
+                  ),
+                  SizedBox(height: 12.h),
+                  Text(
+                    'login_required_message'.tr(context),
+                    style:
+                        TextStyle(fontSize: 16.sp, color: AppColors.textGrey),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 24.h),
+                  AppButton(
+                    text: 'login'.tr(context),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      );
+                    },
+                    type: AppButtonType.primary,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return BlocProvider(
       create: (context) => WishlistCubit(sl<WishlistRepo>()),
       child: Scaffold(
@@ -60,7 +110,7 @@ class WishlistScreen extends StatelessWidget {
   Widget _buildFavoritesContent(BuildContext context, WishlistCubit cubit) {
     if (cubit.wishlist?.items.isEmpty ?? true) {
       return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        padding: EdgeInsets.symmetric(horizontal: 15.w),
         child: _buildEmptyFavorites(context),
       );
     }
@@ -92,7 +142,7 @@ class WishlistScreen extends StatelessWidget {
         ),
         Expanded(
           child: GridView.builder(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            padding: EdgeInsets.symmetric(horizontal: 15.w),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: 15.w,
@@ -159,10 +209,7 @@ class WishlistScreen extends StatelessWidget {
           ),
           SizedBox(height: 40.h),
           AppButton(
-            onPressed: () {
-              // navigateTo(
-              //     context, const HomeScreen()); // Assuming HomeScreen exists
-            },
+            onPressed: () {},
             text: 'explore_products'.tr(context),
             type: AppButtonType.primary,
           ),

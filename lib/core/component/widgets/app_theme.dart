@@ -2,6 +2,7 @@ import 'package:cozy/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! AppTheme
 class AppTheme {
   static ThemeData getLightTheme(String language) {
     return ThemeData(

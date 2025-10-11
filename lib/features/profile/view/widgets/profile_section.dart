@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/widgets/custom_cached_image.dart';
 
+//! ProfileSection
 class ProfileSection extends StatelessWidget {
   final String userName;
   final bool isVendor;
@@ -72,14 +73,14 @@ class ProfileSection extends StatelessWidget {
           : Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Avatar
+
                 _buildAvatar(),
 
                 SizedBox(height: spacing.h),
 
-                // Name
+
                 SizedBox(
-                  // width: 90.w, // Fixed width for consistent layout
+
                   child: Text(
                     userName,
                     style: textStyle ??
@@ -89,12 +90,12 @@ class ProfileSection extends StatelessWidget {
                           color: const Color(0xff152354),
                         ),
                     textAlign: TextAlign.center,
-                    // maxLines: 1,
-                    // overflow: TextOverflow.ellipsis,
+
+
                   ),
                 ),
 
-                // Subtitle (account type)
+
                 if (subtitle != null) ...[
                   SizedBox(height: 2.h),
                   SizedBox(
@@ -139,7 +140,7 @@ class ProfileSection extends StatelessWidget {
     }
 
     if (userImageUrl.isEmpty) {
-      // Empty image URL - show placeholder
+
       return Container(
         width: 100.w,
         height: 100.w,
@@ -158,7 +159,7 @@ class ProfileSection extends StatelessWidget {
       );
     }
 
-    // Has image URL
+
     return Container(
       width: 100.w,
       height: 100.w,

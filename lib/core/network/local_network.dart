@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+//! CacheHelper
 class CacheHelper {
   late SharedPreferences sharedPreferences;
 
@@ -12,9 +13,9 @@ class CacheHelper {
     return sharedPreferences.getString(key);
   }
 
-  // String? getUserOrVendor() {
-  //   return sharedPreferences.getString(AppConstants.salonOrExpert);
-  // }
+
+
+
 
   Future<bool> setData(String key, String value) async {
     return await sharedPreferences.setString(key, value);

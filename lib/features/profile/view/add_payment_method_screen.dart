@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/component/widgets/app_button.dart';
 import '../data/models/payment_method_model.dart';
 
+//! AddPaymentMethodScreen
 class AddPaymentMethodScreen extends StatefulWidget {
   final PaymentMethodModel? paymentMethod;
 
@@ -16,6 +17,7 @@ class AddPaymentMethodScreen extends StatefulWidget {
   State<AddPaymentMethodScreen> createState() => _AddPaymentMethodScreenState();
 }
 
+//! _AddPaymentMethodScreenState
 class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
   final _formKey = GlobalKey<FormState>();
   final _cardNumberController = TextEditingController();
@@ -91,7 +93,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
               ),
               SizedBox(height: 16.h),
 
-              // Payment Method Type Selection
+
               Container(
                 padding: EdgeInsets.all(16.w),
                 decoration: BoxDecoration(
@@ -121,7 +123,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
 
               SizedBox(height: 24.h),
 
-              // Payment Method Details
+
               if (_selectedType == PaymentMethodType.card) ...[
                 Text(
                   'card_details'.tr(context),

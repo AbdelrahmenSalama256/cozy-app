@@ -1,5 +1,6 @@
 import 'tracking_event_model.dart';
 
+//! OrderTrackResponse
 class OrderTrackResponse {
   final bool success;
   final List<TrackingEvent> trackingEvents;

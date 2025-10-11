@@ -17,8 +17,6 @@ import 'package:cozy/features/profile/view/addresses_screen.dart';
 import 'package:cozy/features/profile/view/cubit/address_cubit.dart';
 import 'package:cozy/features/profile/view/edit_profile_screen.dart';
 import 'package:cozy/features/profile/view/my_orders_screen.dart';
-import 'package:cozy/features/profile/view/notifications_screen.dart';
-import 'package:cozy/features/profile/view/payment_method_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,11 +26,14 @@ import '../../../core/component/custom_toast.dart';
 import '../data/models/contact_model.dart';
 import '../data/repo/address_repo.dart';
 
+//! ProfileScreen
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final global = context.read<GlobalCubit>();
+
     return BlocProvider(
       create: (context) => GlobalCubit()..getProfile(),
       child: StreamBuilder<ContactResponse?>(
@@ -61,7 +62,6 @@ class ProfileScreen extends StatelessWidget {
             builder: (context, state) {
               final cubit = context.read<GlobalCubit>();
 
-              // استخدام البيانات من الستريم إذا كانت متاحة
               final userData = snapshot.data ?? cubit.contactResponse;
 
               return Scaffold(
@@ -85,6 +85,7 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildLoggedInProfile(BuildContext context, GlobalCubit cubit,
       GlobalState state, ContactResponse? userData) {
     final user = userData?.data.user;
+    final global = context.read<GlobalCubit>();
 
     return SingleChildScrollView(
       child: Column(
@@ -161,7 +162,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           SizedBox(height: 20.h),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            padding: EdgeInsets.symmetric(horizontal: 15.w),
             child: Column(
               children: [
                 _buildProfileOption(
@@ -172,14 +173,16 @@ class ProfileScreen extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (context) => const EditProfileScreen())),
                 ),
-                _buildProfileOption(
-                  icon: Icons.shopping_bag_outlined,
-                  title: 'my_orders'.tr(context),
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const MyOrdersScreen())),
-                ),
+                !global.isAuthenticated
+                    ? SizedBox.shrink()
+                    : _buildProfileOption(
+                        icon: Icons.shopping_bag_outlined,
+                        title: 'my_orders'.tr(context),
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const MyOrdersScreen())),
+                      ),
                 _buildProfileOption(
                   icon: Icons.location_on_outlined,
                   title: 'addresses'.tr(context),
@@ -193,14 +196,15 @@ class ProfileScreen extends StatelessWidget {
                                 child: const AddressesScreen(),
                               ))),
                 ),
-                _buildProfileOption(
-                  icon: Icons.payment_outlined,
-                  title: 'payment_methods'.tr(context),
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const PaymentMethodsScreen())),
-                ),
+                // _buildProfileOption(
+                //   icon: Icons.payment_outlined,
+                //   title: 'payment_methods'.tr(context),
+                //   onTap: () => Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => const PaymentMethodsScreen())),
+                // ),
+
                 _buildProfileOption(
                   icon: Icons.support_agent_outlined,
                   title: 'customer_service'.tr(context),
@@ -209,14 +213,14 @@ class ProfileScreen extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (context) => const CustomerServiceScreen())),
                 ),
-                _buildProfileOption(
-                  icon: Icons.notifications_outlined,
-                  title: 'notifications'.tr(context),
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const NotificationsScreen())),
-                ),
+                // _buildProfileOption(
+                //   icon: Icons.notifications_outlined,
+                //   title: 'notifications'.tr(context),
+                //   onTap: () => Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => const NotificationsScreen())),
+                // ),
                 _buildProfileOption(
                   icon: Icons.language_outlined,
                   title: 'language'.tr(context),
@@ -390,7 +394,6 @@ class ProfileScreen extends StatelessWidget {
           TextButton(
             onPressed: () {
               cubit.logout();
-              // No need for Navigator.pop here; handled in listener
             },
             child: Text(
               'logout'.tr(context),

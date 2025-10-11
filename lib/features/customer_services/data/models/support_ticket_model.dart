@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//! SupportTicketResponse
 class SupportTicketResponse {
   final bool success;
   final List<SupportTicket> tickets;
@@ -19,6 +20,7 @@ class SupportTicketResponse {
   }
 }
 
+//! SupportTicket
 class SupportTicket {
   final int id;
   final int businessId;
@@ -62,7 +64,7 @@ class SupportTicket {
     );
   }
 
-  // Helper method to get status color
+
   Color getStatusColor() {
     switch (status.toLowerCase()) {
       case 'open':
@@ -78,7 +80,7 @@ class SupportTicket {
     }
   }
 
-  // Helper method to get priority color
+
   Color getPriorityColor() {
     switch (priority.toLowerCase()) {
       case 'high':
@@ -92,7 +94,7 @@ class SupportTicket {
     }
   }
 
-  // Helper method to get type display text
+
   String getTypeDisplayText() {
     switch (type.toLowerCase()) {
       case 'inquiry':

@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_types_as_parameter_names, non_constant_identifier_names
-
 import 'package:cozy/core/app/cozy_home.dart';
 import 'package:flutter/material.dart';
 
@@ -23,33 +21,24 @@ void navigateTo(BuildContext context, Widget screen) {
   );
 }
 
-// void pop(BuildContext context) {
-//   final baseScreenState = BaseScreen.currentState;
-//   if (baseScreenState != null) {
-//     baseScreenState.pop(context);
-//   } else {
-//     Navigator.of(context).pop();
-//   }
-// }
-
-void navigateReplac(context, Widget) => Navigator.pushReplacement(
+void navigateReplac(BuildContext context, Widget screen) =>
+    Navigator.pushReplacement(
       context,
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
-        // reverseTransitionDuration: const Duration(milliseconds: 700),
-        pageBuilder: (context, animation, secondaryAnimation) => Widget,
+        pageBuilder: (context, animation, secondaryAnimation) => screen,
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
       ),
     );
 
-void navigateAndFinish(context, Widget) => Navigator.pushAndRemoveUntil(
+void navigateAndFinish(BuildContext context, Widget screen) =>
+    Navigator.pushAndRemoveUntil(
       context,
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
-        // reverseTransitionDuration: const Duration(milliseconds: 700),
-        pageBuilder: (context, animation, secondaryAnimation) => Widget,
+        pageBuilder: (context, animation, secondaryAnimation) => screen,
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
@@ -58,7 +47,7 @@ void navigateAndFinish(context, Widget) => Navigator.pushAndRemoveUntil(
         return false;
       },
     );
-// Navigation without bottom nav bar (regular navigation)
+
 void navigateWithoutNav(BuildContext context, Widget screen) {
   Navigator.push(
     context,
@@ -76,7 +65,6 @@ void navigateWithoutNav(BuildContext context, Widget screen) {
   );
 }
 
-// Replacement navigation with bottom nav bar
 void navigateReplacWithNav(BuildContext context, Widget screen,
     {bool withNavBar = true}) {
   navigatorKey.currentState!.pushReplacement(
@@ -93,7 +81,6 @@ void navigateReplacWithNav(BuildContext context, Widget screen,
   );
 }
 
-// Replacement navigation without bottom nav bar
 void navigateReplacWithoutNav(BuildContext context, Widget screen) {
   Navigator.pushReplacement(
     context,
@@ -110,7 +97,6 @@ void navigateReplacWithoutNav(BuildContext context, Widget screen) {
   );
 }
 
-// Navigate and finish all with bottom nav bar (alternative implementation)
 void navigateAndFinishWithNav(BuildContext context, Widget screen,
     {bool withNavBar = true}) {
   navigatorKey.currentState!.pushAndRemoveUntil(
@@ -128,7 +114,6 @@ void navigateAndFinishWithNav(BuildContext context, Widget screen,
   );
 }
 
-// Navigate and finish all without bottom nav bar
 void navigateAndFinishWithoutNav(BuildContext context, Widget screen) {
   Navigator.pushAndRemoveUntil(
     context,

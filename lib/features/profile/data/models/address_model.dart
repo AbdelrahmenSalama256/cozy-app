@@ -1,3 +1,4 @@
+//! AddressModel
 class AddressModel {
   final String id;
   final String title;
@@ -51,7 +52,7 @@ class AddressModel {
 
   String get fullAddress => '$street, $city, $state $zipCode, $country';
 
-  // For adding new address
+
   Map<String, dynamic> toAddJson() {
     return {
       'country': country,
@@ -66,7 +67,7 @@ class AddressModel {
     };
   }
 
-  // For updating address
+
   Map<String, dynamic> toUpdateJson() {
     return {
       'country': country,

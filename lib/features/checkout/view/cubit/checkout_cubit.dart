@@ -4,6 +4,7 @@ import 'package:cozy/features/checkout/data/repo/checkout_repo.dart';
 
 import 'checkout_state.dart';
 
+//! CheckoutCubit
 class CheckoutCubit extends Cubit<CheckoutState> {
   final CheckoutRepo checkoutRepo;
 

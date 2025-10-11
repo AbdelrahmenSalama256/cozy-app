@@ -1,4 +1,4 @@
-// order_tracking_details_screen.dart
+
 import 'package:cozy/core/component/custom_loading_indicator.dart';
 import 'package:cozy/core/component/custom_toast.dart';
 import 'package:cozy/core/constants/app_colors.dart';
@@ -12,10 +12,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cozy/core/utils/currency_formatter.dart';
 
 import '../data/models/tracking_event_model.dart';
 import '../data/repo/orders_repo.dart';
 
+//! OrderTrackingDetailsScreen
 class OrderTrackingDetailsScreen extends StatefulWidget {
   final String orderId;
 
@@ -26,13 +28,14 @@ class OrderTrackingDetailsScreen extends StatefulWidget {
       _OrderTrackingDetailsScreenState();
 }
 
+//! _OrderTrackingDetailsScreenState
 class _OrderTrackingDetailsScreenState
     extends State<OrderTrackingDetailsScreen> {
-  // final RefreshController _refreshController = RefreshController();
+
 
   @override
   void dispose() {
-    // _refreshController.dispose();
+
     super.dispose();
   }
 
@@ -74,12 +77,12 @@ class _OrderTrackingDetailsScreenState
                 ),
               ),
               actions: [
-                // if (cubit.currentTrackResponse != null)
-                //   IconButton(
-                //     icon: Icon(Icons.refresh,
-                //         size: 20.sp, color: AppColors.primary),
-                //     onPressed: () => cubit.refreshTracking(widget.orderId),
-                //   ),
+
+
+
+
+
+
               ],
             ),
             body: _buildBody(context, cubit, state, order),
@@ -123,7 +126,7 @@ class _OrderTrackingDetailsScreenState
             SizedBox(height: 16.h),
             _buildOrderSummary(context, cubit.currentTrackResponse!, order),
             SizedBox(height: 16.h),
-            // _buildSupportSection(context),
+
           ],
         ),
       ),
@@ -145,10 +148,10 @@ class _OrderTrackingDetailsScreenState
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 16.h),
-            // ElevatedButton(
-            //   onPressed: () => cubit.trackOrder(widget.orderId),
-            //   child: Text('retry'.tr(context)),
-            // ),
+
+
+
+
           ],
         ),
       ),
@@ -183,15 +186,15 @@ class _OrderTrackingDetailsScreenState
                   child: Text('go_back'.tr(context)),
                 ),
                 SizedBox(width: 16.w),
-                // ElevatedButton(
-                //   onPressed: () {
-                //     cubit.getOrders();
-                //     cubit.trackOrder(
-                //       widget.orderId,
-                //     );
-                //   },
-                //   child: Text('retry'.tr(context)),
-                // ),
+
+
+
+
+
+
+
+
+
               ],
             ),
           ],
@@ -243,7 +246,7 @@ class _OrderTrackingDetailsScreenState
                     if (kDebugMode) {
                       print('Copied tracking number: $trackingNumber');
                     }
-                    // Clipboard.setData(ClipboardData(text: trackingNumber));
+
                     showToast(
                       context,
                       message: 'copied_to_clipboard'.tr(context),
@@ -281,7 +284,7 @@ class _OrderTrackingDetailsScreenState
 
   Widget _buildTrackingProgress(
       BuildContext context, List<TrackingEvent> trackingEvents) {
-    // Define all possible order status steps
+
     final Map<String, Map<String, String>> stepMap = {
       'Order Placed': {
         'title': 'order_placed',
@@ -305,10 +308,10 @@ class _OrderTrackingDetailsScreenState
       },
     };
 
-    // Find completed steps from events
+
     final completedSteps = <String, TrackingEvent>{};
     for (final event in trackingEvents) {
-      // Try to match event title with known steps
+
       for (final stepKey in stepMap.keys) {
         if (event.title.toLowerCase().contains(stepKey.toLowerCase())) {
           completedSteps[stepKey] = event;
@@ -317,7 +320,7 @@ class _OrderTrackingDetailsScreenState
       }
     }
 
-    // Get ordered steps
+
     final orderedSteps = stepMap.entries.toList();
 
     return Card(
@@ -373,7 +376,7 @@ class _OrderTrackingDetailsScreenState
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Timeline indicator
+
           Column(
             children: [
               Container(
@@ -529,7 +532,7 @@ class _OrderTrackingDetailsScreenState
               Text(
                 trackingResponse.finalTotal.isNotEmpty
                     ? trackingResponse.finalTotal
-                    : '\$${order?.finalTotal.toStringAsFixed(2) ?? '0.00'}',
+                    : formatCurrency(context, order?.finalTotal ?? 0),
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,

@@ -4,6 +4,7 @@ import 'package:cozy/core/locale/app_loacl.dart';
 
 import 'package:flutter/material.dart';
 
+//! AppStepIndicator
 class AppStepIndicator extends StatelessWidget {
   final int currentStep;
   final int totalSteps;
@@ -32,7 +33,7 @@ class AppStepIndicator extends StatelessWidget {
       children: [
         Row(
           children: List.generate(totalSteps * 2 - 1, (index) {
-            // Even indices are circles, odd indices are lines
+
             if (index % 2 == 0) {
               final stepNumber = (index ~/ 2) + 1;
               final isActive = stepNumber <= currentStep;

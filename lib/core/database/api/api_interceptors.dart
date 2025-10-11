@@ -4,6 +4,7 @@ import 'package:cozy/core/network/local_network.dart';
 import 'package:cozy/core/services/service_locator.dart';
 import 'package:dio/dio.dart';
 
+//! ApiInterceptors
 class ApiInterceptors extends Interceptor {
   @override
   void onRequest(

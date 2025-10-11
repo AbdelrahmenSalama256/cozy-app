@@ -1,4 +1,4 @@
-// edit_profile_screen.dart
+
 import 'package:cozy/core/component/custom_loading_indicator.dart';
 import 'package:cozy/core/component/custom_toast.dart';
 import 'package:cozy/core/component/widgets/app_button.dart';
@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! EditProfileScreen
 class EditProfileScreen extends StatelessWidget {
   const EditProfileScreen({super.key});
 

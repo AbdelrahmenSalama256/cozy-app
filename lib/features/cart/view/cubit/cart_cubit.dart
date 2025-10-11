@@ -4,6 +4,7 @@ import '../../data/model/cart_model.dart';
 import '../../data/repo/cart_repo.dart';
 import 'cart_state.dart';
 
+//! CartCubit
 class CartCubit extends Cubit<CartState> {
   final CartRepo cartRepo;
 
@@ -29,7 +30,7 @@ class CartCubit extends Cubit<CartState> {
     result.fold(
       (error) => emit(CartItemRemovedError(error)),
       (cartItems) {
-        // cart = cartItems;
+
         emit(CartItemRemovedSuccess(cartItems));
       },
     );
@@ -41,14 +42,14 @@ class CartCubit extends Cubit<CartState> {
     result.fold(
       (error) => emit(ClearCartError(error)),
       (cartItems) {
-        // cart = cartItems;
+
         emit(ClearCartSuccess(cartItems));
       },
     );
   }
 
   void updateCartItemQuantity(int itemId, int newQuantity) {
-    // cart = cart.updateItemQuantity(itemId, newQuantity);
+
     emit(CartUpdated());
   }
 }

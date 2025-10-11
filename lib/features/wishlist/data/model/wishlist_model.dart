@@ -6,6 +6,7 @@ String cleanHtmlText(String htmlText) {
   return unescape.convert(withoutHtmlTags);
 }
 
+//! WishlistProduct
 class WishlistProduct {
   final int id;
   final String name;
@@ -53,6 +54,7 @@ class WishlistProduct {
   }
 }
 
+//! WishlistItem
 class WishlistItem {
   final int id;
   final int userId;
@@ -88,6 +90,7 @@ class WishlistItem {
   }
 }
 
+//! Wishlist
 class Wishlist {
   final List<WishlistItem> items;
   final int wishlistCount;

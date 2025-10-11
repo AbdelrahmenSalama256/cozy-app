@@ -1,3 +1,4 @@
+//! PopularSearchModel
 class PopularSearchModel {
   final String id;
   final String queryKey; // Key for localization

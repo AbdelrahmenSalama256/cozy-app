@@ -76,14 +76,17 @@ String? formatTimeOfDay(TimeOfDay? timeOfDay) {
   return null;
 }
 
+//! getHourFromTimeOfDay
 getHourFromTimeOfDay(TimeOfDay time) {
   return time.hourOfPeriod;
 }
 
+//! getMinuteFromTimeOfDay
 getMinuteFromTimeOfDay(TimeOfDay time) {
   return time.minute;
 }
 
+//! getPeriodFromTimeOfDay
 getPeriodFromTimeOfDay(TimeOfDay time) {
   return time.period == DayPeriod.am ? 'AM' : 'PM';
 }
@@ -121,7 +124,7 @@ String? formatTime(String? dateTimeString) {
 }
 
 Future<MultipartFile> uploadImageToAPI(XFile image) async {
-  // Get the mime type of the file
+
   String? mimeType = lookupMimeType(image.path);
 
   return MultipartFile.fromFile(

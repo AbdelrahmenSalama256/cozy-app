@@ -7,6 +7,7 @@ import '../../data/models/order_tracking_response.dart';
 import '../../data/repo/orders_repo.dart';
 import 'orders_state.dart';
 
+//! OrdersCubit
 class OrdersCubit extends Cubit<OrdersState> {
   final OrderRepo orderRepo;
 
@@ -55,11 +56,11 @@ class OrdersCubit extends Cubit<OrdersState> {
       (error) {
         Print.error(error);
         emit(OrderError(error));
-        // Refresh orders after cancellation attempt
+
         getOrders();
       },
       (message) {
-        // Update local order status
+
         final index = orders.indexWhere((order) => order.id == orderId);
         if (index != -1) {
           orders[index] = OrderModel(

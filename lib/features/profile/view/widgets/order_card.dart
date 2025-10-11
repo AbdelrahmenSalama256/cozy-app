@@ -3,10 +3,12 @@ import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/features/profile/data/models/order_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cozy/core/utils/currency_formatter.dart';
 
 import '../../../../core/component/widgets/app_button.dart';
 import '../../data/models/order_status.dart';
 
+//! OrderCard
 class OrderCard extends StatelessWidget {
   final OrderModel order;
   final VoidCallback onTap;
@@ -92,7 +94,7 @@ class OrderCard extends StatelessWidget {
                   ),
                   const Spacer(),
                   Text(
-                    '\$${order.finalTotal.toStringAsFixed(2)}',
+                    formatCurrency(context, order.finalTotal),
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
@@ -124,7 +126,7 @@ class OrderCard extends StatelessWidget {
               SizedBox(height: 12.h),
               Row(
                 children: [
-                  // Show track button for shipped orders
+
                   if (order.status == OrderStatus.shipped &&
                       onTrackTap != null) ...[
                     Expanded(
@@ -143,7 +145,7 @@ class OrderCard extends StatelessWidget {
                     ),
                     SizedBox(width: 8.w),
                   ],
-                  // Show cancel button for packed (processing) orders
+
                   if (order.status == OrderStatus.packed &&
                       onCancelTap != null) ...[
                     Expanded(
@@ -164,7 +166,7 @@ class OrderCard extends StatelessWidget {
                     ),
                     SizedBox(width: 8.w),
                   ],
-                  // Always show view details button
+
                   Expanded(
                     child: AppButton(
                       text: 'view_details'.tr(context),

@@ -6,6 +6,7 @@ enum PaymentMethodType {
   bankTransfer,
 }
 
+//! PaymentMethodModel
 class PaymentMethodModel {
   final String id;
   final PaymentMethodType type;

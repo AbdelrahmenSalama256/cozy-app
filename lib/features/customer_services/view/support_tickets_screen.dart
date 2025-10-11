@@ -9,6 +9,7 @@ import '../data/models/support_ticket_model.dart';
 import '../view/cubit/customer_service_cubit.dart';
 import 'cubit/customer_service_state.dart';
 
+//! SupportTicketsScreen
 class SupportTicketsScreen extends StatelessWidget {
   const SupportTicketsScreen({super.key});
 
@@ -272,7 +273,7 @@ class SupportTicketsScreen extends StatelessWidget {
               height: 52.h,
               child: ElevatedButton(
                 onPressed: () {
-                  // Navigate to create ticket screen
+
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
@@ -430,7 +431,7 @@ class SupportTicketsScreen extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            // Navigate to ticket details
+
           },
           borderRadius: BorderRadius.circular(20.r),
           child: Padding(
@@ -438,7 +439,7 @@ class SupportTicketsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header with title and status
+
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -477,7 +478,7 @@ class SupportTicketsScreen extends StatelessWidget {
 
                 SizedBox(height: 16.h),
 
-                // Description
+
                 Text(
                   ticket.data,
                   style: TextStyle(
@@ -491,7 +492,7 @@ class SupportTicketsScreen extends StatelessWidget {
 
                 SizedBox(height: 20.h),
 
-                // Tags row
+
                 Row(
                   children: [
                     _buildModernTypeBadge(ticket.getTypeDisplayText()),
@@ -509,7 +510,7 @@ class SupportTicketsScreen extends StatelessWidget {
 
                 SizedBox(height: 16.h),
 
-                // Footer with date
+
                 Container(
                   padding:
                       EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),

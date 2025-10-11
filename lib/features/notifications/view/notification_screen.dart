@@ -9,16 +9,68 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../core/component/widgets/app_button.dart';
+import '../../../core/cubit/global_cubit.dart';
+import '../../auth/view/login_screen.dart';
 import '../data/models/notification_model.dart';
 import '../data/repo/notifications_repo.dart';
 import 'cubit/notifications_state.dart';
 import 'widgets/notifications_empty_state.dart';
 
+//! NotificationsScreen
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final global = context.read<GlobalCubit>();
+
+    if (!global.isAuthenticated) {
+      return Scaffold(
+        backgroundColor: AppColors.lightGrey,
+        body: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.lock_outline,
+                      size: 100.sp, color: AppColors.textGrey),
+                  SizedBox(height: 24.h),
+                  Text(
+                    'login_required'.tr(context),
+                    style: TextStyle(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack),
+                  ),
+                  SizedBox(height: 12.h),
+                  Text(
+                    'login_required_message'.tr(context),
+                    style:
+                        TextStyle(fontSize: 16.sp, color: AppColors.textGrey),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 24.h),
+                  AppButton(
+                    text: 'login'.tr(context),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      );
+                    },
+                    type: AppButtonType.primary,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return BlocProvider(
       create: (context) =>
           NotificationsCubit(sl<NotificationsRepo>())..fetchNotifications(),
@@ -71,25 +123,28 @@ class NotificationsScreen extends StatelessWidget {
             }
 
             if (state is NotificationsError) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      state.message,
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: AppColors.textGrey,
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15.w),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        state.message,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: AppColors.textGrey,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 16.h),
-                    ElevatedButton(
-                      onPressed: () => context
-                          .read<NotificationsCubit>()
-                          .fetchNotifications(),
-                      child: Text('retry'.tr(context)),
-                    ),
-                  ],
+                      SizedBox(height: 16.h),
+                      AppButton(
+                        onPressed: () => context
+                            .read<NotificationsCubit>()
+                            .fetchNotifications(),
+                        text: 'retry'.tr(context),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }
@@ -155,28 +210,21 @@ class NotificationsScreen extends StatelessWidget {
 
     switch (notification.type) {
       case NotificationType.order:
-        // Navigate to order details
         if (notification.link != null) {
-          // Handle order details navigation
           PrintUtil.debug('Navigate to order: ${notification.data}');
         }
         break;
       case NotificationType.promotion:
-        // Navigate to promotion
         PrintUtil.debug('Navigate to promotion');
         break;
       case NotificationType.system:
-        // Handle system notification
         break;
       case NotificationType.follow:
-        // Navigate to user profile
         break;
       case NotificationType.like:
       case NotificationType.comment:
-        // Navigate to post
         break;
       case NotificationType.unknown:
-        // Handle unknown notification type
         break;
     }
   }

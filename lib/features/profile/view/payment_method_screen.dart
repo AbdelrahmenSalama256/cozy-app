@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'add_payment_method_screen.dart';
 
+//! PaymentMethodsScreen
 class PaymentMethodsScreen extends StatefulWidget {
   const PaymentMethodsScreen({super.key});
 
@@ -15,6 +16,7 @@ class PaymentMethodsScreen extends StatefulWidget {
   State<PaymentMethodsScreen> createState() => _PaymentMethodsScreenState();
 }
 
+//! _PaymentMethodsScreenState
 class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
   List<PaymentMethodModel> paymentMethods = [
     PaymentMethodModel(

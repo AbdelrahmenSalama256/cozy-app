@@ -4,6 +4,7 @@ import 'package:cozy/features/search/data/model/popular_search_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! PopularSearchItemCard
 class PopularSearchItemCard extends StatelessWidget {
   final PopularSearchModel popularSearch;
   final VoidCallback onTap;

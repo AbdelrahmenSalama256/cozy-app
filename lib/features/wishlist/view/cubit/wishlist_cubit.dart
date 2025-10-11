@@ -4,6 +4,7 @@ import '../../data/model/wishlist_model.dart';
 import '../../data/repo/wishlist_repo.dart';
 import 'wishlist_state.dart';
 
+//! WishlistCubit
 class WishlistCubit extends Cubit<WishlistState> {
   final WishlistRepo wishlistRepo;
 

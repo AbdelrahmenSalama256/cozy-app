@@ -1,10 +1,12 @@
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cozy/core/utils/currency_formatter.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import 'section_container.dart';
 
+//! DeliveryOptionsSection
 class DeliveryOptionsSection extends StatelessWidget {
   const DeliveryOptionsSection({super.key});
 
@@ -27,7 +29,7 @@ class DeliveryOptionsSection extends StatelessWidget {
             context,
             'Express Delivery',
             '2-3 business days',
-            '\$15.00',
+            formatCurrency(context, 15),
             false,
           ),
           SizedBox(height: 12.h),
@@ -35,7 +37,7 @@ class DeliveryOptionsSection extends StatelessWidget {
             context,
             'Next Day Delivery',
             'Next business day',
-            '\$25.00',
+            formatCurrency(context, 25),
             false,
           ),
         ],
@@ -68,7 +70,7 @@ class DeliveryOptionsSection extends StatelessWidget {
             value: true,
             groupValue: isSelected,
             onChanged: (value) {
-              // Handle delivery option selection
+
             },
             activeColor: AppColors.primary,
           ),

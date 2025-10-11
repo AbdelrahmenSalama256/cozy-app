@@ -1,9 +1,7 @@
-// ignore_for_file: constant_identifier_names
-
+//! EndPoints
 class EndPoints {
-  static const String baseUrl = "https://cozy-home.cangrowonline.com/api/";
-  static const String baseUrlWithoutApi =
-      "https://cozy-home.cangrowonline.com/uploads/";
+  static const String baseUrl = "https://cozyhome.com.sa/api/";
+  static const String baseUrlWithoutApi = "https://cozyhome.com.sa/uploads/";
   //! Login
   static const String login = "${baseUrl}login";
   static const String getProfile = "${baseUrl}contact-details";
@@ -17,28 +15,23 @@ class EndPoints {
   static const String deleteAccount = "${baseUrl}auth/account-deletion";
   //! Forget Password
 
-  // ! Notifications
   static const String notifications = 'notifications';
   static const String markAllNotificationsRead = 'notifications/mark-all-read';
 
-  // ! shop
   static const String category = '${baseUrl}categories';
   static const String allProducts = '${baseUrl}all-products';
   static const String productDetails = '${baseUrl}product-details';
 
-  // ! Wishlist
   static const String favorites = '${baseUrl}wishlist-details';
   static const String addProductToWishlist = '${baseUrl}add-to-wishlist';
   static const String removeFavItem = '${baseUrl}remove-wishlist';
 
-  // ! Cart
   static const String cart = '${baseUrl}cart-details';
   static const String addProductToCart = '${baseUrl}add-to-cart';
   static const String updateCartItemQuantity = '${baseUrl}carts';
   static const String removeCartItem = '${baseUrl}remove-cart';
   static const String clearCart = '${baseUrl}clear-cart';
 
-  //// Buissniss Account Case
   //! Addresses
   static const String getAddresses = '${baseUrl}addresses';
   static const String addAddress = '${baseUrl}addresses';
@@ -55,15 +48,16 @@ class EndPoints {
   static const String cancelOrder = '${baseUrl}cancel-order';
   static const String trackOrder = '${baseUrl}order-tracks';
 
-  // ! Offers
   static const String offers = '${baseUrl}offers';
   static const String productByoffers = '${baseUrl}offer-products';
+  static const String settingsEndpoint = '${baseUrl}settings';
+  static const String about = '${baseUrl}about';
 
-  // ! customer services
   static const String submitTicket = '${baseUrl}submit-ticket';
   static const String getSupportTickets = '${baseUrl}support-tickets';
 }
 
+//! ApiKey
 class ApiKey {
   static const String status = "status";
   static const String result = "result";
@@ -179,7 +173,7 @@ class ApiKey {
   static const String avatarOriginal = "avatar_original";
   static const String emailVerified = "email_verified";
   static const String accessToken = "access_token";
-  static const String wss_token = "wss_token";
+  static const String wssToken = "wss_token";
   static const String tokenType = "token_type";
   static const String expiresAt = "expires_at";
   static const String user = "user";

@@ -2,6 +2,7 @@ import 'package:cozy/core/constants/app_colors.dart';
 
 import 'package:flutter/material.dart';
 
+//! AppCheckbox
 class AppCheckbox extends StatelessWidget {
   final bool value;
   final ValueChanged<bool?> onChanged;

@@ -1,4 +1,5 @@
-// features/home/data/models/category_model.dart
+
+//! CategoryModel
 class CategoryModel {
   final int? id;
   final String? name;

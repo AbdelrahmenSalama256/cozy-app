@@ -21,6 +21,7 @@ import 'cubit/checkout_cubit.dart';
 import 'cubit/checkout_state.dart';
 import 'widgets/address_card.dart';
 
+//! CheckoutScreen
 class CheckoutScreen extends StatefulWidget {
   final Cart cart;
 
@@ -30,6 +31,7 @@ class CheckoutScreen extends StatefulWidget {
   State<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
+//! _CheckoutScreenState
 class _CheckoutScreenState extends State<CheckoutScreen> {
   int? selectedAddressIndex;
   final TextEditingController notesController = TextEditingController();
@@ -117,10 +119,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   SizedBox(height: 20.h),
-                                  // Order Summary
+
                                   OrderSummarySection(cart: widget.cart),
                                   SizedBox(height: 20.h),
-                                  // Delivery Address
+
                                   SectionContainer(
                                     title: 'delivery_address'.tr(context),
                                     actionText: 'change'.tr(context),
@@ -146,7 +148,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                           ),
                                   ),
                                   SizedBox(height: 20.h),
-                                  // Order Notes
+
                                   OrderNotesSection(
                                       controller: notesController),
                                 ],
@@ -154,7 +156,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             ),
                           ),
                           SizedBox(height: 20.h),
-                          // Bottom Section with Total and Place Order
+
                           CheckoutBottomSection(
                             total: widget.cart.total!,
                             isProcessing: isProcessing,

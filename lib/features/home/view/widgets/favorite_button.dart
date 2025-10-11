@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
 
+//! FavoriteButton
 class FavoriteButton extends StatefulWidget {
   final bool isFavorited;
   final VoidCallback onFavoriteToggle;
@@ -26,6 +27,7 @@ class FavoriteButton extends StatefulWidget {
   State<FavoriteButton> createState() => _FavoriteButtonState();
 }
 
+//! _FavoriteButtonState
 class _FavoriteButtonState extends State<FavoriteButton>
     with TickerProviderStateMixin {
   bool isFavorited = false;
@@ -55,7 +57,7 @@ class _FavoriteButtonState extends State<FavoriteButton>
       scale = 1.3; // Scale effect for the icon
     });
 
-    // Trigger the floating hearts effect only when favoriting (false -> true)
+
     if (!wasFavorited && isFavorited) {
       setState(() {
         showHearts = true;
@@ -64,20 +66,20 @@ class _FavoriteButtonState extends State<FavoriteButton>
       });
     }
 
-    // Reset the scale after the animation
+
     Future.delayed(widget.animationDuration, () {
       if (mounted) {
-        // ✅ التحقق من أن الـ Widget لا يزال موجودًا
+
         setState(() {
           scale = 1.0;
         });
       }
     });
 
-    // Clear the floating hearts after the animation
+
     Future.delayed(const Duration(milliseconds: 800), () {
       if (mounted) {
-        // ✅ التحقق من أن الـ Widget لا يزال موجودًا
+
         setState(() {
           floatingHearts.clear();
           showHearts = false;
@@ -115,14 +117,14 @@ class _FavoriteButtonState extends State<FavoriteButton>
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      // onTap: sl<CacheHelper>().getDataString(key: ApiKey.token) == null
-      //     ? () => navigateTo(
-      //         context,
-      //         BlocProvider(
-      //           create: (context) => AuthCubit(),
-      //           child: LoginScreen(),
-      //         ))
-      //     : toggleFavorite,
+
+
+
+
+
+
+
+
       onTap: toggleFavorite,
       child: Stack(
         clipBehavior: Clip.none,
@@ -140,7 +142,7 @@ class _FavoriteButtonState extends State<FavoriteButton>
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
-                    //         borderRadius: BorderRadius.circular(4.r),
+
                   ),
                   child: Icon(
                     isFavorited

@@ -9,6 +9,7 @@ import '../model/offer_product_model.dart';
 import '../model/offers_model.dart';
 import '../model/product_model.dart';
 
+//! HomeRepo
 class HomeRepo {
   final ApiConsumer api;
 
@@ -87,7 +88,7 @@ class HomeRepo {
       final response = await api.get('${EndPoints.productDetails}/$productId');
       final responseData = response.data as Map<String, dynamic>;
 
-      // Pass the entire response data to the model
+
       return Right(ProductDetailsModel.fromJson(responseData));
     } on ServerException catch (e) {
       return Left(e.errorModel.detail);

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 enum AppButtonType { primary, secondary, text }
 
+//! AppButton
 class AppButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
@@ -62,7 +63,7 @@ class AppButton extends StatelessWidget {
           backgroundColor: backgroundColor ??
               AppColors.primary, // Use provided color or default
           disabledBackgroundColor: (backgroundColor ?? AppColors.primary)
-              // ignore: deprecated_member_use
+
               .withOpacity(0.5),
           foregroundColor: Colors.white,
           padding: padding ?? EdgeInsets.symmetric(horizontal: 16.w),

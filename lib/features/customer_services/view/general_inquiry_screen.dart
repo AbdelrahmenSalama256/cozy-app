@@ -10,6 +10,7 @@ import '../../../core/component/widgets/app_text_field.dart';
 import 'cubit/customer_service_cubit.dart';
 import 'cubit/customer_service_state.dart';
 
+//! GeneralInquiryScreen
 class GeneralInquiryScreen extends StatefulWidget {
   const GeneralInquiryScreen({super.key});
 
@@ -17,6 +18,7 @@ class GeneralInquiryScreen extends StatefulWidget {
   State<GeneralInquiryScreen> createState() => _GeneralInquiryScreenState();
 }
 
+//! _GeneralInquiryScreenState
 class _GeneralInquiryScreenState extends State<GeneralInquiryScreen>
     with AutomaticKeepAliveClientMixin {
   @override

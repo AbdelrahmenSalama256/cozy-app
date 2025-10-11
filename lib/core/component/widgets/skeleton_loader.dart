@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! SkeletonLoader
 class SkeletonLoader extends StatelessWidget {
   final double width;
   final double height;
@@ -32,6 +33,7 @@ class SkeletonLoader extends StatelessWidget {
   }
 }
 
+//! ShimmerEffect
 class ShimmerEffect extends StatelessWidget {
   final Widget child;
   final bool isLoading;

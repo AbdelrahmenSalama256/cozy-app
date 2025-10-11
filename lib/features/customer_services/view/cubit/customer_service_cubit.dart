@@ -7,12 +7,13 @@ import '../../data/models/support_ticket_model.dart';
 import '../../data/repo/customer_service_repo.dart';
 import 'customer_service_state.dart';
 
+//! CustomerServiceCubit
 class CustomerServiceCubit extends Cubit<CustomerServiceState> {
   CustomerServiceCubit() : super(CustomerServiceInitial());
 
   final CustomerServiceRepo _repo = sl<CustomerServiceRepo>();
 
-  // Controllers and form key
+
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
@@ -24,16 +25,16 @@ class CustomerServiceCubit extends Cubit<CustomerServiceState> {
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  // Dropdown values
+
   String selectedCategory = 'product_information';
   String complaintType = 'product_quality';
   String requestType = 'return';
   String returnReason = 'defective_product';
 
-  // Slider value
+
   int severityLevel = 2;
 
-  // Lists
+
   final List<String> categories = [
     'product_information',
     'order_status',
@@ -63,7 +64,7 @@ class CustomerServiceCubit extends Cubit<CustomerServiceState> {
     'other'
   ];
 
-  // Initialize with user data
+
   void initializeWithUserData() {
     final globalCubit = sl<GlobalCubit>();
     final user = globalCubit.contactResponse?.data.user;
@@ -76,7 +77,7 @@ class CustomerServiceCubit extends Cubit<CustomerServiceState> {
     emit(CustomerServiceDataLoaded());
   }
 
-  // Update dropdown values
+
   void updateSelectedCategory(String value) {
     selectedCategory = value;
     emit(CustomerServiceDataUpdated());
@@ -112,7 +113,7 @@ class CustomerServiceCubit extends Cubit<CustomerServiceState> {
     String category;
     String message;
 
-    // Determine category and message based on type
+
     if (type == 'inquiry') {
       category = selectedCategory;
       message = messageController.text;

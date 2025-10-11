@@ -3,6 +3,7 @@ import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! FilterChipWidget
 class FilterChipWidget extends StatelessWidget {
   final String labelKey;
   final bool isSelected;

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../data/models/notification_model.dart';
 
+//! NotificationItemWidget
 class NotificationItemWidget extends StatelessWidget {
   final NotificationModel notification;
   final VoidCallback onTap;

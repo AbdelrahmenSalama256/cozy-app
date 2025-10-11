@@ -1,7 +1,8 @@
-// custom_bottom_sheet.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+//! CustomBottomSheet
 class CustomBottomSheet extends StatelessWidget {
   final Widget child;
   final bool isScrollControlled;
