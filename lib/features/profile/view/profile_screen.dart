@@ -32,8 +32,6 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final global = context.read<GlobalCubit>();
-
     return BlocProvider(
       create: (context) => GlobalCubit()..getProfile(),
       child: StreamBuilder<ContactResponse?>(
