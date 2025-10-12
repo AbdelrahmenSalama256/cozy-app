@@ -77,8 +77,15 @@ class CategoryDetailsScreen extends StatelessWidget {
                       }
                       return false;
                     },
-                    child: SingleChildScrollView(
-                      child: Column(
+                    child: RefreshIndicator(
+                      onRefresh: () async {
+                        await context
+                            .read<HomeCubit>()
+                            .fetchProducts(isRefresh: true);
+                      },
+                      child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
@@ -244,6 +251,7 @@ class CategoryDetailsScreen extends StatelessWidget {
                             ),
                           SizedBox(height: 15.h),
                         ],
+                        ),
                       ),
                     ),
                   );

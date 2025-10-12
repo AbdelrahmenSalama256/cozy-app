@@ -1,9 +1,9 @@
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
+import 'package:cozy/core/utils/currency_formatter.dart';
 import 'package:cozy/features/profile/data/models/order_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:cozy/core/utils/currency_formatter.dart';
 
 import '../../../../core/component/widgets/app_button.dart';
 import '../../data/models/order_status.dart';
@@ -114,7 +114,7 @@ class OrderCard extends StatelessWidget {
                     ),
                     SizedBox(width: 4.w),
                     Text(
-                      '${'shipping_status'.tr(context)}: ${order.shippingStatus}',
+                      '${'shipping_status'.tr(context)}: ${order.shippingStatus?.toLowerCase().tr(context)}',
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: AppColors.textGrey,
@@ -126,7 +126,6 @@ class OrderCard extends StatelessWidget {
               SizedBox(height: 12.h),
               Row(
                 children: [
-
                   if (order.status == OrderStatus.shipped &&
                       onTrackTap != null) ...[
                     Expanded(
@@ -145,7 +144,6 @@ class OrderCard extends StatelessWidget {
                     ),
                     SizedBox(width: 8.w),
                   ],
-
                   if (order.status == OrderStatus.packed &&
                       onCancelTap != null) ...[
                     Expanded(
@@ -166,7 +164,6 @@ class OrderCard extends StatelessWidget {
                     ),
                     SizedBox(width: 8.w),
                   ],
-
                   Expanded(
                     child: AppButton(
                       text: 'view_details'.tr(context),

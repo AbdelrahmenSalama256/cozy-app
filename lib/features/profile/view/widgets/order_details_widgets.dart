@@ -1,3 +1,4 @@
+import '../../data/models/order_status.dart';
 import 'package:cozy/core/component/widgets/app_button.dart';
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/constants/navigation.dart';
@@ -12,7 +13,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../data/models/order_details_item_model.dart';
-import '../../data/models/order_status.dart';
+
+import '../../../../core/component/custom_toast.dart';
+import '../../../../core/constants/widgets/custom_cached_image.dart';
+import '../../../../core/cubit/global_cubit.dart';
+import '../../../product/view/product_details_screen.dart';
+import '../../../customer_services/view/customer_service_screen.dart';
 
 Widget buildOrderStatusCard(BuildContext context, OrderModel order) {
   final statusColor = _getStatusColor(order.status);
@@ -170,22 +176,11 @@ Widget _buildProductImage(OrderItem item) {
     child: ClipRRect(
       borderRadius: BorderRadius.circular(8.r),
       child: hasImage
-          ? Image.network(
-              imageUrl,
+          ? CustomCachedImage(
+              imageUrl: imageUrl,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) =>
-                  _buildPlaceholderIcon(),
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
-                        : null,
-                  ),
-                );
-              },
+              h: 60.w,
+              w: 60.w,
             )
           : _buildPlaceholderIcon(),
     ),
@@ -412,7 +407,7 @@ Widget buildActionButtons(OrderModel order, BuildContext context) {
             order.status == OrderStatus.orderd)
           _buildCancelOrderButton(order, context),
         SizedBox(height: 12.h),
-        _buildSupportAndReorderButtons(context),
+        _buildSupportAndReorderButtons(context, order),
         if (order.status == OrderStatus.shipped) ...[
           SizedBox(height: 12.h),
           _buildTrackOrderButton(context, order.id),
@@ -441,7 +436,7 @@ Widget _buildCancelOrderButton(OrderModel order, BuildContext context) {
   );
 }
 
-Widget _buildSupportAndReorderButtons(BuildContext context) {
+Widget _buildSupportAndReorderButtons(BuildContext context, OrderModel order) {
   return Row(
     children: [
       Expanded(
@@ -463,7 +458,7 @@ Widget _buildSupportAndReorderButtons(BuildContext context) {
       Expanded(
         child: AppButton(
           text: 'reorder'.tr(context),
-          onPressed: () => _reorder(context),
+          onPressed: () => _reorder(context, order),
           type: AppButtonType.primary,
           height: 48.h,
           borderRadius: BorderRadius.circular(8.r),
@@ -504,14 +499,45 @@ Widget _buildTrackOrderButton(BuildContext context, final String orderId) {
   );
 }
 
-void _contactSupport(BuildContext context) {}
+void _contactSupport(BuildContext context) {
+  navigateTo(context, const CustomerServiceScreen());
+}
 
-void _reorder(BuildContext context) {}
+void _reorder(BuildContext context, OrderModel order) {
+  final global = context.read<GlobalCubit>();
+
+  String? requiresVariationProductId;
+  for (final item in order.items) {
+    final hasVariation = (item.variations != null && item.variations!.isNotEmpty);
+    if (!hasVariation) {
+      global.addToCart(
+        productId: item.productId,
+        quantity: item.quantity,
+        variation: 0,
+      );
+    } else {
+      requiresVariationProductId ??= item.productId;
+    }
+  }
+
+  if (requiresVariationProductId != null) {
+    showToast(
+      context,
+      message: 'please_select_a_variations'.tr(context),
+      state: ToastStates.warning,
+    );
+    navigateTo(
+      context,
+      ProductDetailsScreen(productId: int.tryParse(requiresVariationProductId) ?? 0),
+    );
+  }
+}
 
 void _showCancelOrderDialog(OrderModel order, BuildContext context) {
   final ordersCubit = context.read<OrdersCubit>();
 
   showDialog(
+    
     context: context,
     builder: (dialogContext) {
       return AlertDialog(
@@ -577,3 +603,6 @@ void _showCancelOrderDialog(OrderModel order, BuildContext context) {
 String _formatDate(DateTime date) {
   return '${date.day}/${date.month}/${date.year}';
 }
+
+
+

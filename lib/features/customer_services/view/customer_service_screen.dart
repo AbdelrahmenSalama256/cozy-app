@@ -1,11 +1,11 @@
-import 'package:cozy/core/constants/app_colors.dart';
-import 'package:cozy/core/locale/app_loacl.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:cozy/core/cubit/global_cubit.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cozy/features/auth/view/login_screen.dart';
 import 'package:cozy/core/component/widgets/app_button.dart';
+import 'package:cozy/core/constants/app_colors.dart';
+import 'package:cozy/core/cubit/global_cubit.dart';
+import 'package:cozy/core/locale/app_loacl.dart';
+import 'package:cozy/features/auth/view/login_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../customer_services/view/complaint_screen.dart';
 import '../../customer_services/view/general_inquiry_screen.dart';
@@ -29,13 +29,19 @@ class CustomerServiceScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.lock_outline, size: 80.sp, color: AppColors.textGrey),
+                Icon(Icons.lock_outline,
+                    size: 80.sp, color: AppColors.textGrey),
                 SizedBox(height: 16.h),
                 Text('login_required'.tr(context),
-                    style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: AppColors.textBlack)),
+                    style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack)),
                 SizedBox(height: 8.h),
                 Text('login_required_message'.tr(context),
-                    textAlign: TextAlign.center, style: TextStyle(fontSize: 14.sp, color: AppColors.textGrey)),
+                    textAlign: TextAlign.center,
+                    style:
+                        TextStyle(fontSize: 14.sp, color: AppColors.textGrey)),
                 SizedBox(height: 16.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -43,14 +49,18 @@ class CustomerServiceScreen extends StatelessWidget {
                     AppButton(
                       text: 'login'.tr(context),
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const LoginScreen()));
                       },
                     ),
                     SizedBox(width: 12.w),
                     AppButton(
                       text: 'start_shopping'.tr(context),
                       type: AppButtonType.text,
-                      onPressed: () => context.read<GlobalCubit>().changeBottomNavIndex(0),
+                      onPressed: () =>
+                          context.read<GlobalCubit>().changeBottomNavIndex(0),
                     ),
                   ],
                 )
@@ -133,7 +143,7 @@ class CustomerServiceScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       elevation: 0,
       leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: AppColors.textBlack),
+        icon: Icon(Icons.arrow_back_ios_new, color: AppColors.textBlack),
         onPressed: () => Navigator.pop(context),
       ),
       title: Text(

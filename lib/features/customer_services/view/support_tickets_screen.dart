@@ -21,7 +21,7 @@ class SupportTicketsScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.textBlack),
+          icon: Icon(Icons.arrow_back_ios_new, color: AppColors.textBlack),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -272,9 +272,7 @@ class SupportTicketsScreen extends StatelessWidget {
               width: double.infinity,
               height: 52.h,
               child: ElevatedButton(
-                onPressed: () {
-
-                },
+                onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
@@ -430,16 +428,13 @@ class SupportTicketsScreen extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {
-
-          },
+          onTap: () {},
           borderRadius: BorderRadius.circular(20.r),
           child: Padding(
             padding: EdgeInsets.all(20.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -475,10 +470,7 @@ class SupportTicketsScreen extends StatelessWidget {
                         context, ticket.status, ticket.getStatusColor()),
                   ],
                 ),
-
                 SizedBox(height: 16.h),
-
-
                 Text(
                   ticket.data,
                   style: TextStyle(
@@ -489,10 +481,7 @@ class SupportTicketsScreen extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-
                 SizedBox(height: 20.h),
-
-
                 Row(
                   children: [
                     _buildModernTypeBadge(ticket.getTypeDisplayText()),
@@ -507,10 +496,7 @@ class SupportTicketsScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 SizedBox(height: 16.h),
-
-
                 Container(
                   padding:
                       EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),

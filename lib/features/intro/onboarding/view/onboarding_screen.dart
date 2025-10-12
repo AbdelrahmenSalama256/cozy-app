@@ -6,6 +6,7 @@ import 'package:cozy/features/auth/view/login_screen.dart';
 import 'package:cozy/features/base/view/base_screen.dart';
 import 'package:cozy/features/intro/onboarding/data/model/onboarding_model.dart';
 import 'package:flutter/foundation.dart';
+import 'package:cozy/core/constants/widgets/custom_cached_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -182,20 +183,12 @@ class _OnboardingViewState extends State<OnboardingView>
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16.r),
-        child: Image.network(
-          onboardingContents[index].imagePath,
+        child: CustomCachedImage(
+          imageUrl: onboardingContents[index].imagePath,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => Container(
-            decoration: BoxDecoration(
-              color: AppColors.lightGrey.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(16.r),
-            ),
-            child: Icon(
-              Icons.chair_outlined,
-              size: imageSize * 0.25,
-              color: AppColors.primary.withOpacity(0.3),
-            ),
-          ),
+          h: imageSize,
+          w: imageSize,
+          borderRadius: 16.r,
         ),
       ),
     );

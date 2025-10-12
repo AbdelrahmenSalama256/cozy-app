@@ -64,6 +64,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '142099948756',
     projectId: 'cozy-home-1ebd3',
     storageBucket: 'cozy-home-1ebd3.firebasestorage.app',
-    iosBundleId: 'com.example.cozy',
+    iosBundleId: 'com.cangrow.cozy',
   );
 }

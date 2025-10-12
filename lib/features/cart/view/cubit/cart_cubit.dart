@@ -49,7 +49,58 @@ class CartCubit extends Cubit<CartState> {
   }
 
   void updateCartItemQuantity(int itemId, int newQuantity) {
+    if (cart == null) return;
+    // Keep a snapshot to revert on failure
+    final previousCart = cart!;
 
+    // Optimistic update (UI reflects immediately)
+    final items = List<CartItem>.from(previousCart.items);
+    final index = items.indexWhere((e) => (e.id ?? -1) == itemId);
+    if (index == -1) return;
+
+    final oldItem = items[index];
+    final updatedItem = CartItem(
+      id: oldItem.id,
+      product: oldItem.product,
+      quantity: newQuantity,
+      variationId: oldItem.variationId,
+      variationName: oldItem.variationName,
+    );
+    items[index] = updatedItem;
+
+    double subtotal = 0;
+    for (final it in items) {
+      final price = it.product?.price ?? 0;
+      final qty = it.quantity ?? 1;
+      subtotal += price * qty;
+    }
+    final shipping = previousCart.shipping ?? 0;
+    final tax = previousCart.tax ?? 0;
+    cart = Cart(
+      items: items,
+      shipping: shipping,
+      tax: tax,
+      total: subtotal + shipping + tax,
+      cartTotal: subtotal,
+      finalTotal: subtotal + shipping + tax,
+      totalItems: items.fold<int>(0, (sum, it) => sum + (it.quantity ?? 0)),
+    );
     emit(CartUpdated());
+
+    // Persist; if failed, reset to previous snapshot
+    cartRepo
+        .updateCartItemQuantity(cartItemId: itemId, quantity: newQuantity)
+        .then((result) {
+      result.fold(
+        (error) {
+          cart = previousCart; // revert
+          emit(CartItemQuantityUpdateError(error));
+          emit(CartUpdated());
+        },
+        (msg) {
+          emit(CartItemQuantityUpdated(msg));
+        },
+      );
+    });
   }
 }

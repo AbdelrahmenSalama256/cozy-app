@@ -1,4 +1,4 @@
-import 'package:cozy/core/constants/app_colors.dart';
+import 'package:cozy/core/constants/widgets/custom_cached_image.dart';
 import 'package:flutter/material.dart';
 
 //! ProductImageCarousel
@@ -20,15 +20,12 @@ class _ProductImageCarouselState extends State<ProductImageCarousel> {
     return PageView.builder(
       itemCount: widget.imageUrls.length,
       onPageChanged: (index) => setState(() => currentImageIndex = index),
-      itemBuilder: (context, index) => Image.network(
-        widget.imageUrls[index],
+      itemBuilder: (context, index) => CustomCachedImage(
+        imageUrl: widget.imageUrls[index],
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => Container(
-          color: AppColors.lightGrey,
-          child: const Icon(Icons.image_not_supported),
-        ),
+        h: double.infinity,
+        w: double.infinity,
       ),
     );
   }
 }
-

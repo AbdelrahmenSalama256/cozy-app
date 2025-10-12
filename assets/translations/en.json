@@ -628,5 +628,9 @@
   "search_hint_text": "Search products...",
   "login_required": "Login Required",
   "login_required_message": "Please login to view your cart and place orders.",
-  "login": "Login"
+  "login": "Login",
+  "no_offer_products": "No products available for this offer",
+  "check_back_products": "Check back later for more products",
+  "products_available": "products available",
+  "shipping_status": "Shipping Status"
 }

@@ -1,6 +1,7 @@
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:flutter/material.dart';
+import 'package:cozy/core/constants/widgets/custom_cached_image.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 //! StoreInfoCard
@@ -44,18 +45,11 @@ class StoreInfoCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8.r),
-            child: Image.network(
-              logoUrl,
-              width: 50.w,
-              height: 50.w,
+            child: CustomCachedImage(
+              imageUrl: logoUrl,
+              w: 50.w,
+              h: 50.w,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                width: 50.w,
-                height: 50.w,
-                color: AppColors.lightGrey,
-                child: Icon(Icons.storefront,
-                    color: AppColors.textGrey, size: 24.sp),
-              ),
             ),
           ),
           SizedBox(width: 12.w),

@@ -1,10 +1,12 @@
 import 'package:cozy/core/component/custom_loading_indicator.dart';
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
+import 'package:cozy/features/auth/view/login_screen.dart';
 import 'package:cozy/features/home/data/model/offer_product_model.dart';
 import 'package:cozy/features/home/view/widgets/product_card.dart';
 import 'package:cozy/features/product/view/product_details_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:cozy/core/component/widgets/unified_app_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -26,21 +28,8 @@ class OffersScreen extends StatelessWidget {
       create: (context) => HomeCubit()..fetchOfferProducts(offerId),
       child: Scaffold(
         backgroundColor: AppColors.white,
-        appBar: AppBar(
-          backgroundColor: AppColors.white,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: AppColors.textBlack),
-            onPressed: () => Navigator.pop(context),
-          ),
-          title: Text(
-            offer?.getName(context) ?? 'special_offers'.tr(context),
-            style: TextStyle(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textBlack,
-            ),
-          ),
+        appBar: UnifiedAppBar.inner(
+          title: offer?.getName(context) ?? 'special_offers'.tr(context),
         ),
         body: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
@@ -67,15 +56,21 @@ class OffersScreen extends StatelessWidget {
               return _buildEmptyState(context);
             }
 
-            return SingleChildScrollView(
-              padding: EdgeInsets.all(20.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildOfferHeader(context, products.length),
-                  SizedBox(height: 24.h),
-                  _buildProductsGrid(context, products),
-                ],
+            return RefreshIndicator(
+              onRefresh: () async {
+                await context.read<HomeCubit>().fetchOfferProducts(offerId);
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.all(20.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildOfferHeader(context, products.length),
+                    SizedBox(height: 24.h),
+                    _buildProductsGrid(context, products),
+                  ],
+                ),
               ),
             );
           },
@@ -176,9 +171,30 @@ class OffersScreen extends StatelessWidget {
             );
           },
           onFavoriteTap: () {
+            final global = context.read<GlobalCubit>();
+            if (!global.isAuthenticated) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+              );
+              return;
+            }
             context
                 .read<GlobalCubit>()
                 .addtowishlist(productId: product.id.toString());
+          },
+          removeFromWishlist: () {
+            final global = context.read<GlobalCubit>();
+            if (!global.isAuthenticated) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+              );
+              return;
+            }
+            context
+                .read<GlobalCubit>()
+                .removeProductFromWishlistByProductId(product.id.toString());
           },
         );
       },
@@ -217,3 +233,4 @@ class OffersScreen extends StatelessWidget {
     );
   }
 }
+

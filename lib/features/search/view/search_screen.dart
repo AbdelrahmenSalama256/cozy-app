@@ -1,6 +1,8 @@
 import 'package:cozy/core/component/widgets/app_button.dart';
 import 'package:cozy/core/constants/app_colors.dart';
+import 'package:cozy/core/cubit/global_cubit.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
+import 'package:cozy/features/auth/view/login_screen.dart';
 import 'package:cozy/features/home/view/widgets/product_card.dart';
 import 'package:cozy/features/search/view/cubit/search_cubit.dart';
 import 'package:cozy/features/search/view/cubit/search_state.dart';
@@ -43,6 +45,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget _buildInitialSearchView(BuildContext context, SearchState state) {
     final cubit = context.read<SearchCubit>();
     return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.symmetric(vertical: 16.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,88 +131,20 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _buildSearchResultsView(BuildContext context, SearchState state) {
-    final cubit = context.read<SearchCubit>();
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 10.h),
-        SizedBox(
-          height: 35.h,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
-            itemCount: state.filterOptions.length,
-            itemBuilder: (context, index) {
-              final filter = state.filterOptions[index];
-              return FilterChipWidget(
-                labelKey: filter,
-                onTap: () => cubit.selectFilter(filter),
-                isSelected: state.selectedFilter == filter,
-              );
-            },
-            separatorBuilder: (context, index) => SizedBox(width: 8.w),
-          ),
-        ),
-        SizedBox(height: 16.h),
-        if (state.searchResults.isNotEmpty)
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
-            child: Card(
-              elevation: 1,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.r)),
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: AppColors.primary.withOpacity(0.1),
-                  child: Icon(Icons.store_mall_directory_outlined,
-                      color: AppColors.primaryLight, size: 24.sp),
-                ),
-                title: Text("Upbox Bag",
-                    style: TextStyle(
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textBlack)),
-                subtitle: Row(
-                  children: [
-                    Flexible(
-                      child: Text(
-                        "search_products_count".tr(context).replaceFirst(
-                            '{0}', state.searchResults.length.toString()),
-                        style: TextStyle(
-                            fontSize: 12.sp, color: AppColors.textGrey),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Text(
-                      " • ",
-                      style:
-                          TextStyle(fontSize: 12.sp, color: AppColors.textGrey),
-                    ),
-                    Flexible(
-                      child: Text(
-                        "search_followers_count"
-                            .tr(context)
-                            .replaceFirst('{0}', '1.3k'),
-                        style: TextStyle(
-                            fontSize: 12.sp, color: AppColors.textGrey),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-                trailing: Icon(Icons.arrow_forward_ios,
-                    size: 16.sp, color: AppColors.textGrey),
-                onTap: () {},
-              ),
-            ),
-          ),
         Expanded(
           child: state.isLoading
               ? const Center(child: CustomLoadingIndicator())
               : state.searchResults.isEmpty
                   ? Center(
-                      child: Text("search_no_results".tr(context),
-                          style: TextStyle(
-                              fontSize: 16.sp, color: AppColors.textGrey)))
+                      child: Text(
+                        "search_no_results".tr(context),
+                        style: TextStyle(
+                            fontSize: 16.sp, color: AppColors.textGrey),
+                      ),
+                    )
                   : GridView.builder(
                       padding: EdgeInsets.all(24.w),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -230,11 +165,35 @@ class _SearchScreenState extends State<SearchScreen> {
                           price: product.price,
                           oldPrice: product.oldPrice,
                           isFavorite: product.isFavourited,
-                          onTap: () {
-
-                          },
+                          onTap: () {},
                           onFavoriteTap: () {
-
+                            final global = context.read<GlobalCubit>();
+                            if (!global.isAuthenticated) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const LoginScreen()),
+                              );
+                              return;
+                            }
+                            context
+                                .read<GlobalCubit>()
+                                .addtowishlist(productId: product.id);
+                          },
+                          removeFromWishlist: () {
+                            final global = context.read<GlobalCubit>();
+                            if (!global.isAuthenticated) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const LoginScreen()),
+                              );
+                              return;
+                            }
+                            context
+                                .read<GlobalCubit>()
+                                .removeProductFromWishlistByProductId(
+                                    product.id);
                           },
                         );
                       },
@@ -336,9 +295,21 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
       body: BlocBuilder<SearchCubit, SearchState>(
         builder: (context, state) {
-          return state.searchQuery.isEmpty && !state.hasSearched
+          final content = state.searchQuery.isEmpty && !state.hasSearched
               ? _buildInitialSearchView(context, state)
               : _buildSearchResultsView(context, state);
+          return RefreshIndicator(
+            onRefresh: () async {
+              final cubit = context.read<SearchCubit>();
+              if (state.hasSearched && state.searchQuery.isNotEmpty) {
+                cubit.performSearch(state.searchQuery);
+              } else {
+                cubit.loadInitialData();
+              }
+              await Future.delayed(const Duration(milliseconds: 300));
+            },
+            child: content,
+          );
         },
       ),
     );

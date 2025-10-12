@@ -1,4 +1,3 @@
-
 import 'package:cozy/core/component/custom_loading_indicator.dart';
 import 'package:cozy/core/component/custom_toast.dart';
 import 'package:cozy/core/component/widgets/app_button.dart';
@@ -72,23 +71,40 @@ class EditProfileScreen extends StatelessWidget {
                           globalState is ProfileLoading
                               ? const Center(child: CustomLoadingIndicator())
                               : Center(
-                                  child: user.image == null
+                                  child: profileCubit.profileImage != null
                                       ? ProfileImagePicker(
                                           profileImage:
                                               profileCubit.profileImage,
                                           onImageSelected:
                                               profileCubit.setProfileImage,
                                         )
-                                      : ProfileSection(
-                                          userName: user.name ?? '',
-                                          userImageUrl: user.imageUrl ?? "",
-                                          textStyle: TextStyle(
-                                              fontSize: 20.sp,
-                                              color: AppColors.black,
-                                              fontWeight: FontWeight.w500),
-                                          subtitle: '',
-                                          isVendor: true,
-                                        ),
+                                      : user.image == null
+                                          ? ProfileImagePicker(
+                                              profileImage:
+                                                  profileCubit.profileImage,
+                                              onImageSelected:
+                                                  profileCubit.setProfileImage,
+                                            )
+                                          : ProfileSection(
+                                              userName: user.name ?? '',
+                                              userImageUrl: user.imageUrl ?? "",
+                                              textStyle: TextStyle(
+                                                  fontSize: 20.sp,
+                                                  color: AppColors.black,
+                                                  fontWeight: FontWeight.w500),
+                                              subtitle: '',
+                                              isVendor: true,
+                                              onTap: () async {
+                                                // allow replacing image even if current URL fails to load
+                                                final picked =
+                                                    await profileCubit
+                                                        .pickImage();
+                                                if (picked != null) {
+                                                  profileCubit
+                                                      .setProfileImage(picked);
+                                                }
+                                              },
+                                            ),
                                 ),
                           SizedBox(height: 32.h),
                           _buildPersonalInfoSection(
@@ -116,7 +132,7 @@ class EditProfileScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       elevation: 0,
       leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: AppColors.textBlack),
+        icon: Icon(Icons.arrow_back_ios_new, color: AppColors.textBlack),
         onPressed: () => Navigator.pop(context),
       ),
       title: Text(
@@ -231,7 +247,7 @@ class EditProfileScreen extends StatelessWidget {
       BuildContext context, bool isLoading, ProfileCubit cubit) {
     return AppButton(
       text: 'save_changes'.tr(context),
-      onPressed: isLoading ? null : cubit.saveChanges,
+      onPressed: cubit.saveChanges,
       type: AppButtonType.primary,
       height: 50.h,
       borderRadius: BorderRadius.circular(4.r),

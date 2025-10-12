@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cozy/core/constants/widgets/custom_cached_image.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cozy/core/utils/currency_formatter.dart';
 
@@ -19,10 +20,10 @@ class OrderItem extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8.r),
-            child: Image.network(
-              "${item.product?.imagePath}",
-              width: 50.w,
-              height: 50.w,
+            child: CustomCachedImage(
+              imageUrl: item.product?.imagePath,
+              w: 50.w,
+              h: 50.w,
               fit: BoxFit.cover,
             ),
           ),

@@ -1,5 +1,6 @@
 import 'package:cozy/core/component/widgets/app_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 //! AppDropdownFormField
 class AppDropdownFormField extends FormField<String> {
@@ -18,11 +19,16 @@ class AppDropdownFormField extends FormField<String> {
           builder: (FormFieldState<String> state) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 AppDropdownField(
                   hint: hint,
                   value: state.value,
                   items: items,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 8.h,
+                  ),
                   onChanged: (value) {
                     state.didChange(value);
                   },
@@ -31,7 +37,10 @@ class AppDropdownFormField extends FormField<String> {
                 ),
                 if (state.hasError)
                   Padding(
-                    padding: const EdgeInsets.only(top: 8, left: 16),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 16.h,
+                    ),
                     child: Text(
                       state.errorText!,
                       style: const TextStyle(

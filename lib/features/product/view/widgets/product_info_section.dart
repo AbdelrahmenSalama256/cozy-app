@@ -41,6 +41,10 @@ class ProductInfoSection extends StatelessWidget {
               SizedBox(height: 16.h),
               PriceDisplay(product: product, hasVariations: hasVariations),
               SizedBox(height: 24.h),
+              if (hasVariations)
+                VariationsSection(variations: product.variations!),
+              QuantitySelector(hasVariations: hasVariations, product: product),
+              SizedBox(height: 24.h),
               if (product.description?.isNotEmpty ?? false) ...[
                 DescriptionSection(description: product.description!),
                 SizedBox(height: 24.h),
@@ -49,10 +53,6 @@ class ProductInfoSection extends StatelessWidget {
                 SpecificationsSection(specifications: product.specifications!),
                 SizedBox(height: 24.h),
               ],
-              if (hasVariations)
-                VariationsSection(variations: product.variations!),
-              QuantitySelector(hasVariations: hasVariations, product: product),
-              // SizedBox(height: 24.h),
             ],
           ),
         ),

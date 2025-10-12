@@ -28,7 +28,7 @@ class EndPoints {
 
   static const String cart = '${baseUrl}cart-details';
   static const String addProductToCart = '${baseUrl}add-to-cart';
-  static const String updateCartItemQuantity = '${baseUrl}carts';
+  static const String updateCartItemQuantity = '${baseUrl}update-cart';
   static const String removeCartItem = '${baseUrl}remove-cart';
   static const String clearCart = '${baseUrl}clear-cart';
 
@@ -38,6 +38,7 @@ class EndPoints {
   static const String updateAddress = '${baseUrl}update-address';
   static const String deleteAddress = '${baseUrl}addresses';
   static const String setDefaultAddress = '${baseUrl}addresses';
+  static const String cities = '${baseUrl}cities';
 
   //! place Orders
   static const String placeOrder = '${baseUrl}place-order';

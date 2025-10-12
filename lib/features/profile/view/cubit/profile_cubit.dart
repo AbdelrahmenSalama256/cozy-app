@@ -27,6 +27,17 @@ class ProfileCubit extends Cubit<ProfileState> {
   XFile? profileImage;
   bool hasChanges = false;
 
+  Future<XFile?> pickImage() async {
+    final picker = ImagePicker();
+    final image = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+      maxWidth: 800,
+      maxHeight: 800,
+    );
+    return image;
+  }
+
   void _setupProfileUpdatesListener() {
     _profileSubscription = globalCubit.profileStream.listen((contactResponse) {
       if (contactResponse != null) {

@@ -3,6 +3,7 @@ import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/core/utils/currency_formatter.dart';
 import 'package:cozy/features/cart/data/model/cart_model.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:cozy/core/constants/widgets/custom_cached_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -48,18 +49,11 @@ class CartItemCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(10.r),
-              child: Image.network(
-                '${cartItem.product?.imagePath}',
-                width: 84.w,
-                height: 84.w,
+              child: CustomCachedImage(
+                imageUrl: cartItem.product?.imagePath,
+                w: 84.w,
+                h: 84.w,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  width: 84.w,
-                  height: 84.w,
-                  color: AppColors.lightGrey,
-                  child: Icon(Icons.image_not_supported,
-                      color: AppColors.textGrey, size: 28.sp),
-                ),
               ),
             ),
             SizedBox(width: 12.w),
@@ -152,7 +146,11 @@ class CartItemCard extends StatelessWidget {
                       _QtyStepper(
                         quantity: qty,
                         onDec: () {
-                          if (qty > 1) onQuantityChanged(qty - 1);
+                          if (qty > 1) {
+                            onQuantityChanged(qty - 1);
+                          } else {
+                            onRemove();
+                          }
                         },
                         onInc: () => onQuantityChanged(qty + 1),
                       ),

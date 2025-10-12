@@ -629,5 +629,9 @@
   "search_hint_text": "ابحث عن المنتجات...",
   "login_required": "مطلوب تسجيل الدخول",
   "login_required_message": "يجب عليك تسجيل الدخول لاستخدام هذه الميزة",
-  "login": "تسجيل الدخول"
+  "login": "تسجيل الدخول",
+  "no_offer_products": "لا توجد منتجات لهذا العرض",
+  "check_back_products": "تحقق لاحقًا لمزيد من المنتجات",
+  "products_available": "منتجات متاحة",
+  "shipping_status": "حالة الشحن"
 }

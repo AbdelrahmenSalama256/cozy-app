@@ -68,10 +68,20 @@ class CartRepo {
     }
   }
 
-  Future<Either<String, String>> updateCart(int cartItemId) async {
+  Future<Either<String, String>> updateCartItemQuantity({
+    required int cartItemId,
+    required int quantity,
+  }) async {
     try {
-      await api.get('${EndPoints.removeCartItem}/$cartItemId');
-      return Right('Item removed from cart successfully');
+      final response = await api.post(
+        '${EndPoints.updateCartItemQuantity}/$cartItemId',
+        data: {
+          'quantity': quantity,
+        },
+      );
+      final data = response.data as Map<String, dynamic>;
+      final message = (data['message'] as String?) ?? 'cart_item_quantity_updated';
+      return Right(message);
     } on ServerException catch (e) {
       return Left(e.errorModel.detail);
     } on NoInternetException catch (e) {

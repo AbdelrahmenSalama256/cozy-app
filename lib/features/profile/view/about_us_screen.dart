@@ -6,6 +6,8 @@ import 'package:cozy/features/profile/data/models/about_model.dart';
 import 'package:cozy/features/profile/data/repo/about_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cozy/core/component/widgets/unified_app_bar.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 //! AboutUsScreen
 class AboutUsScreen extends StatelessWidget {
@@ -15,22 +17,7 @@ class AboutUsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      appBar: AppBar(
-        backgroundColor: AppColors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.textBlack),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          'about_us'.tr(context),
-          style: TextStyle(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textBlack,
-          ),
-        ),
-      ),
+      appBar: UnifiedAppBar.inner(title: 'about_us'.tr(context)),
       body: FutureBuilder(
         future: sl<AboutRepo>().fetchAbout(),
         builder: (context, snapshot) {
@@ -84,16 +71,38 @@ class AboutUsScreen extends StatelessWidget {
           if (data.about.content.isNotEmpty)
             Column(
               children: data.about.content
-                  .map((e) => _buildSection(e.title ?? '', e.description ?? ''))
+                  .where((e) =>
+                      ((e.title ?? '').trim().isNotEmpty) ||
+                      ((e.description ?? '').trim().isNotEmpty))
+                  .map((e) => _buildSection(
+                        (e.title ?? '').trim(),
+                        (e.description ?? '').trim(),
+                      ))
                   .toList(),
             ),
           SizedBox(height: 24.h),
-          _buildSocialSection(context, data.social),
+          if (_hasAnySocial(data.social))
+            _buildSocialSection(context, data.social),
           SizedBox(height: 24.h),
-          _buildStatsSection(context, data.statistics),
+          if (_hasAnyStats(data.statistics))
+            _buildStatsSection(context, data.statistics),
         ],
       ),
     );
+  }
+
+  bool _hasAnySocial(SocialLinks social) {
+    return ((social.facebook ?? '').trim().isNotEmpty) ||
+        ((social.instagram ?? '').trim().isNotEmpty) ||
+        ((social.twitter ?? '').trim().isNotEmpty) ||
+        ((social.linkedin ?? '').trim().isNotEmpty) ||
+        ((social.youtube ?? '').trim().isNotEmpty);
+  }
+
+  bool _hasAnyStats(StatisticsSection statistics) {
+    return ((statistics.tagline ?? '').trim().isNotEmpty) ||
+        ((statistics.description ?? '').trim().isNotEmpty) ||
+        (statistics.content.isNotEmpty);
   }
 
   Widget _buildSocialSection(BuildContext context, SocialLinks social) {
@@ -119,20 +128,20 @@ class AboutUsScreen extends StatelessWidget {
         SizedBox(height: 16.h),
         Wrap(spacing: 16.w, runSpacing: 10.h, children: [
           if ((social.facebook ?? '').isNotEmpty)
-            _buildSocialButton(
-                context, Icons.facebook, 'Facebook', social.facebook),
+            _buildSocialButton(context, 'assets/images/icons/fb.svg',
+                'Facebook', social.facebook),
           if ((social.instagram ?? '').isNotEmpty)
-            _buildSocialButton(
-                context, Icons.camera_alt, 'Instagram', social.instagram),
+            _buildSocialButton(context, 'assets/images/icons/ins.svg',
+                'Instagram', social.instagram),
           if ((social.twitter ?? '').isNotEmpty)
-            _buildSocialButton(
-                context, Icons.alternate_email, 'Twitter', social.twitter),
+            _buildSocialButton(context, 'assets/images/icons/x.svg', 'Twitter',
+                social.twitter),
           if ((social.youtube ?? '').isNotEmpty)
-            _buildSocialButton(
-                context, Icons.video_library, 'YouTube', social.youtube),
+            _buildSocialButton(context, 'assets/images/icons/yt.svg', 'YouTube',
+                social.youtube),
           if ((social.linkedin ?? '').isNotEmpty)
-            _buildSocialButton(
-                context, Icons.work_outline, 'LinkedIn', social.linkedin),
+            _buildSocialButton(context, 'assets/images/icons/in.svg',
+                'LinkedIn', social.linkedin),
         ])
       ]),
     );
@@ -147,8 +156,9 @@ class AboutUsScreen extends StatelessWidget {
     final desc = lang == 'ar'
         ? (statistics.descriptionAr ?? statistics.description ?? '')
         : (statistics.description ?? '');
-    if (statistics.content.isEmpty && tagline.isEmpty && desc.isEmpty)
+    if (statistics.content.isEmpty && tagline.isEmpty && desc.isEmpty) {
       return const SizedBox();
+    }
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(20.w),
@@ -258,7 +268,7 @@ class AboutUsScreen extends StatelessWidget {
   }
 
   Widget _buildSocialButton(
-      BuildContext context, IconData icon, String platform, String? url) {
+      BuildContext context, String assetPath, String platform, String? url) {
     return InkWell(
       borderRadius: BorderRadius.circular(28.r),
       onTap: () => launchCustomUrl(context, url),
@@ -271,10 +281,12 @@ class AboutUsScreen extends StatelessWidget {
               color: AppColors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(25.r),
             ),
-            child: Icon(
-              icon,
-              size: 24.sp,
-              color: AppColors.primary,
+            child: Center(
+              child: SvgPicture.asset(
+                assetPath,
+                width: 24.w,
+                color: AppColors.primary,
+              ),
             ),
           ),
           SizedBox(height: 8.h),
@@ -290,3 +302,4 @@ class AboutUsScreen extends StatelessWidget {
     );
   }
 }
+

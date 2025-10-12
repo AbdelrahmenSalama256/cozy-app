@@ -6,6 +6,7 @@ import 'package:cozy/core/services/service_locator.dart';
 import 'package:cozy/features/notifications/view/cubit/notifications_cubit.dart';
 import 'package:cozy/features/notifications/view/widgets/notification_item_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:cozy/core/component/widgets/unified_app_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -76,46 +77,7 @@ class NotificationsScreen extends StatelessWidget {
           NotificationsCubit(sl<NotificationsRepo>())..fetchNotifications(),
       child: Scaffold(
         backgroundColor: AppColors.white,
-        appBar: AppBar(
-          backgroundColor: AppColors.white,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: AppColors.textBlack,
-              size: 20.sp,
-            ),
-            onPressed: () => Navigator.pop(context),
-          ),
-          title: Text(
-            'notifications'.tr(context),
-            style: TextStyle(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textBlack,
-            ),
-          ),
-          centerTitle: true,
-          actions: [
-            BlocBuilder<NotificationsCubit, NotificationsState>(
-              builder: (context, state) {
-                final cubit = context.read<NotificationsCubit>();
-                final hasUnread = cubit.notifications.any((n) => !n.isRead);
-
-                return hasUnread
-                    ? IconButton(
-                        icon: Icon(
-                          Icons.mark_email_read,
-                          color: AppColors.primary,
-                          size: 24.sp,
-                        ),
-                        onPressed: () => cubit.markAllAsRead(),
-                      )
-                    : SizedBox();
-              },
-            ),
-          ],
-        ),
+        appBar: UnifiedAppBar.inner(title: 'notifications'.tr(context)),
         body: BlocBuilder<NotificationsCubit, NotificationsState>(
           builder: (context, state) {
             if (state is NotificationsLoading) {

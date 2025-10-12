@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cozy/core/constants/widgets/custom_cached_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -61,32 +61,11 @@ class CategoryCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.vertical(
                     top: Radius.circular(borderRadius!.r)),
-                child: Image.network(
-                  imageUrl ?? '',
-                  width: double.infinity,
+                child: CustomCachedImage(
+                  imageUrl: imageUrl,
+                  w: double.infinity,
                   fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) =>
-                      loadingProgress == null
-                          ? child
-                          : Center(
-                              child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes !=
-                                        null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                        (loadingProgress.expectedTotalBytes ??
-                                            1)
-                                    : null,
-                              ),
-                            ),
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    width: double.infinity,
-                    color: AppColors.lightGrey,
-                    child: Icon(
-                      CupertinoIcons.photo_on_rectangle,
-                      color: AppColors.textGrey,
-                      size: 40.sp,
-                    ),
-                  ),
+                  borderRadius: borderRadius!.r,
                 ),
               ),
             ),

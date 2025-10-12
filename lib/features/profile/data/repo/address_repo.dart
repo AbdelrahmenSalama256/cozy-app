@@ -13,6 +13,151 @@ class AddressRepo {
 
   AddressRepo(this.api);
 
+  Future<Either<String, List<String>>> getCitiesByCountry({
+    required String countryCode,
+    required String langCode,
+  }) async {
+    // Localized fallback datasets
+    const saEn = <String>[
+      'Riyadh',
+      'Jeddah',
+      'Mecca',
+      'Medina',
+      'Dammam',
+      'Al Khobar',
+      'Dhahran',
+      'Taif',
+      'Tabuk',
+      'Abha',
+      'Jizan',
+      'Al Kharj',
+      'Buraidah',
+      'Hail',
+      'Najran',
+      'Al Jubail',
+      'Yanbu'
+    ];
+    const saAr = <String>[
+      'الرياض',
+      'جدة',
+      'مكة',
+      'المدينة المنورة',
+      'الدمام',
+      'الخبر',
+      'الظهران',
+      'الطائف',
+      'تبوك',
+      'أبها',
+      'جيزان',
+      'الخرج',
+      'بريدة',
+      'حائل',
+      'نجران',
+      'الجبيل',
+      'ينبع'
+    ];
+    const egEn = <String>[
+      'Cairo',
+      'Giza',
+      'Alexandria',
+      'Shubra El Kheima',
+      'Port Said',
+      'Suez',
+      'Luxor',
+      'Asyut',
+      'Ismailia',
+      'Faiyum',
+      'Zagazig',
+      'Mansoura',
+      'Tanta',
+      'Aswan',
+      'Damietta'
+    ];
+    const egAr = <String>[
+      'القاهرة',
+      'الجيزة',
+      'الإسكندرية',
+      'شبرا الخيمة',
+      'بورسعيد',
+      'السويس',
+      'الأقصر',
+      'أسيوط',
+      'الإسماعيلية',
+      'الفيوم',
+      'الزقازيق',
+      'المنصورة',
+      'طنطا',
+      'أسوان',
+      'دمياط'
+    ];
+    const aeEn = <String>[
+      'Dubai',
+      'Abu Dhabi',
+      'Sharjah',
+      'Ajman',
+      'Ras Al Khaimah',
+      'Fujairah',
+      'Umm Al Quwain',
+      'Al Ain'
+    ];
+    const aeAr = <String>[
+      'دبي',
+      'أبوظبي',
+      'الشارقة',
+      'عجمان',
+      'رأس الخيمة',
+      'الفجيرة',
+      'أم القيوين',
+      'العين'
+    ];
+    List<String> fallbackFor(String cc, String lang) {
+      final l = lang.toLowerCase().startsWith('ar') ? 'ar' : 'en';
+      switch (cc.toUpperCase()) {
+        case 'EG':
+          return l == 'ar' ? egAr : egEn;
+        case 'AE':
+          return l == 'ar' ? aeAr : aeEn;
+        case 'SA':
+        default:
+          return l == 'ar' ? saAr : saEn;
+      }
+    }
+
+    try {
+      // Try optional backend with query params if available
+      final response = await api.get(
+        '${EndPoints.cities}?country=${countryCode.toUpperCase()}&lang=${langCode.toLowerCase()}',
+      );
+      final data = response.data;
+      // Accept either {success:true,data:[{name:..},..]} or a raw List<String>
+      List<String> result = [];
+      if (data is Map<String, dynamic>) {
+        final list = (data['data'] ?? data['cities'] ?? []) as List;
+        result = list.map((e) {
+          if (e is String) return e;
+          if (e is Map && e['name'] != null) return e['name'].toString();
+          return e.toString();
+        }).toList();
+      } else if (data is List) {
+        result = data.map((e) => e.toString()).toList();
+      }
+      // If empty, fall back to localized defaults
+      final backfill = fallbackFor(countryCode, langCode);
+      return Right(result.isNotEmpty ? result : backfill);
+    } on ServerException {
+      return Right(fallbackFor(countryCode, langCode));
+    } on NoInternetException {
+      return Right(fallbackFor(countryCode, langCode));
+    } catch (e) {
+      return Right(fallbackFor(countryCode, langCode));
+    }
+  }
+
+  // Backwards compatibility wrapper
+  Future<Either<String, List<String>>> getCities() async {
+    return getCitiesByCountry(countryCode: 'SA', langCode: 'en');
+  }
+
   //! Fetch all addresses
   Future<Either<String, List<AddressModel>>> getAddresses() async {
     try {
@@ -49,7 +194,6 @@ class AddressRepo {
       return Left('Failed to fetch addresses: $e');
     }
   }
-
 
   Future<Either<String, String>> addAddress(AddressModel address) async {
     try {

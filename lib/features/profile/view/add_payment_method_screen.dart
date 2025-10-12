@@ -62,7 +62,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
         backgroundColor: AppColors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.textBlack),
+          icon: Icon(Icons.arrow_back_ios_new, color: AppColors.textBlack),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -92,8 +92,6 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
                 ),
               ),
               SizedBox(height: 16.h),
-
-
               Container(
                 padding: EdgeInsets.all(16.w),
                 decoration: BoxDecoration(
@@ -120,10 +118,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
                   ],
                 ),
               ),
-
               SizedBox(height: 24.h),
-
-
               if (_selectedType == PaymentMethodType.card) ...[
                 Text(
                   'card_details'.tr(context),
@@ -250,9 +245,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
                   ),
                 ),
               ],
-
               SizedBox(height: 24.h),
-
               Container(
                 padding: EdgeInsets.all(16.w),
                 decoration: BoxDecoration(
@@ -303,9 +296,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
                   ],
                 ),
               ),
-
               SizedBox(height: 32.h),
-
               Expanded(
                 child: AppButton(
                   onPressed: _savePaymentMethod,

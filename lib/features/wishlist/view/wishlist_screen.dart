@@ -141,16 +141,21 @@ class WishlistScreen extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: GridView.builder(
-            padding: EdgeInsets.symmetric(horizontal: 15.w),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 15.w,
-              mainAxisSpacing: 15.h,
-              childAspectRatio: 0.70,
-            ),
-            itemCount: cubit.wishlist?.items.length ?? 0,
-            itemBuilder: (context, index) {
+          child: RefreshIndicator(
+            onRefresh: () async {
+              await context.read<WishlistCubit>().fetchWishlist();
+            },
+            child: GridView.builder(
+              padding: EdgeInsets.symmetric(horizontal: 15.w),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 15.w,
+                mainAxisSpacing: 15.h,
+                childAspectRatio: 0.70,
+              ),
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount: cubit.wishlist?.items.length ?? 0,
+              itemBuilder: (context, index) {
               final item = cubit.wishlist!.items[index];
               final product = item.product;
               return ProductCard(
@@ -168,12 +173,13 @@ class WishlistScreen extends StatelessWidget {
                     ProductDetailsScreen(productId: product.id),
                   );
                 },
-                onFavoriteTap: () {
+                removeFromWishlist: () {
                   cubit.removeFromWishlist(item.id);
                 },
               );
             },
           ),
+        ),
         ),
       ],
     );
@@ -209,7 +215,9 @@ class WishlistScreen extends StatelessWidget {
           ),
           SizedBox(height: 40.h),
           AppButton(
-            onPressed: () {},
+            onPressed: () {
+              context.read<GlobalCubit>().changeBottomNavIndex(0);
+            },
             text: 'explore_products'.tr(context),
             type: AppButtonType.primary,
           ),

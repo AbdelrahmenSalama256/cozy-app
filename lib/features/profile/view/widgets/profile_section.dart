@@ -160,20 +160,30 @@ class ProfileSection extends StatelessWidget {
     }
 
 
-    return Container(
-      width: 100.w,
-      height: 100.w,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: borderColor != null
-            ? Border.all(color: borderColor!, width: 2.w)
-            : null,
-        image: DecorationImage(
-          image: userImageUrl.startsWith('http')
-              ? NetworkImage(userImageUrl)
-              : AssetImage(userImageUrl) as ImageProvider,
-          fit: BoxFit.cover,
-        ),
+    return ClipOval(
+      child: Image.network(
+        userImageUrl,
+        width: 100.w,
+        height: 100.w,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            width: 100.w,
+            height: 100.w,
+            decoration: BoxDecoration(
+              color: isVendor ? Colors.black : Colors.grey.shade200,
+              shape: BoxShape.circle,
+              border: borderColor != null
+                  ? Border.all(color: borderColor!, width: 2.w)
+                  : null,
+            ),
+            child: Icon(
+              isVendor ? Icons.store : Icons.person,
+              color: isVendor ? Colors.white : Colors.grey,
+              size: avatarRadius.sp,
+            ),
+          );
+        },
       ),
     );
   }

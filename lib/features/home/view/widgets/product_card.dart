@@ -1,8 +1,8 @@
 import 'package:cozy/core/constants/app_colors.dart';
+import 'package:cozy/core/constants/widgets/custom_cached_image.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:cozy/core/utils/currency_formatter.dart';
 import 'package:cozy/features/home/view/widgets/favorite_button.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -37,7 +37,6 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final discountPercentage = _calculateDiscountPercentage(price, oldPrice);
 
     return GestureDetector(
@@ -62,40 +61,11 @@ class ProductCard extends StatelessWidget {
                 ClipRRect(
                   borderRadius:
                       BorderRadius.vertical(top: Radius.circular(16.r)),
-                  child: Image.network(
-                    imageUrl,
-                    width: double.infinity,
-                    height: 110.h,
+                  child: CustomCachedImage(
+                    imageUrl: imageUrl,
+                    w: double.infinity,
+                    h: 110.h,
                     fit: BoxFit.cover,
-                    loadingBuilder: (context, child, loadingProgress) =>
-                        loadingProgress == null
-                            ? child
-                            : Container(
-                                width: double.infinity,
-                                height: 110.h,
-                                decoration: BoxDecoration(
-                                  color: AppColors.lightGrey,
-                                ),
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    value: loadingProgress.expectedTotalBytes !=
-                                            null
-                                        ? loadingProgress
-                                                .cumulativeBytesLoaded /
-                                            (loadingProgress
-                                                    .expectedTotalBytes ??
-                                                1)
-                                        : null,
-                                  ),
-                                ),
-                              ),
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      height: 110.h,
-                      width: double.infinity,
-                      color: AppColors.lightGrey,
-                      child: Icon(CupertinoIcons.photo_on_rectangle,
-                          color: AppColors.textGrey, size: 30.sp),
-                    ),
                   ),
                 ),
                 Positioned(
@@ -111,7 +81,6 @@ class ProductCard extends StatelessWidget {
                     size: 18.sp,
                   ),
                 ),
-
                 if (oldPrice != null && discountPercentage > 0)
                   Positioned(
                     top: 6.h,

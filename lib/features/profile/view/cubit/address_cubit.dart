@@ -1,8 +1,12 @@
+import 'dart:ui' as ui;
+
 import 'package:bloc/bloc.dart';
 import 'package:cozy/core/common/logs.dart';
+import 'package:cozy/core/network/local_network.dart';
 import 'package:cozy/features/profile/data/models/address_model.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/services/service_locator.dart';
 import '../../data/repo/address_repo.dart';
 import 'address_state.dart';
 
@@ -14,6 +18,9 @@ class AddressCubit extends Cubit<AddressState> {
 
   List<AddressModel> addresses = [];
 
+  // Cities dropdown support
+  List<String> cities = [];
+  String? selectedCity;
 
   final formKey = GlobalKey<FormState>();
   final titleController = TextEditingController();
@@ -28,7 +35,6 @@ class AddressCubit extends Cubit<AddressState> {
   bool isEditing = false;
   String? editingAddressId;
 
-
   void initializeForm({AddressModel? address}) {
     if (address != null) {
       isEditing = true;
@@ -38,6 +44,7 @@ class AddressCubit extends Cubit<AddressState> {
       phoneController.text = address.phone;
       streetController.text = address.street;
       cityController.text = address.city;
+      selectedCity = address.city.isNotEmpty ? address.city : null;
       stateController.text = address.state;
       zipController.text = address.zipCode;
       countryController.text = address.country;
@@ -50,20 +57,35 @@ class AddressCubit extends Cubit<AddressState> {
       phoneController.clear();
       streetController.clear();
       cityController.clear();
+      selectedCity = null;
       stateController.clear();
       zipController.clear();
-      countryController.text = 'United States';
+      // Derive default country from platform locale, fallback to SA
+      final platformLocale = ui.PlatformDispatcher.instance.locale;
+      final cc = (platformLocale.countryCode ?? '').toUpperCase();
+      // Map a few known codes to localized country names (basic)
+      String defaultCountry;
+      switch (cc) {
+        case 'EG':
+          defaultCountry = 'Egypt';
+          break;
+        case 'AE':
+          defaultCountry = 'United Arab Emirates';
+          break;
+        case 'SA':
+        default:
+          defaultCountry = 'Saudi Arabia';
+      }
+      countryController.text = defaultCountry;
       isDefault = false;
     }
     emit(AddressFormInitialized(isEditing: isEditing, isDefault: isDefault));
   }
 
-
   void toggleDefault(bool value) {
     isDefault = value;
     emit(AddressFormUpdated(isDefault: isDefault));
   }
-
 
   Future<void> saveAddress() async {
     if (!formKey.currentState!.validate()) {
@@ -71,13 +93,18 @@ class AddressCubit extends Cubit<AddressState> {
       return;
     }
 
+    // Persist dropdown values from form fields that use onSaved
+    try {
+      formKey.currentState!.save();
+    } catch (_) {}
+
     final address = AddressModel(
       id: isEditing ? editingAddressId! : '',
       title: titleController.text.isEmpty ? 'Address' : titleController.text,
       name: nameController.text,
       phone: phoneController.text,
       street: streetController.text,
-      city: cityController.text,
+      city: (selectedCity ?? cityController.text),
       state: stateController.text,
       zipCode: zipController.text,
       country: countryController.text,
@@ -100,6 +127,45 @@ class AddressCubit extends Cubit<AddressState> {
     );
   }
 
+  String _mapCountryNameToCode(String name) {
+    final n = (name).toLowerCase().trim();
+    if (n.contains('saudi') || n.contains('السعود') || n == 'sa') return 'SA';
+    if (n.contains('egypt') || n.contains('مصر') || n == 'eg') return 'EG';
+    if (n.contains('emirates') || n.contains('الإمارات') || n == 'ae') {
+      return 'AE';
+    }
+    if (n.contains('united states') || n.contains('usa') || n == 'us') {
+      return 'US';
+    }
+    return 'SA';
+  }
+
+  Future<void> fetchCities() async {
+    // Determine language from cache (en/ar)
+    final langCode = sl<CacheHelper>().getCachedLanguage();
+    // Determine country code from field or platform
+    final platformLocale = ui.PlatformDispatcher.instance.locale;
+    final ccFromCountry = _mapCountryNameToCode(countryController.text);
+    final countryCode = (ccFromCountry.isNotEmpty
+        ? ccFromCountry
+        : (platformLocale.countryCode ?? 'SA'));
+
+    final result = await addressRepo.getCitiesByCountry(
+      countryCode: countryCode,
+      langCode: langCode,
+    );
+    result.fold(
+      (_) {},
+      (list) {
+        cities = list;
+        // If an existing city matches, keep it
+        if (selectedCity != null && !cities.contains(selectedCity)) {
+          selectedCity = null;
+        }
+        emit(AddressFormUpdated(isDefault: isDefault));
+      },
+    );
+  }
 
   Future<void> fetchAddresses() async {
     emit(AddressLoading());
@@ -116,7 +182,6 @@ class AddressCubit extends Cubit<AddressState> {
     );
   }
 
-
   Future<void> deleteAddress(String addressId) async {
     emit(AddressLoading());
     final result = await addressRepo.deleteAddress(addressId);
@@ -132,7 +197,6 @@ class AddressCubit extends Cubit<AddressState> {
       },
     );
   }
-
 
   Future<void> setDefaultAddress(String addressId) async {
     emit(AddressLoading());

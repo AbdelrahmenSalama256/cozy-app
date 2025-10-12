@@ -1,4 +1,5 @@
 import 'package:cozy/core/component/widgets/app_button.dart';
+import 'package:cozy/core/component/widgets/app_dropdown_form_field.dart';
 import 'package:cozy/core/component/widgets/app_text_field.dart';
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
@@ -22,8 +23,9 @@ class AddAddressScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          AddressCubit(sl<AddressRepo>())..initializeForm(address: address),
+      create: (context) => AddressCubit(sl<AddressRepo>())
+        ..initializeForm(address: address)
+        ..fetchCities(),
       child: BlocConsumer<AddressCubit, AddressState>(
         listener: (context, state) {
           if (state is AddressSuccess) {
@@ -91,7 +93,7 @@ class AddAddressScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       elevation: 0,
       leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: AppColors.textBlack),
+        icon: Icon(Icons.arrow_back_ios_new, color: AppColors.textBlack),
         onPressed: () => Navigator.pop(context),
       ),
       title: Text(
@@ -158,12 +160,20 @@ class AddAddressScreen extends StatelessWidget {
       children: [
         Expanded(
           flex: 2,
-          child: AppTextField(
-            labelText: 'city'.tr(context),
-            hintText: 'city_hint'.tr(context),
-            controller: cubit.cityController,
-            validator: (value) =>
-                value!.isEmpty ? 'city_required'.tr(context) : null,
+          child: SizedBox(
+            // height: 56.h,
+            child: AppDropdownFormField(
+              hint: 'city'.tr(context),
+              items: cubit.cities,
+              initialValue: cubit.selectedCity,
+              validator: (value) => (value == null || value.isEmpty)
+                  ? 'city_required'.tr(context)
+                  : null,
+              onSaved: (value) {
+                cubit.selectedCity = value;
+                cubit.cityController.text = value ?? '';
+              },
+            ),
           ),
         ),
         SizedBox(width: 16.w),

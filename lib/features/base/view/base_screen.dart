@@ -46,8 +46,15 @@ class _BaseScreenState extends State<BaseScreen> {
               setState(() {});
             }
           },
-          child: PopScope(
-            onPopInvoked: (didPop) {},
+          child: WillPopScope(
+            onWillPop: () {
+              if (cubit.currentNavIndex == 0) {
+                return Future.value(false);
+              } else {
+                cubit.changeBottomNavIndex(0);
+                return Future.value(false);
+              }
+            },
             child: Scaffold(
               backgroundColor: Colors.white,
               extendBody: true,

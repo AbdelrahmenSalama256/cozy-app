@@ -256,6 +256,9 @@ class CartScreen extends StatelessWidget {
                 },
                 type: AppButtonType.primary,
               ),
+              SizedBox(
+                height: 20.h,
+              )
             ],
           ),
         ),
