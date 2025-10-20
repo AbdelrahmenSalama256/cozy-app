@@ -86,6 +86,10 @@ class CartScreen extends StatelessWidget {
                 ErrorMessageHandler.showErrorToast(
                     context, state.error.tr(context));
               }
+              if (state is CartItemQuantityUpdateError) {
+                ErrorMessageHandler.showErrorToast(context, state.error);
+              }
+              // 
               if (state is CartItemRemovedSuccess) {
                 showToast(context,
                     message: state.message.tr(context),

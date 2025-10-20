@@ -3,6 +3,7 @@ import 'package:cozy/core/component/widgets/app_button.dart';
 import 'package:cozy/core/constants/app_colors.dart';
 import 'package:cozy/core/locale/app_loacl.dart';
 import 'package:flutter/material.dart';
+import 'package:cozy/core/notification/notification_prefs.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 //! NotificationsScreen
@@ -23,6 +24,20 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   bool newArrivals = false;
   bool priceDrops = true;
   bool stockAlerts = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Load saved preferences
+    pushNotifications = NotificationPrefs.getPushEnabled();
+    emailNotifications = NotificationPrefs.getEmailEnabled();
+    smsNotifications = NotificationPrefs.getSmsEnabled();
+    orderUpdates = NotificationPrefs.getOrderUpdatesEnabled();
+    promotionalOffers = NotificationPrefs.getPromotionsEnabled();
+    newArrivals = NotificationPrefs.getNewArrivalsEnabled();
+    priceDrops = NotificationPrefs.getPriceDropsEnabled();
+    stockAlerts = NotificationPrefs.getStockAlertsEnabled();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,19 +86,28 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               'push_notifications'.tr(context),
               'receive_push_notifications'.tr(context),
               pushNotifications,
-              (value) => setState(() => pushNotifications = value),
+              (value) async {
+                setState(() => pushNotifications = value);
+                await NotificationPrefs.setPushEnabled(value);
+              },
             ),
             _buildNotificationTile(
               'email_notifications'.tr(context),
               'receive_email_notifications'.tr(context),
               emailNotifications,
-              (value) => setState(() => emailNotifications = value),
+              (value) async {
+                setState(() => emailNotifications = value);
+                await NotificationPrefs.setEmailEnabled(value);
+              },
             ),
             _buildNotificationTile(
               'sms_notifications'.tr(context),
               'receive_sms_notifications'.tr(context),
               smsNotifications,
-              (value) => setState(() => smsNotifications = value),
+              (value) async {
+                setState(() => smsNotifications = value);
+                await NotificationPrefs.setSmsEnabled(value);
+              },
             ),
             SizedBox(height: 24.h),
             _buildSectionHeader('order_notifications'.tr(context)),
@@ -91,7 +115,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               'order_updates'.tr(context),
               'order_status_updates'.tr(context),
               orderUpdates,
-              (value) => setState(() => orderUpdates = value),
+              (value) async {
+                setState(() => orderUpdates = value);
+                await NotificationPrefs.setOrderUpdatesEnabled(value);
+              },
             ),
             SizedBox(height: 24.h),
             _buildSectionHeader('marketing_notifications'.tr(context)),
@@ -99,25 +126,37 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               'promotional_offers'.tr(context),
               'special_deals_discounts'.tr(context),
               promotionalOffers,
-              (value) => setState(() => promotionalOffers = value),
+              (value) async {
+                setState(() => promotionalOffers = value);
+                await NotificationPrefs.setPromotionsEnabled(value);
+              },
             ),
             _buildNotificationTile(
               'new_arrivals'.tr(context),
               'latest_products_updates'.tr(context),
               newArrivals,
-              (value) => setState(() => newArrivals = value),
+              (value) async {
+                setState(() => newArrivals = value);
+                await NotificationPrefs.setNewArrivalsEnabled(value);
+              },
             ),
             _buildNotificationTile(
               'price_drops'.tr(context),
               'price_reduction_alerts'.tr(context),
               priceDrops,
-              (value) => setState(() => priceDrops = value),
+              (value) async {
+                setState(() => priceDrops = value);
+                await NotificationPrefs.setPriceDropsEnabled(value);
+              },
             ),
             _buildNotificationTile(
               'stock_alerts'.tr(context),
               'out_of_stock_notifications'.tr(context),
               stockAlerts,
-              (value) => setState(() => stockAlerts = value),
+              (value) async {
+                setState(() => stockAlerts = value);
+                await NotificationPrefs.setStockAlertsEnabled(value);
+              },
             ),
             SizedBox(height: 32.h),
             SizedBox(
@@ -203,7 +242,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
 
-  void _saveSettings() {
+  void _saveSettings() async {
+    // Everything is persisted on toggle; this is a visual confirmation.
     showToast(context,
         message: 'settings_saved'.tr(context), state: ToastStates.success);
   }

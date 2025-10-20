@@ -2,6 +2,8 @@ import 'package:cozy/core/app/cozy_home.dart';
 import 'package:cozy/core/cubit/global_cubit.dart';
 import 'package:cozy/core/network/local_network.dart';
 import 'package:cozy/core/services/service_locator.dart';
+import 'package:cozy/core/notification/local_notification_handler.dart';
+import 'package:cozy/core/notification/notification_handler.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -25,12 +27,15 @@ void main() async {
       const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   //! Service Locator
   initServiceLocator();
+  //! Cache Helper
+  await sl<CacheHelper>().init();
+  // Initialize local + push notification handlers (requires CacheHelper)
+  await LocalNotificationService.init();
+  await NotificationHandler.init();
   //! Update Checker
   if (kDebugMode) {
     await Upgrader.clearSavedSettings();
   }
-  //! Cache Helper
-  await sl<CacheHelper>().init();
   //! Application Starts From here.
   runApp(
     MultiBlocProvider(

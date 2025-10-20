@@ -25,9 +25,10 @@ class ActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<HomeCubit>();
+    final cubit = context.watch<HomeCubit>();
     final selectedVariationId = cubit.selectedVariationId;
     final quantity = cubit.quantity;
+    final isOutOfStock = cubit.isCurrentSelectionOutOfStock;
 
     return SafeArea(
       top: false,
@@ -44,67 +45,88 @@ class ActionButtons extends StatelessWidget {
           ],
           border: Border(top: BorderSide(color: AppColors.lightGrey, width: 1)),
         ),
-        child: Row(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(
-              child: AppButton(
-                text: 'add_to_cart'.tr(context),
-                isLoading: globalState is core_state.CartLoading,
-                onPressed: () {
-                  if (selectedVariationId.isEmpty && hasVariations) {
-                    showToast(
-                      context,
-                      message: "please_select_a_variations".tr(context),
-                      state: ToastStates.warning,
-                    );
-                    return;
-                  }
-                  final variationId = selectedVariationId.isEmpty
-                      ? productId.toString()
-                      : selectedVariationId;
-                  context.read<GlobalCubit>().addToCart(
-                        productId: productId.toString(),
-                        quantity: quantity,
-                        variation: int.tryParse(variationId) ?? productId,
-                      );
-                },
-                type: AppButtonType.secondary,
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: AppButton(
+                    text: 'add_to_cart'.tr(context),
+                    isLoading: globalState is core_state.CartLoading,
+                    onPressed: isOutOfStock
+                        ? null
+                        : () {
+                            if (selectedVariationId.isEmpty && hasVariations) {
+                              showToast(
+                                context,
+                                message: "please_select_a_variations".tr(context),
+                                state: ToastStates.warning,
+                              );
+                              return;
+                            }
+                            final variationId = selectedVariationId.isEmpty
+                                ? productId.toString()
+                                : selectedVariationId;
+                            context.read<GlobalCubit>().addToCart(
+                                  productId: productId.toString(),
+                                  quantity: quantity,
+                                  variation: int.tryParse(variationId) ?? productId,
+                                );
+                          },
+                    type: AppButtonType.secondary,
+                  ),
+                ),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: AppButton(
+                    text: 'buy_now'.tr(context),
+                    onPressed: isOutOfStock
+                        ? null
+                        : () {
+                            if (selectedVariationId.isEmpty && hasVariations) {
+                              showToast(
+                                context,
+                                message: "please_select_a_variations".tr(context),
+                                state: ToastStates.warning,
+                              );
+                              return;
+                            }
+                            final global = context.read<GlobalCubit>();
+                            if (!global.isAuthenticated) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                              );
+                              return;
+                            }
+                            final variationId = selectedVariationId.isEmpty
+                                ? productId.toString()
+                                : selectedVariationId;
+                            context.read<GlobalCubit>().addToCart(
+                                  productId: productId.toString(),
+                                  quantity: quantity,
+                                  variation: int.tryParse(variationId) ?? productId,
+                                );
+                            navigateTo(context, const CheckoutLauncher());
+                          },
+                    type: AppButtonType.primary,
+                  ),
+                ),
+              ],
             ),
-            SizedBox(width: 12.w),
-            Expanded(
-              child: AppButton(
-                text: 'buy_now'.tr(context),
-                onPressed: () {
-                  if (selectedVariationId.isEmpty && hasVariations) {
-                    showToast(
-                      context,
-                      message: "please_select_a_variations".tr(context),
-                      state: ToastStates.warning,
-                    );
-                    return;
-                  }
-                  final global = context.read<GlobalCubit>();
-                  if (!global.isAuthenticated) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const LoginScreen()),
-                    );
-                    return;
-                  }
-                  final variationId = selectedVariationId.isEmpty
-                      ? productId.toString()
-                      : selectedVariationId;
-                  context.read<GlobalCubit>().addToCart(
-                        productId: productId.toString(),
-                        quantity: quantity,
-                        variation: int.tryParse(variationId) ?? productId,
-                      );
-                  navigateTo(context, const CheckoutLauncher());
-                },
-                type: AppButtonType.primary,
+            if (isOutOfStock) ...[
+              SizedBox(height: 8.h),
+              Text(
+                'out_of_stock'.tr(context),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.error,
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ),

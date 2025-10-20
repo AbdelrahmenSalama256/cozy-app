@@ -8,6 +8,13 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+// --- Load keystore props (do NOT hardcode secrets) ---
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "com.cangrow.cozy"
     compileSdk = flutter.compileSdkVersion
@@ -23,25 +30,50 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.cangrow.cozy"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
+    // --- Release signing using key.properties ---
+    signingConfigs {
+        release {
+            // Only set if key.properties exists (keeps CI/dev flexible)
+            if (keystoreProperties["storeFile"]) {
+                storeFile file(keystoreProperties["storeFile"])
+                storePassword keystoreProperties["storePassword"]
+                keyAlias keystoreProperties["keyAlias"]
+                keyPassword keystoreProperties["keyPassword"]
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            // Use your real release keystore instead of debug
+            signingConfig signingConfigs.release
+
+            // Optional hardening (safe defaults for Play):
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            // Debug stays unsigned/debug-signed as usual
+            signingConfig signingConfigs.debug
         }
     }
 }
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // Note: Do not depend on legacy Play Core with targetSdk 34.
+    // If you need specific Play services, add the modern split libs instead, e.g.:
+    // implementation 'com.google.android.play:app-update:2.1.0'
+    // implementation 'com.google.android.play:review:2.0.1'
 }

@@ -1,4 +1,8 @@
+import 'package:cozy/core/constants/app_colors.dart';
+import 'package:cozy/core/locale/app_loacl.dart';
+import 'package:cozy/features/home/view/cubit/home_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/cubit/global_state.dart' as core_state;
@@ -26,6 +30,8 @@ class ProductInfoSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final homeCubit = context.watch<HomeCubit>();
+    final isSelectionOutOfStock = homeCubit.isCurrentSelectionOutOfStock;
     return SliverToBoxAdapter(
       child: Container(
         decoration: BoxDecoration(
@@ -41,6 +47,25 @@ class ProductInfoSection extends StatelessWidget {
               SizedBox(height: 16.h),
               PriceDisplay(product: product, hasVariations: hasVariations),
               SizedBox(height: 24.h),
+              if (isSelectionOutOfStock) ...[
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(12.w),
+                  decoration: BoxDecoration(
+                    color: AppColors.error.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: Text(
+                    'out_of_stock'.tr(context),
+                    style: TextStyle(
+                      color: AppColors.error,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16.h),
+              ],
               if (hasVariations)
                 VariationsSection(variations: product.variations!),
               QuantitySelector(hasVariations: hasVariations, product: product),

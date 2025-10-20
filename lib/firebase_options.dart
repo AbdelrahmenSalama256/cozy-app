@@ -1,18 +1,7 @@
 
-
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
-
-
-
-
-
-
-
-
-
-
 
 //! DefaultFirebaseOptions
 class DefaultFirebaseOptions {
@@ -51,19 +40,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCDgWNQKI3h0ZASErU55kusxNYjb42FQ5E',
-    appId: '1:142099948756:android:9ad3c133241c6c93688741',
-    messagingSenderId: '142099948756',
-    projectId: 'cozy-home-1ebd3',
-    storageBucket: 'cozy-home-1ebd3.firebasestorage.app',
+    apiKey: 'AIzaSyAU4a8uGe7HCpbp9kronyq0exIU3TlphHQ',
+    appId: '1:1002937750051:android:00341c1e18270311409796',
+    messagingSenderId: '1002937750051',
+    projectId: 'cozyhome-sa',
+    storageBucket: 'cozyhome-sa.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDWd2eIr9JvoAT2EmchwsltgOZgQ2dqWis',
-    appId: '1:142099948756:ios:745f0e0b58d77e80688741',
-    messagingSenderId: '142099948756',
-    projectId: 'cozy-home-1ebd3',
-    storageBucket: 'cozy-home-1ebd3.firebasestorage.app',
+    apiKey: 'AIzaSyDAtClO5FpJ9FXMRu0KxFtzdcUKAd9Z5Uw',
+    appId: '1:1002937750051:ios:244dbfbfff380355409796',
+    messagingSenderId: '1002937750051',
+    projectId: 'cozyhome-sa',
+    storageBucket: 'cozyhome-sa.firebasestorage.app',
     iosBundleId: 'com.cangrow.cozy',
   );
+
 }

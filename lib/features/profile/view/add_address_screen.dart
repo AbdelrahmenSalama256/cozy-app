@@ -131,6 +131,12 @@ class AddAddressScreen extends StatelessWidget {
       labelText: 'name'.tr(context),
       hintText: 'name_hint'.tr(context),
       controller: cubit.nameController,
+      validator: (value) {
+        final v = (value ?? '').trim();
+        if (v.isEmpty) return 'name_required'.tr(context);
+        if (v.length < 2) return 'name_length'.tr(context);
+        return null;
+      },
     );
   }
 
@@ -140,8 +146,13 @@ class AddAddressScreen extends StatelessWidget {
       hintText: 'phone_hint'.tr(context),
       controller: cubit.phoneController,
       keyboardType: TextInputType.phone,
-      validator: (value) =>
-          value!.isEmpty ? 'phone_required'.tr(context) : null,
+      validator: (value) {
+        final v = (value ?? '').trim();
+        if (v.isEmpty) return 'phone_required'.tr(context);
+        final digits = v.replaceAll(RegExp(r'\D'), '');
+        if (digits.length < 8) return 'invalid_phone'.tr(context);
+        return null;
+      },
     );
   }
 

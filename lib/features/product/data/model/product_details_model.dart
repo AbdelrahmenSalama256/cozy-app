@@ -68,6 +68,19 @@ class ProductDetailsModel {
     );
   }
 
+  int get totalAvailableQuantity {
+    if (variations == null || variations!.isEmpty) {
+      return 0;
+    }
+    var total = 0;
+    for (final variation in variations!) {
+      total += variation.quantity ?? 0;
+    }
+    return total;
+  }
+
+  bool get isOutOfStock => totalAvailableQuantity <= 0;
+
   factory ProductDetailsModel.fromJson(Map<String, dynamic> json) {
     try {
 

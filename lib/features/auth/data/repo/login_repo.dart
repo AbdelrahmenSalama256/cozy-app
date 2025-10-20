@@ -1,5 +1,6 @@
 import 'package:cozy/core/constants/widgets/errors/exceptions.dart';
 import 'package:cozy/core/database/api/api_consumer.dart';
+import 'package:cozy/core/notification/notification_handler.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/database/api/end_points.dart';
@@ -16,11 +17,13 @@ class LoginRepo {
     String? password,
   }) async {
     try {
+      final fcmToken = await NotificationHandler.getToken();
       final response = await api.post(
         EndPoints.login,
         data: {
           'username': username,
           'password': password,
+          'fcm_token': fcmToken,
         },
       );
 
@@ -40,7 +43,6 @@ class LoginRepo {
         data: {'email': emailOrPhone}, // Send as JSON
         isFormData: false, // Ensure JSON format
       );
-
 
       if (response.data is Map<String, dynamic>) {
         final success = response.data['success'] == true;

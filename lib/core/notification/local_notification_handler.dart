@@ -28,38 +28,36 @@ class LocalNotificationService {
   }
 
 
-  static void showBasicNotification(RemoteMessage message) async {
-
-
-
-
-
-
-
-
-
-
-
-    AndroidNotificationDetails android = const AndroidNotificationDetails(
+  static Future<void> showSimpleNotification({
+    required String title,
+    required String body,
+    int id = 0,
+  }) async {
+    const android = AndroidNotificationDetails(
       'channel_id',
       'channel_name',
       importance: Importance.max,
       priority: Priority.high,
-      icon:
-          '@drawable/ic_notification', // Ensure this icon exists in res/drawable
-
-
-
-
+      icon: '@mipmap/ic_launcher',
     );
-    NotificationDetails details = NotificationDetails(
-      android: android,
-    );
+    const details = NotificationDetails(android: android);
     await flutterLocalNotificationsPlugin.show(
-      0,
-      message.notification?.title,
-      message.notification?.body,
+      id,
+      title,
+      body,
       details,
+    );
+  }
+
+  static Future<void> showBasicNotification(RemoteMessage message) async {
+    final notification = message.notification;
+    if (notification == null) {
+      return;
+    }
+    await showSimpleNotification(
+      title: notification.title ?? '',
+      body: notification.body ?? '',
+      id: message.hashCode,
     );
   }
 }

@@ -632,5 +632,8 @@
   "no_offer_products": "No products available for this offer",
   "check_back_products": "Check back later for more products",
   "products_available": "products available",
-  "shipping_status": "Shipping Status"
+  "shipping_status": "Shipping Status",
+  "please_fill_required_fields": "Please fill all required fields",
+  "cart_item_quantity_updated": "Cart item quantity updated",
+  "no_tracking_data": "No tracking data available"
 }

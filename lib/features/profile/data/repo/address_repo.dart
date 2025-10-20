@@ -124,26 +124,54 @@ class AddressRepo {
     }
 
     try {
-      // Try optional backend with query params if available
-      final response = await api.get(
-        '${EndPoints.cities}?country=${countryCode.toUpperCase()}&lang=${langCode.toLowerCase()}',
-      );
-      final data = response.data;
-      // Accept either {success:true,data:[{name:..},..]} or a raw List<String>
-      List<String> result = [];
-      if (data is Map<String, dynamic>) {
-        final list = (data['data'] ?? data['cities'] ?? []) as List;
-        result = list.map((e) {
-          if (e is String) return e;
-          if (e is Map && e['name'] != null) return e['name'].toString();
-          return e.toString();
-        }).toList();
-      } else if (data is List) {
-        result = data.map((e) => e.toString()).toList();
+      // Prefer plain endpoint first (api/cities), then try with params if needed.
+      Future<List<String>> parse(dynamic data) async {
+        List<String> result = [];
+        if (data is Map<String, dynamic>) {
+          final list = (data['data'] ?? data['cities'] ?? []) as List;
+          result = list.map((e) {
+            if (e is String) return e;
+            if (e is Map) {
+              final isAr = langCode.toLowerCase().startsWith('ar');
+              final ar = e['name_ar']?.toString();
+              final en = e['name']?.toString();
+              if (isAr && ar != null && ar.isNotEmpty) return ar;
+              if (en != null && en.isNotEmpty) return en;
+            }
+            return e.toString();
+          }).toList();
+        } else if (data is List) {
+          result = data.map((e) => e.toString()).toList();
+        }
+        return result;
       }
-      // If empty, fall back to localized defaults
-      final backfill = fallbackFor(countryCode, langCode);
-      return Right(result.isNotEmpty ? result : backfill);
+
+      // Attempt 1: plain endpoint
+      try {
+        final r1 = await api.get(EndPoints.cities);
+        final parsed1 = await parse(r1.data);
+        if (parsed1.isNotEmpty) {
+          return Right(parsed1);
+        }
+      } catch (_) {
+        // fallthrough to attempt 2
+      }
+
+      // Attempt 2: endpoint with country/lang params (if backend supports it)
+      try {
+        final r2 = await api.get(
+          '${EndPoints.cities}?country=${countryCode.toUpperCase()}&lang=${langCode.toLowerCase()}',
+        );
+        final parsed2 = await parse(r2.data);
+        if (parsed2.isNotEmpty) {
+          return Right(parsed2);
+        }
+      } catch (_) {
+        // fallthrough to fallback
+      }
+
+      // Fallback localized defaults
+      return Right(fallbackFor(countryCode, langCode));
     } on ServerException {
       return Right(fallbackFor(countryCode, langCode));
     } on NoInternetException {

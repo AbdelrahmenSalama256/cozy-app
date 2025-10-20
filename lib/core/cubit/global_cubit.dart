@@ -3,11 +3,11 @@ import 'dart:convert';
 
 import 'package:cozy/core/constants/app_constant.dart';
 import 'package:cozy/core/constants/widgets/print_util.dart';
+import 'package:cozy/core/data/repo/settings_repo.dart';
 import 'package:cozy/core/network/local_network.dart';
 import 'package:cozy/core/services/service_locator.dart';
 import 'package:cozy/features/cart/data/repo/cart_repo.dart';
 import 'package:cozy/features/wishlist/data/repo/wishlist_repo.dart';
-import 'package:cozy/core/data/repo/settings_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,6 +16,7 @@ import '../../features/cart/data/model/cart_model.dart';
 import '../../features/profile/data/models/contact_model.dart';
 import '../../features/profile/data/repo/profile_repo.dart';
 import '../../features/wishlist/data/model/wishlist_model.dart';
+import '../notification/notification_handler.dart';
 import 'global_state.dart';
 
 //! GlobalCubit
@@ -27,6 +28,7 @@ class GlobalCubit extends Cubit<GlobalState> {
         "User type is ${sl<CacheHelper>().getDataString(key: AppConstants.userType)}");
     PrintUtil.success(
         "${sl<CacheHelper>().getDataString(key: AppConstants.token)}");
+    PrintUtil.success(NotificationHandler.getToken());
 
     _initCurrency();
     _fetchAndApplySettings();
@@ -124,7 +126,9 @@ class GlobalCubit extends Cubit<GlobalState> {
       }, (settings) {
         if ((settings.currency ?? '').isNotEmpty) {
           // Update currency symbol from settings; assume SAR unless overridden later
-          changeCurrency(code: currencyCode.isNotEmpty ? currencyCode : 'SAR', symbol: settings.currency);
+          changeCurrency(
+              code: currencyCode.isNotEmpty ? currencyCode : 'SAR',
+              symbol: settings.currency);
         }
         // Optionally, store name/logo for later use
         // Could cache via CacheHelper if needed

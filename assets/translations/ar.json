@@ -633,5 +633,8 @@
   "no_offer_products": "لا توجد منتجات لهذا العرض",
   "check_back_products": "تحقق لاحقًا لمزيد من المنتجات",
   "products_available": "منتجات متاحة",
-  "shipping_status": "حالة الشحن"
+  "shipping_status": "حالة الشحن",
+  "please_fill_required_fields": "يرجى ملء الحقول المطلوبة",
+  "cart_item_quantity_updated": "تم تحديث كمية العنصر في السلة",
+  "no_tracking_data": "لا توجد بيانات تتبع"
 }
